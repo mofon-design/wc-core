@@ -1,0 +1,72 @@
+{
+  "name": "@mofon-design/wc-core",
+  "version": "0.1.0-beta0",
+  "description": "Web components core of Mofon Design",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "es/index.d.ts",
+  "typings": "es/index.d.ts",
+  "scripts": {
+    "build": "father build",
+    "lint": "npm run lint:tsc && npm run lint:script && npm run lint:style",
+    "lint-fix": "npm run lint-fix:script && npm run lint-fix:style",
+    "lint-fix:script": "npm run lint:script -- --fix",
+    "lint-fix:style": "npm run lint:style -- --fix",
+    "lint:script": "eslint . --ext '.js,.jsx,.ts,.tsx'",
+    "lint:style": "stylelint 'src/**/*.less' --syntax less",
+    "lint:tsc": "npm run tsc",
+    "prettier:ts": "prettier ./**/*.ts --write",
+    "prettier:js": "prettier ./**/*.js --write --loglevel=error"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged",
+    "commit-msg": "node scripts/verifyCommit.js"
+  },
+  "devDependencies": {
+    "@umijs/fabric": "^2.0.3",
+    "chalk": "^3.0.0",
+    "father": "^2.29.2",
+    "lint-staged": "^10.0.8",
+    "prettier": "^1.19.0",
+    "typescript": "^3.8.0",
+    "yorkie": "^2.0.0"
+  },
+  "dependencies": {},
+  "sideEffects": [
+    "*.css",
+    "*.less"
+  ],
+  "lint-staged": {
+    "*.{less,md,json}": [
+      "prettier --write"
+    ],
+    "*.js?(x)": [
+      "eslint",
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "eslint",
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "files": [
+    "es",
+    "lib"
+  ],
+  "bugs": {
+    "url": "https://github.com/mofon-design/wc-core/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mofon-design/wc-core"
+  },
+  "keywords": [
+    "mofon",
+    "component",
+    "components",
+    "webcomponent",
+    "web-component",
+    "core"
+  ]
+}
