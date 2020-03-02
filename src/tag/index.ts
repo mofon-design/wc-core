@@ -4,8 +4,10 @@ import { CoreElement, CoreInternalElement, Constructor, CoreElementStage } from 
 export function tag(tagName: string, options?: ElementDefinitionOptions) {
   return <T extends Constructor<CoreElement>>(constructor: T): T => {
     const wrappedClass = class extends constructor implements CoreInternalElement<InstanceType<T>> {
+      // @ts-ignore
       mapAttrsToProps: CoreInternalElement<InstanceType<T>>['mapAttrsToProps'];
 
+      // @ts-ignore
       properties: CoreInternalElement<InstanceType<T>>['properties'];
 
       stage: CoreElementStage = CoreElementStage.NULL;
@@ -15,11 +17,6 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
 
         /** in case property decorator is not called at least once */
         makeSureCorePropertiesExist(this);
-
-        // @ts-ignore
-        this.mapAttrsToProps = this.mapAttrsToProps;
-        // @ts-ignore
-        this.properties = this.properties;
       }
 
       attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {

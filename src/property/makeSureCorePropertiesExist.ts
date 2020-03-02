@@ -27,7 +27,7 @@ export function makeSureCorePropertiesExist<T>(instance: Partial<CoreInternalEle
     Object.defineProperty(instance, 'stage', {
       configurable: true,
       enumerable: false,
-      writable: false,
+      writable: true,
     });
   }
 
