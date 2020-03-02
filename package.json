@@ -8,14 +8,15 @@
   "types": "es/index.d.ts",
   "typings": "es/index.d.ts",
   "scripts": {
-    "build": "father build",
-    "lint": "npm run lint:tsc && npm run lint:script && npm run lint:style",
+    "build": "npm run build:es && npm run build:lib",
+    "build:es": "rm -rf es/ && tsc --build tsconfig.json",
+    "build:lib": "rm -rf lib/ && tsc --build tsconfig.es5.json",
+    "lint": "npm run build:es && npm run lint:script && npm run lint:style",
     "lint-fix": "npm run lint-fix:script && npm run lint-fix:style",
     "lint-fix:script": "npm run lint:script -- --fix",
     "lint-fix:style": "npm run lint:style -- --fix",
     "lint:script": "eslint . --ext '.js,.jsx,.ts,.tsx'",
     "lint:style": "stylelint 'src/**/*.less' --syntax less",
-    "lint:tsc": "npm run tsc",
     "prettier:ts": "prettier ./**/*.ts --write",
     "prettier:js": "prettier ./**/*.js --write --loglevel=error"
   },
@@ -26,7 +27,6 @@
   "devDependencies": {
     "@umijs/fabric": "^2.0.3",
     "chalk": "^3.0.0",
-    "father": "^2.29.2",
     "lint-staged": "^10.0.8",
     "prettier": "^1.19.0",
     "typescript": "^3.8.0",

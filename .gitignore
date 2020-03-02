@@ -9,6 +9,8 @@
 
 # production
 /coverage
+/es
+/lib
 
 # misc
 .DS_Store
