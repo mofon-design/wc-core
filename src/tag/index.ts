@@ -24,8 +24,10 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
 
       attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
         if (oldValue === newValue) return;
+        this.stage |= CoreElementStage.ATTRIBUTE_CHANGED;
         this.properties[this.mapAttrsToProps[name]] = newValue as any;
         super.attributeChangedCallback?.(name, oldValue, newValue);
+        this.stage &= ~CoreElementStage.ATTRIBUTE_CHANGED;
       }
 
       connectedCallback() {

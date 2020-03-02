@@ -1,10 +1,10 @@
-import { CoreElement } from '../types/index';
+import { CoreInternalElement } from '../types/index';
 
 /**
  * Property decorator always fired before element class decorator, so it is necessary
  * to check whether the necessary properties have been initialized.
  */
-export function makeSureCorePropertiesExist<T>(instance: Partial<CoreElement<T>>) {
+export function makeSureCorePropertiesExist<T>(instance: Partial<CoreInternalElement<T>>) {
   if (!('mapAttrsToProps' in instance)) {
     Object.defineProperty(instance, 'mapAttrsToProps', {
       value: {},
@@ -30,4 +30,6 @@ export function makeSureCorePropertiesExist<T>(instance: Partial<CoreElement<T>>
       writable: false,
     });
   }
+
+  return instance as CoreInternalElement<T>;
 }

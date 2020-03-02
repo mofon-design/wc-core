@@ -3,25 +3,25 @@ import { PickPropertyKeysByExtends } from './helper';
 interface PropertyDecorator {
   default(value: this['defaultValue']): this;
   defaultValue?: unknown;
-  isRequired?: boolean;
-  required(): this;
+  isOptional?: boolean;
+  optional(): this;
 }
 
 export interface PropertyBooleanDecorator extends PropertyDecorator {
-  <T, U extends PickPropertyKeysByExtends<T, boolean>>(target: T, propertyKey: U): void;
-  defaultValue?: boolean;
+  <T, U extends PickPropertyKeysByExtends<T, boolean | null>>(target: T, propertyKey: U): void;
+  defaultValue: boolean | null;
 }
 
 export interface PropertyNumberDecorator extends PropertyDecorator {
-  <T, U extends PickPropertyKeysByExtends<T, number>>(target: T, propertyKey: U): void;
-  defaultValue?: number;
+  <T, U extends PickPropertyKeysByExtends<T, number | null>>(target: T, propertyKey: U): void;
+  defaultValue: number | null;
   oneOf?: number[];
   only(...numbers: number[]): this;
 }
 
 export interface PropertyStringDecorator extends PropertyDecorator {
-  <T, U extends PickPropertyKeysByExtends<T, string>>(target: T, propertyKey: U): void;
-  defaultValue?: string;
+  <T, U extends PickPropertyKeysByExtends<T, string | null>>(target: T, propertyKey: U): void;
+  defaultValue: string | null;
   oneOf?: string[];
   only(...strings: string[]): this;
 }

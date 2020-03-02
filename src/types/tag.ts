@@ -75,4 +75,5 @@ export const enum CoreElementStage {
    */
   CONNECTED = 1 << 0,
   UPDATING = 1 << 1,
+  ATTRIBUTE_CHANGED = 1 << 2,
 }
