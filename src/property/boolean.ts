@@ -21,6 +21,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
 
         if (newValue === oldValue) return;
         this.properties[propertyKey] = newValue as any;
+        this.propertyChangedCallback?.(propertyKey as any, oldValue, newValue);
 
         if (this.stage & CoreElementStage.ATTRIBUTE_CHANGED) return;
 
