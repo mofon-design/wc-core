@@ -1,3 +1,5 @@
+import { AnyFunction } from './any';
+
 export interface Constructor<T> {
   new (...args: any[]): T;
 }
@@ -13,3 +15,5 @@ export type OmitPropertyKeysByExtends<T, U> = {
 export type PickPropertiesByExtends<T, U> = Pick<T, PickPropertyKeysByExtends<T, U>>;
 
 export type OmitPropertiesByExtends<T, U> = Pick<T, OmitPropertyKeysByExtends<T, U>>;
+
+export type NonFunctionPropertyKeys<T> = OmitPropertyKeysByExtends<T, AnyFunction>;
