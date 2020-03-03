@@ -2,24 +2,22 @@ import { CoreElementStage, CoreInternalElement, PropertyBooleanDecorator } from 
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyBooleanDecorator(customAttribute?: string): PropertyBooleanDecorator {
-  const decorator: PropertyBooleanDecorator = (Target, unknownPropertyKey) => {
+  const decorator: PropertyBooleanDecorator = (ProtoType, unknownPropertyKey) => {
     const [propertyKey, attributeName] = createAttrPropMap(
-      Target,
+      ProtoType,
       unknownPropertyKey,
       customAttribute,
     );
 
-    type Instance = CoreInternalElement<InstanceType<typeof Target>>;
-
-    Object.defineProperty(Target.prototype, propertyKey, {
+    Object.defineProperty(ProtoType, propertyKey, {
       enumerable: true,
       configurable: true,
-      get(this: Instance) {
+      get(this: CoreInternalElement<typeof ProtoType>) {
         // return covertAnyToBoolean(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
-      set(this: Instance, booleanLike: unknown = decorator.fallbackValue) {
-        const newValue = covertAnyToBoolean(booleanLike, this.stage);
+      set(this: CoreInternalElement<typeof ProtoType>, booleanLike: unknown) {
+        const newValue = covertAnyToBoolean(booleanLike, decorator, this.stage);
         const oldValue = (this.properties[propertyKey] as unknown) as boolean | null;
 
         if (newValue === oldValue) return;
@@ -64,7 +62,15 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
  * <my-element bool-attribute="">True</my-element>
  * ```
  */
-function covertAnyToBoolean(value: any, stage: CoreElementStage): boolean {
+function covertAnyToBoolean(
+  value: any,
+  decorator: PropertyBooleanDecorator,
+  stage: CoreElementStage,
+): boolean | null {
+  if (value === undefined) {
+    return decorator.fallbackValue;
+  }
+
   if (typeof value === 'string' && stage & CoreElementStage.SYNC_PROPERTY) {
     return true;
   }

@@ -2,23 +2,21 @@ import { CoreElementStage, CoreInternalElement, PropertyNumberDecorator } from '
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyNumberDecorator(customAttribute?: string): PropertyNumberDecorator {
-  const decorator: PropertyNumberDecorator = (Target, unknownPropertyKey) => {
+  const decorator: PropertyNumberDecorator = (ProtoType, unknownPropertyKey) => {
     const [propertyKey, attributeName] = createAttrPropMap(
-      Target,
+      ProtoType,
       unknownPropertyKey,
       customAttribute,
     );
 
-    type Instance = CoreInternalElement<InstanceType<typeof Target>>;
-
-    Object.defineProperty(Target.prototype, propertyKey, {
+    Object.defineProperty(ProtoType, propertyKey, {
       enumerable: true,
       configurable: true,
-      get(this: Instance) {
+      get(this: CoreInternalElement<typeof ProtoType>) {
         // return covertAnyToNumber(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
-      set(this: Instance, numberLike: unknown) {
+      set(this: CoreInternalElement<typeof ProtoType>, numberLike: unknown) {
         // make sure value is not `NaN`
         const newValue = covertAnyToNumber(numberLike, decorator);
         const oldValue = (this.properties[propertyKey] as unknown) as number | null;

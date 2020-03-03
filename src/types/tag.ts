@@ -66,6 +66,10 @@ export interface CoreElementConstructor extends Constructor<CoreElement>, Custom
  */
 export interface CoreInternalElement<T> extends CoreElement {
   /**
+   * Map HTML attribute names to element property keys.
+   */
+  mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
+  /**
    * The actual storage location of the element property value for the element property accessor.
    *
    * @note
@@ -79,16 +83,8 @@ export interface CoreInternalElement<T> extends CoreElement {
   stage: CoreElementStage;
 }
 
-export interface CoreInternalElementClass<T> {
-  /**
-   * Map HTML attribute names to element property keys.
-   */
-  mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
-}
-
 export interface CoreInternalElementConstructor<T>
   extends CustomElementClass,
-    CoreInternalElementClass<T>,
     Constructor<CoreInternalElement<T>> {}
 
 export const enum CoreElementStage {

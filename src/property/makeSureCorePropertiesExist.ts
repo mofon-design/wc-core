@@ -1,20 +1,14 @@
-import {
-  CoreElementConstructor,
-  CoreElementStage,
-  CoreInternalElementConstructor,
-} from '../types/index';
+import { CoreElementStage, CoreInternalElement } from '../types/index';
 
 /**
  * Property decorator always fired before element class decorator, so it is necessary
  * to check whether the necessary properties have been initialized.
  */
-export function makeSureCorePropertiesExist<T extends CoreElementConstructor>(
-  UnsafeTarget: T,
-): CoreInternalElementConstructor<InstanceType<T>> {
-  const Target = (UnsafeTarget as {}) as CoreInternalElementConstructor<InstanceType<T>>;
+export function makeSureCorePropertiesExist<T>(UnsafeProtoType: T): CoreInternalElement<T> & T {
+  const ProtoType = UnsafeProtoType as CoreInternalElement<T> & T;
 
-  if (!('mapAttrsToProps' in Target)) {
-    Object.defineProperty(Target, 'mapAttrsToProps', {
+  if (!('mapAttrsToProps' in ProtoType)) {
+    Object.defineProperty(ProtoType, 'mapAttrsToProps', {
       value: {},
       configurable: true,
       enumerable: false,
@@ -22,18 +16,8 @@ export function makeSureCorePropertiesExist<T extends CoreElementConstructor>(
     });
   }
 
-  if (!('observedAttributes' in Target)) {
-    Object.defineProperty(Target, 'observedAttributes', {
-      configurable: true,
-      enumerable: true,
-      get() {
-        return Object.keys(Target.mapAttrsToProps);
-      },
-    });
-  }
-
-  if (!('properties' in Target.prototype)) {
-    Object.defineProperty(Target.prototype, 'properties', {
+  if (!('properties' in ProtoType)) {
+    Object.defineProperty(ProtoType, 'properties', {
       value: {},
       configurable: true,
       enumerable: false,
@@ -41,8 +25,8 @@ export function makeSureCorePropertiesExist<T extends CoreElementConstructor>(
     });
   }
 
-  if (!('stage' in Target.prototype)) {
-    Object.defineProperty(Target.prototype, 'stage', {
+  if (!('stage' in ProtoType)) {
+    Object.defineProperty(ProtoType, 'stage', {
       value: CoreElementStage.NULL,
       configurable: true,
       enumerable: false,
@@ -50,5 +34,5 @@ export function makeSureCorePropertiesExist<T extends CoreElementConstructor>(
     });
   }
 
-  return Target;
+  return ProtoType;
 }

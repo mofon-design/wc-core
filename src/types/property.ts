@@ -1,13 +1,10 @@
-import { AnyConstructor } from './any';
 import { PickPropertyKeysByExtends } from './helper';
 
-type PickThisPropKeys<
-  T extends AnyConstructor,
-  U extends { fallbackValue?: unknown }
-> = PickPropertyKeysByExtends<InstanceType<T>, U['fallbackValue']>;
-
 interface PropertyDecorator {
-  <T extends AnyConstructor, U extends PickThisPropKeys<T, this>>(target: T, propertyKey: U): void;
+  <T, U extends PickPropertyKeysByExtends<T, this['fallbackValue']>>(
+    target: T,
+    propertyKey: U,
+  ): void;
   /**
    * When the value passed in is `undefined` or `null` or not in the options specified by
    * `only(...)`, the property value will fallback to this one.

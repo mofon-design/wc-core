@@ -1,4 +1,4 @@
-import { Constructor, NonFunctionPropertyKeys } from '../types/index';
+import { NonFunctionPropertyKeys } from '../types/index';
 import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
 
 /**
@@ -8,12 +8,12 @@ import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
  * When the type of `attribute` is not string, such as number or symbol, the value will be
  * converted to `${typeof attribute}-${String(propertyName)}`.
  */
-export function createAttrPropMap<T extends Constructor<any>>(
-  UnsafeTarget: T,
+export function createAttrPropMap<T>(
+  UnsafeProtoType: T,
   unknownPropertyKey: string | number | symbol,
   customAttribute: string | number | symbol = unknownPropertyKey,
 ) {
-  const Target = makeSureCorePropertiesExist(UnsafeTarget);
+  const ProtoType = makeSureCorePropertiesExist<T>(UnsafeProtoType);
 
   const propertyKey = unknownPropertyKey as NonFunctionPropertyKeys<T>;
 
@@ -22,8 +22,7 @@ export function createAttrPropMap<T extends Constructor<any>>(
       ? customAttribute
       : (typeof customAttribute).concat('-', String(customAttribute));
 
-  // eslint-disable-next-line no-param-reassign
-  Target.mapAttrsToProps[attributeName] = propertyKey;
+  ProtoType.mapAttrsToProps[attributeName] = propertyKey;
 
   return [propertyKey, attributeName] as const;
 }

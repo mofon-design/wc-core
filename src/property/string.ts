@@ -2,23 +2,21 @@ import { CoreElementStage, CoreInternalElement, PropertyStringDecorator } from '
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyStringDecorator(customAttribute?: string): PropertyStringDecorator {
-  const decorator: PropertyStringDecorator = (Target, unknownPropertyKey) => {
+  const decorator: PropertyStringDecorator = (ProtoType, unknownPropertyKey) => {
     const [propertyKey, attributeName] = createAttrPropMap(
-      Target,
+      ProtoType,
       unknownPropertyKey,
       customAttribute,
     );
 
-    type Instance = CoreInternalElement<InstanceType<typeof Target>>;
-
-    Object.defineProperty(Target.prototype, propertyKey, {
+    Object.defineProperty(ProtoType, propertyKey, {
       enumerable: true,
       configurable: true,
-      get(this: Instance) {
+      get(this: CoreInternalElement<typeof ProtoType>) {
         // return covertAnyToString(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
-      set(this: Instance, stringLike: unknown) {
+      set(this: CoreInternalElement<typeof ProtoType>, stringLike: unknown) {
         const newValue = covertAnyToString(stringLike, decorator);
         const oldValue = (this.properties[propertyKey] as unknown) as string | null;
 

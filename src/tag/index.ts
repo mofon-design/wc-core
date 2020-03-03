@@ -2,13 +2,17 @@ import { makeSureCorePropertiesExist } from '../property/makeSureCorePropertiesE
 import { CoreElementConstructor, CoreElementStage, CoreInternalElement } from '../types/index';
 
 export function tag(tagName: string, options?: ElementDefinitionOptions) {
-  return <T extends CoreElementConstructor>(UnsafeTarget: T): T => {
-    /**
-     * In case property decorator is not called at least once.
-     */
-    const Target = makeSureCorePropertiesExist(UnsafeTarget);
-
+  return <T extends CoreElementConstructor>(Target: T): T => {
     const WrappedTarget = class extends Target implements CoreInternalElement<InstanceType<T>> {
+      // @ts-ignore
+      mapAttrsToProps: CoreInternalElement<InstanceType<T>>['mapAttrsToProps'];
+
+      // @ts-ignore
+      properties: CoreInternalElement<InstanceType<T>>['properties'];
+
+      // @ts-ignore
+      stage: CoreInternalElement<InstanceType<T>>['stage'];
+
       attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
         if (oldValue === newValue) return;
 
@@ -30,7 +34,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
          * ```
          */
         this.stage |= CoreElementStage.SYNC_PROPERTY;
-        this.properties[WrappedTarget.mapAttrsToProps[name]] = newValue as any;
+        this.properties[this.mapAttrsToProps[name]] = newValue as any;
         this.stage &= ~CoreElementStage.SYNC_PROPERTY;
 
         super.attributeChangedCallback?.(name, oldValue, newValue);
@@ -60,6 +64,21 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
         }
       }
     };
+
+    /**
+     * In case property decorator is not called at least once.
+     */
+    makeSureCorePropertiesExist(WrappedTarget.prototype);
+
+    if (!('observedAttributes' in WrappedTarget)) {
+      Object.defineProperty(WrappedTarget, 'observedAttributes', {
+        configurable: true,
+        enumerable: true,
+        get() {
+          return Object.keys(WrappedTarget.prototype.mapAttrsToProps);
+        },
+      });
+    }
 
     window.customElements.define(tagName, WrappedTarget, options);
 
