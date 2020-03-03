@@ -35,6 +35,13 @@ export interface CustomElementLifecycle {
  */
 export interface CustomElement extends HTMLElement, CustomElementLifecycle {}
 
+export interface CustomElementClass {
+  /**
+   * A static accessor that specifies which attributes should be noted for changes.
+   */
+  observedAttributes?: string[];
+}
+
 /**
  * Non-native life cycle methods, which can be used with decorated by `@tag('tagName')`.
  */
@@ -52,12 +59,7 @@ export interface CoreElementLifecycle {
 
 export interface CoreElement extends CustomElement, CoreElementLifecycle {}
 
-export interface CoreElementConstructor extends Constructor<CoreElement> {
-  /**
-   * A static accessor that specifies which attributes should be noted for changes.
-   */
-  observedAttributes?: string[];
-}
+export interface CoreElementConstructor extends Constructor<CoreElement>, CustomElementClass {}
 
 /**
  * Custom element class decorated by `@tag(tagName)` class decorator.
@@ -77,12 +79,17 @@ export interface CoreInternalElement<T> extends CoreElement {
   stage: CoreElementStage;
 }
 
-export interface CoreInternalElementConstructor<T> extends Constructor<CoreInternalElement<T>> {
+export interface CoreInternalElementClass<T> {
   /**
    * Map HTML attribute names to element property keys.
    */
   mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
 }
+
+export interface CoreInternalElementConstructor<T>
+  extends CustomElementClass,
+    CoreInternalElementClass<T>,
+    Constructor<CoreInternalElement<T>> {}
 
 export const enum CoreElementStage {
   /**

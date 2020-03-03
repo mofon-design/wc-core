@@ -17,3 +17,5 @@ export type PickPropertiesByExtends<T, U> = Pick<T, PickPropertyKeysByExtends<T,
 export type OmitPropertiesByExtends<T, U> = Pick<T, OmitPropertyKeysByExtends<T, U>>;
 
 export type NonFunctionPropertyKeys<T> = OmitPropertyKeysByExtends<T, AnyFunction>;
+
+export type OmitUnion<T, U> = T & Pick<U, Exclude<keyof U, keyof T>>;

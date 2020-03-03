@@ -1,24 +1,14 @@
 import { makeSureCorePropertiesExist } from '../property/makeSureCorePropertiesExist';
-import { CoreElementConstructor, CoreInternalElement, CoreElementStage } from '../types/index';
+import { CoreElementConstructor, CoreElementStage, CoreInternalElement } from '../types/index';
 
 export function tag(tagName: string, options?: ElementDefinitionOptions) {
-  return <T extends CoreElementConstructor>(constructor: T): T => {
-    const wrappedClass = class extends constructor implements CoreInternalElement<InstanceType<T>> {
-      // @ts-ignore
-      mapAttrsToProps: CoreInternalElement<InstanceType<T>>['mapAttrsToProps'];
+  return <T extends CoreElementConstructor>(unsafeTarget: T): T => {
+    /**
+     * In case property decorator is not called at least once.
+     */
+    const target = makeSureCorePropertiesExist(unsafeTarget);
 
-      // @ts-ignore
-      properties: CoreInternalElement<InstanceType<T>>['properties'];
-
-      stage: CoreElementStage = CoreElementStage.NULL;
-
-      constructor(...args: any[]) {
-        super(...args);
-
-        /** in case property decorator is not called at least once */
-        makeSureCorePropertiesExist(this);
-      }
-
+    const wrappedClass = class extends target implements CoreInternalElement<InstanceType<T>> {
       attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
         if (oldValue === newValue) return;
 
@@ -40,7 +30,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
          * ```
          */
         this.stage |= CoreElementStage.SYNC_PROPERTY;
-        this.properties[this.mapAttrsToProps[name]] = newValue as any;
+        this.properties[wrappedClass.mapAttrsToProps[name]] = newValue as any;
         this.stage &= ~CoreElementStage.SYNC_PROPERTY;
 
         super.attributeChangedCallback?.(name, oldValue, newValue);
@@ -73,6 +63,6 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
 
     window.customElements.define(tagName, wrappedClass, options);
 
-    return wrappedClass;
+    return (wrappedClass as unknown) as T;
   };
 }
