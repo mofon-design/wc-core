@@ -30,8 +30,14 @@ export interface CustomElementLifecycle {
   disconnectedCallback?(): void;
 }
 
+/**
+ * Customized built-in elements.
+ */
 export interface CustomElement extends HTMLElement, CustomElementLifecycle {}
 
+/**
+ * Non-native life cycle methods, which can be used with decorated by `@tag('tagName')`.
+ */
 export interface CoreElementLifecycle {
   /**
    * Invoked each time one of the custom element's properties is changed.

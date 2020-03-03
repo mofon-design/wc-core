@@ -13,6 +13,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
       enumerable: true,
       configurable: true,
       get(this: CoreInternalElement<typeof target>) {
+        // return covertAnyToBoolean(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
       set(this: CoreInternalElement<typeof target>, booleanLike: unknown = decorator.defaultValue) {
@@ -21,15 +22,21 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
 
         if (newValue === oldValue) return;
         this.properties[propertyKey] = newValue as any;
-        this.propertyChangedCallback?.(propertyKey as any, oldValue, newValue);
 
-        if (this.stage & CoreElementStage.SYNC_PROPERTY) return;
+        /**
+         * Sync property value to HTML attribute before fire `propertyChangedCallback`,
+         * to ensure the consistency between them.
+         */
 
-        if (newValue) {
-          this.setAttribute(attributeName, '');
-        } else {
-          this.removeAttribute(attributeName);
+        if (!(this.stage & CoreElementStage.SYNC_PROPERTY)) {
+          if (newValue) {
+            this.setAttribute(attributeName, '');
+          } else {
+            this.removeAttribute(attributeName);
+          }
         }
+
+        this.propertyChangedCallback?.(propertyKey as any, oldValue, newValue);
       },
     });
   };

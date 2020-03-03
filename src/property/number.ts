@@ -13,6 +13,7 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
       enumerable: true,
       configurable: true,
       get(this: CoreInternalElement<typeof target>) {
+        // return covertAnyToNumber(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
       set(this: CoreInternalElement<typeof target>, numberLike: unknown = decorator.defaultValue) {
@@ -22,15 +23,21 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
 
         if (newValue === oldValue) return;
         this.properties[propertyKey] = newValue as any;
-        this.propertyChangedCallback?.(propertyKey as any, oldValue, newValue);
 
-        if (this.stage & CoreElementStage.SYNC_PROPERTY) return;
+        /**
+         * Sync property value to HTML attribute before fire `propertyChangedCallback`,
+         * to ensure the consistency between them.
+         */
 
-        if (newValue !== null) {
-          this.setAttribute(attributeName, String(newValue));
-        } else {
-          this.removeAttribute(attributeName);
+        if (!(this.stage & CoreElementStage.SYNC_PROPERTY)) {
+          if (newValue !== null) {
+            this.setAttribute(attributeName, String(newValue));
+          } else {
+            this.removeAttribute(attributeName);
+          }
         }
+
+        this.propertyChangedCallback?.(propertyKey as any, oldValue, newValue);
       },
     });
   };

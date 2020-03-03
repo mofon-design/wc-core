@@ -13,6 +13,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
       enumerable: true,
       configurable: true,
       get(this: CoreInternalElement<typeof target>) {
+        // return covertAnyToString(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
       set(this: CoreInternalElement<typeof target>, stringLike: unknown = decorator.defaultValue) {
@@ -21,15 +22,21 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
 
         if (newValue === oldValue) return;
         this.properties[propertyKey] = newValue as any;
-        this.propertyChangedCallback?.(propertyKey as any, oldValue, newValue);
 
-        if (this.stage & CoreElementStage.SYNC_PROPERTY) return;
+        /**
+         * Sync property value to HTML attribute before fire `propertyChangedCallback`,
+         * to ensure the consistency between them.
+         */
 
-        if (newValue !== null) {
-          this.setAttribute(attributeName, newValue);
-        } else {
-          this.removeAttribute(attributeName);
+        if (!(this.stage & CoreElementStage.SYNC_PROPERTY)) {
+          if (newValue !== null) {
+            this.setAttribute(attributeName, newValue);
+          } else {
+            this.removeAttribute(attributeName);
+          }
         }
+
+        this.propertyChangedCallback?.(propertyKey as any, oldValue, newValue);
       },
     });
   };
