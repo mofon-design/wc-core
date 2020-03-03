@@ -18,7 +18,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
         // return covertAnyToBoolean(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
-      set(this: Instance, booleanLike: unknown = decorator.defaultValue) {
+      set(this: Instance, booleanLike: unknown = decorator.fallbackValue) {
         const newValue = covertAnyToBoolean(booleanLike, this.stage);
         const oldValue = (this.properties[propertyKey] as unknown) as boolean | null;
 
@@ -43,10 +43,10 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
     });
   };
 
-  decorator.defaultValue = null;
+  decorator.fallbackValue = null;
 
-  decorator.default = value => {
-    decorator.defaultValue = value;
+  decorator.fallback = value => {
+    decorator.fallbackValue = value;
     return decorator;
   };
 
@@ -64,7 +64,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
  * <my-element bool-attribute="">True</my-element>
  * ```
  */
-function covertAnyToBoolean(value: any, stage: CoreElementStage) {
+function covertAnyToBoolean(value: any, stage: CoreElementStage): boolean {
   if (typeof value === 'string' && stage & CoreElementStage.SYNC_PROPERTY) {
     return true;
   }

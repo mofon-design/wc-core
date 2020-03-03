@@ -18,7 +18,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
         // return covertAnyToString(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
-      set(this: Instance, stringLike: unknown = decorator.defaultValue) {
+      set(this: Instance, stringLike: unknown) {
         const newValue = covertAnyToString(stringLike, decorator);
         const oldValue = (this.properties[propertyKey] as unknown) as string | null;
 
@@ -43,15 +43,10 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
     });
   };
 
-  decorator.defaultValue = null;
+  decorator.fallbackValue = null;
 
-  decorator.optional = () => {
-    decorator.isOptional = true;
-    return decorator;
-  };
-
-  decorator.default = value => {
-    decorator.defaultValue = value;
+  decorator.fallback = value => {
+    decorator.fallbackValue = value;
     return decorator;
   };
 
@@ -64,8 +59,8 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
 }
 
 function covertAnyToString(value: any, decorator: PropertyStringDecorator) {
-  if (value === null && decorator.isOptional) {
-    return null;
+  if (value === null || value === undefined) {
+    return decorator.fallbackValue;
   }
 
   const stringifiedValue = value ? String(value) : '';
@@ -75,8 +70,8 @@ function covertAnyToString(value: any, decorator: PropertyStringDecorator) {
       return stringifiedValue;
     }
 
-    // return default one while value is invalid
-    return decorator.defaultValue;
+    // return fallback one while value is invalid
+    return decorator.fallbackValue;
   }
 
   return stringifiedValue;

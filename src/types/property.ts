@@ -3,30 +3,47 @@ import { PickPropertyKeysByExtends } from './helper';
 
 type PickThisPropKeys<
   T extends AnyConstructor,
-  U extends { defaultValue?: unknown }
-> = PickPropertyKeysByExtends<InstanceType<T>, U['defaultValue']>;
+  U extends { fallbackValue?: unknown }
+> = PickPropertyKeysByExtends<InstanceType<T>, U['fallbackValue']>;
 
 interface PropertyDecorator {
   <T extends AnyConstructor, U extends PickThisPropKeys<T, this>>(target: T, propertyKey: U): void;
-  default(value: this['defaultValue']): this;
-  defaultValue?: unknown;
-  isOptional?: boolean;
-  optional(): this;
+  /**
+   * When the value passed in is `undefined` or `null` or not in the options specified by
+   * `only(...)`, the property value will fallback to this one.
+   */
+  fallback(value: this['fallbackValue']): this;
+  /**
+   * The fallback value of the property.
+   */
+  fallbackValue: unknown;
 }
 
 export interface PropertyBooleanDecorator extends PropertyDecorator {
-  defaultValue: boolean | null;
+  fallbackValue: boolean | null;
 }
 
 export interface PropertyNumberDecorator extends PropertyDecorator {
-  defaultValue: number | null;
+  fallbackValue: number | null;
+  /**
+   * The value must be at least equal to one of the members of the array.
+   */
   oneOf?: number[];
+  /**
+   * Indicate that the value passed in the assignment must be the specified value or values.
+   */
   only(...numbers: number[]): this;
 }
 
 export interface PropertyStringDecorator extends PropertyDecorator {
-  defaultValue: string | null;
+  fallbackValue: string | null;
+  /**
+   * The value must be at least equal to one of the members of the array.
+   */
   oneOf?: string[];
+  /**
+   * Indicate that the value passed in the assignment must be the specified value or values.
+   */
   only(...strings: string[]): this;
 }
 

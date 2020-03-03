@@ -18,7 +18,7 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
         // return covertAnyToNumber(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
-      set(this: Instance, numberLike: unknown = decorator.defaultValue) {
+      set(this: Instance, numberLike: unknown) {
         // make sure value is not `NaN`
         const newValue = covertAnyToNumber(numberLike, decorator);
         const oldValue = (this.properties[propertyKey] as unknown) as number | null;
@@ -44,15 +44,10 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
     });
   };
 
-  decorator.defaultValue = null;
+  decorator.fallbackValue = null;
 
-  decorator.optional = () => {
-    decorator.isOptional = true;
-    return decorator;
-  };
-
-  decorator.default = value => {
-    decorator.defaultValue = value;
+  decorator.fallback = value => {
+    decorator.fallbackValue = value;
     return decorator;
   };
 
@@ -64,9 +59,19 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
   return decorator;
 }
 
-function covertAnyToNumber(value: any, decorator: PropertyNumberDecorator) {
-  if (value === null && decorator.isOptional) {
-    return null;
+/**
+ * Covert any type of value to a number.
+ *
+ * @description
+ * `undefined` and `''` will be treated as `null`, and return fallback value.
+ */
+function covertAnyToNumber(value: any, decorator: PropertyNumberDecorator): number | null {
+  /**
+   * - Number('') === 0
+   * - Number(null) === 0
+   */
+  if (value === null || value === undefined || value === '') {
+    return decorator.fallbackValue;
   }
 
   const numberifiedValue = Number(value);
@@ -76,9 +81,9 @@ function covertAnyToNumber(value: any, decorator: PropertyNumberDecorator) {
       return numberifiedValue;
     }
 
-    // return default one while value is invalid
-    return decorator.defaultValue;
+    // return fallback one while value is invalid
+    return decorator.fallbackValue;
   }
 
-  return Number.isNaN(numberifiedValue) ? null : numberifiedValue;
+  return Number.isNaN(numberifiedValue) ? decorator.fallbackValue : numberifiedValue;
 }
