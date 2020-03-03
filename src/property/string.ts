@@ -23,7 +23,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
         this.properties[propertyKey] = newValue as any;
         this.propertyChangedCallback?.(propertyKey as any, oldValue, newValue);
 
-        if (this.stage & CoreElementStage.ATTRIBUTE_CHANGED) return;
+        if (this.stage & CoreElementStage.SYNC_PROPERTY) return;
 
         if (newValue !== null) {
           this.setAttribute(attributeName, newValue);

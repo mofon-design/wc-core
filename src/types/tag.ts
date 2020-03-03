@@ -1,4 +1,4 @@
-import { NonFunctionPropertyKeys } from './helper';
+import { Constructor, NonFunctionPropertyKeys } from './helper';
 
 /**
  * HTML custom element native life cycle methods.
@@ -46,6 +46,13 @@ export interface CoreElementLifecycle {
 
 export interface CoreElement extends CustomElement, CoreElementLifecycle {}
 
+export interface CoreElementConstructor extends Constructor<CoreElement> {
+  /**
+   * A static accessor that specifies which attributes should be noted for changes.
+   */
+  observedAttributes?: string[];
+}
+
 /**
  * Custom element class decorated by `@tag(tagName)` class decorator.
  */
@@ -69,11 +76,22 @@ export interface CoreInternalElement<T> extends CoreElement {
 }
 
 export const enum CoreElementStage {
+  /**
+   * Initial value.
+   */
   NULL = 0,
   /**
    * Indicate whether the node is connected (directly or indirectly) to the context object.
    */
   CONNECTED = 1 << 0,
+  /**
+   * Reserved value.
+   */
   UPDATING = 1 << 1,
-  ATTRIBUTE_CHANGED = 1 << 2,
+  /**
+   * Indicate that the HTML attribute value is being synchronized to the element property,
+   * preventing the property setter from firing `setAttribute()` or `removeAttribute()`
+   * which causes loop calls.
+   */
+  SYNC_PROPERTY = 1 << 2,
 }

@@ -1,8 +1,8 @@
 import { makeSureCorePropertiesExist } from '../property/makeSureCorePropertiesExist';
-import { CoreElement, CoreInternalElement, Constructor, CoreElementStage } from '../types/index';
+import { CoreElementConstructor, CoreInternalElement, CoreElementStage } from '../types/index';
 
 export function tag(tagName: string, options?: ElementDefinitionOptions) {
-  return <T extends Constructor<CoreElement>>(constructor: T): T => {
+  return <T extends CoreElementConstructor>(constructor: T): T => {
     const wrappedClass = class extends constructor implements CoreInternalElement<InstanceType<T>> {
       // @ts-ignore
       mapAttrsToProps: CoreInternalElement<InstanceType<T>>['mapAttrsToProps'];
@@ -21,10 +21,29 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
 
       attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
         if (oldValue === newValue) return;
-        this.stage |= CoreElementStage.ATTRIBUTE_CHANGED;
+
+        /**
+         * Prevent the property setter from loop calls.
+         *
+         * Do not change the stage when `setAttribute()` or `removeAttribute()` is fired
+         * by the property setter to prevent `setAttribute()` or `removeAttribute()`
+         * triggering `attributeChangedCallback()` in an asynchronous manner.
+         *
+         * @deprecated
+         * ```ts
+         * set property(value: string | null) {
+         *   this.stage |= CoreElementStage.SYNC_ATTRIBUTE;
+         *   if (value === null) this.removeAttribute();
+         *   else this.setAttribute('example', value);
+         *   this.stage &= ~CoreElementStage.SYNC_ATTRIBUTE;
+         * }
+         * ```
+         */
+        this.stage |= CoreElementStage.SYNC_PROPERTY;
         this.properties[this.mapAttrsToProps[name]] = newValue as any;
+        this.stage &= ~CoreElementStage.SYNC_PROPERTY;
+
         super.attributeChangedCallback?.(name, oldValue, newValue);
-        this.stage &= ~CoreElementStage.ATTRIBUTE_CHANGED;
       }
 
       connectedCallback() {
