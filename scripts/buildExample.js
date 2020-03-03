@@ -21,14 +21,15 @@ const Examples = fs
 ChildProcess.spawnSync('npm', ['run', 'build:es']);
 ChildProcess.execSync([TSCPath, 'example/**/*.ts', TSCConfig].join(' '));
 fs.writeFileSync(HomePageFile, HomePageHTML.split('<!--INSTER-LIST-->').join(Examples), 'utf8');
-rewriteImportPath('example', 'example');
+rewriteImportPath('example', 'example', p => (p.startsWith('../../es') ? p.slice(3) : p));
 rewriteImportPath('es', 'example/es');
 
 /**
  * @param {string} entry
  * @param {string} target
+ * @param {(v: string) => string} format
  */
-function rewriteImportPath(entry, target) {
+function rewriteImportPath(entry, target, format = v => v) {
   const absEntryDir = path.join(RootPath, entry);
   const absTargetDir = path.join(RootPath, target);
 
@@ -38,7 +39,7 @@ function rewriteImportPath(entry, target) {
 
   fs.readdirSync(absEntryDir, { withFileTypes: true }).forEach(item => {
     if (item.isDirectory()) {
-      return rewriteImportPath(path.join(entry, item.name), path.join(target, item.name));
+      return rewriteImportPath(path.join(entry, item.name), path.join(target, item.name), format);
     }
 
     if (path.extname(item.name) !== '.js') {
@@ -48,10 +49,10 @@ function rewriteImportPath(entry, target) {
     let index = 0;
     let code = fs.readFileSync(path.join(absEntryDir, item.name), 'utf8');
     while (code.length > index) {
-      const match = code.slice(index).match(/from '[^']+/);
+      const match = code.slice(index).match(/from ['"]([^'"]+)/);
       if (!match) break;
       index += match[0].length + match.index;
-      code = `${code.slice(0, index)}.js${code.slice(index)}`;
+      code = `${code.slice(0, index - match[1].length)}${format(match[1])}.js${code.slice(index)}`;
     }
 
     fs.writeFileSync(path.join(absTargetDir, item.name), code, 'utf8');
