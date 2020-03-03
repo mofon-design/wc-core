@@ -19,7 +19,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
         return this.properties[propertyKey];
       },
       set(this: Instance, booleanLike: unknown = decorator.defaultValue) {
-        const newValue = covertAnyToBoolean(booleanLike, decorator);
+        const newValue = covertAnyToBoolean(booleanLike, this.stage);
         const oldValue = (this.properties[propertyKey] as unknown) as boolean | null;
 
         if (newValue === oldValue) return;
@@ -45,11 +45,6 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
 
   decorator.defaultValue = null;
 
-  decorator.optional = () => {
-    decorator.isOptional = true;
-    return decorator;
-  };
-
   decorator.default = value => {
     decorator.defaultValue = value;
     return decorator;
@@ -58,9 +53,20 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
   return decorator;
 }
 
-function covertAnyToBoolean(value: any, decorator: PropertyBooleanDecorator) {
-  if (value === null && decorator.isOptional) {
-    return null;
+/**
+ * If the current value is an HTML attribute value,
+ * the empty string is also treated as true.
+ *
+ * @example
+ * ```html
+ * <my-element>False</my-element>
+ * <my-element bool-attribute>True</my-element>
+ * <my-element bool-attribute="">True</my-element>
+ * ```
+ */
+function covertAnyToBoolean(value: any, stage: CoreElementStage) {
+  if (typeof value === 'string' && stage & CoreElementStage.SYNC_PROPERTY) {
+    return true;
   }
 
   return Boolean(value);
