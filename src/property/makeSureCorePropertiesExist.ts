@@ -9,12 +9,12 @@ import {
  * to check whether the necessary properties have been initialized.
  */
 export function makeSureCorePropertiesExist<T extends CoreElementConstructor>(
-  unsafeTarget: T,
+  UnsafeTarget: T,
 ): CoreInternalElementConstructor<InstanceType<T>> {
-  const target = (unsafeTarget as {}) as CoreInternalElementConstructor<InstanceType<T>>;
+  const Target = (UnsafeTarget as {}) as CoreInternalElementConstructor<InstanceType<T>>;
 
-  if (!('mapAttrsToProps' in target)) {
-    Object.defineProperty(target, 'mapAttrsToProps', {
+  if (!('mapAttrsToProps' in Target)) {
+    Object.defineProperty(Target, 'mapAttrsToProps', {
       value: {},
       configurable: true,
       enumerable: false,
@@ -22,18 +22,18 @@ export function makeSureCorePropertiesExist<T extends CoreElementConstructor>(
     });
   }
 
-  if (!('observedAttributes' in target)) {
-    Object.defineProperty(target, 'observedAttributes', {
+  if (!('observedAttributes' in Target)) {
+    Object.defineProperty(Target, 'observedAttributes', {
       configurable: true,
       enumerable: true,
       get() {
-        return Object.keys(target.mapAttrsToProps);
+        return Object.keys(Target.mapAttrsToProps);
       },
     });
   }
 
-  if (!('properties' in target.prototype)) {
-    Object.defineProperty(target.prototype, 'properties', {
+  if (!('properties' in Target.prototype)) {
+    Object.defineProperty(Target.prototype, 'properties', {
       value: {},
       configurable: true,
       enumerable: false,
@@ -41,8 +41,8 @@ export function makeSureCorePropertiesExist<T extends CoreElementConstructor>(
     });
   }
 
-  if (!('stage' in target.prototype)) {
-    Object.defineProperty(target.prototype, 'stage', {
+  if (!('stage' in Target.prototype)) {
+    Object.defineProperty(Target.prototype, 'stage', {
       value: CoreElementStage.NULL,
       configurable: true,
       enumerable: false,
@@ -50,5 +50,5 @@ export function makeSureCorePropertiesExist<T extends CoreElementConstructor>(
     });
   }
 
-  return target;
+  return Target;
 }

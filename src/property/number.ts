@@ -2,16 +2,16 @@ import { CoreElementStage, CoreInternalElement, PropertyNumberDecorator } from '
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyNumberDecorator(customAttribute?: string): PropertyNumberDecorator {
-  const decorator: PropertyNumberDecorator = (target, unknownPropertyKey) => {
+  const decorator: PropertyNumberDecorator = (Target, unknownPropertyKey) => {
     const [propertyKey, attributeName] = createAttrPropMap(
-      target,
+      Target,
       unknownPropertyKey,
       customAttribute,
     );
 
-    type Instance = CoreInternalElement<InstanceType<typeof target>>;
+    type Instance = CoreInternalElement<InstanceType<typeof Target>>;
 
-    Object.defineProperty(target.prototype, propertyKey, {
+    Object.defineProperty(Target.prototype, propertyKey, {
       enumerable: true,
       configurable: true,
       get(this: Instance) {

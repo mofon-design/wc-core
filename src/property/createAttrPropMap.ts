@@ -9,11 +9,11 @@ import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
  * converted to `${typeof attribute}-${String(propertyName)}`.
  */
 export function createAttrPropMap<T extends Constructor<any>>(
-  unsafeTarget: T,
+  UnsafeTarget: T,
   unknownPropertyKey: string | number | symbol,
   customAttribute: string | number | symbol = unknownPropertyKey,
 ) {
-  const target = makeSureCorePropertiesExist(unsafeTarget);
+  const Target = makeSureCorePropertiesExist(UnsafeTarget);
 
   const propertyKey = unknownPropertyKey as NonFunctionPropertyKeys<T>;
 
@@ -23,7 +23,7 @@ export function createAttrPropMap<T extends Constructor<any>>(
       : (typeof customAttribute).concat('-', String(customAttribute));
 
   // eslint-disable-next-line no-param-reassign
-  target.mapAttrsToProps[attributeName] = propertyKey;
+  Target.mapAttrsToProps[attributeName] = propertyKey;
 
   return [propertyKey, attributeName] as const;
 }

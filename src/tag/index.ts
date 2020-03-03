@@ -2,13 +2,13 @@ import { makeSureCorePropertiesExist } from '../property/makeSureCorePropertiesE
 import { CoreElementConstructor, CoreElementStage, CoreInternalElement } from '../types/index';
 
 export function tag(tagName: string, options?: ElementDefinitionOptions) {
-  return <T extends CoreElementConstructor>(unsafeTarget: T): T => {
+  return <T extends CoreElementConstructor>(UnsafeTarget: T): T => {
     /**
      * In case property decorator is not called at least once.
      */
-    const target = makeSureCorePropertiesExist(unsafeTarget);
+    const Target = makeSureCorePropertiesExist(UnsafeTarget);
 
-    const wrappedClass = class extends target implements CoreInternalElement<InstanceType<T>> {
+    const WrappedTarget = class extends Target implements CoreInternalElement<InstanceType<T>> {
       attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
         if (oldValue === newValue) return;
 
@@ -30,7 +30,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
          * ```
          */
         this.stage |= CoreElementStage.SYNC_PROPERTY;
-        this.properties[wrappedClass.mapAttrsToProps[name]] = newValue as any;
+        this.properties[WrappedTarget.mapAttrsToProps[name]] = newValue as any;
         this.stage &= ~CoreElementStage.SYNC_PROPERTY;
 
         super.attributeChangedCallback?.(name, oldValue, newValue);
@@ -61,8 +61,8 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
       }
     };
 
-    window.customElements.define(tagName, wrappedClass, options);
+    window.customElements.define(tagName, WrappedTarget, options);
 
-    return (wrappedClass as unknown) as T;
+    return (WrappedTarget as unknown) as T;
   };
 }
