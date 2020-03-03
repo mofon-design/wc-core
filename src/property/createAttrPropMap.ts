@@ -1,4 +1,4 @@
-import { CoreInternalElement, NonFunctionPropertyKeys } from '../types/index';
+import { Constructor, NonFunctionPropertyKeys } from '../types/index';
 import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
 
 /**
@@ -8,14 +8,12 @@ import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
  * When the type of `attribute` is not string, such as number or symbol, the value will be
  * converted to `${typeof attribute}-${String(propertyName)}`.
  */
-export function createAttrPropMap<T>(
-  unsafeInstance: T,
+export function createAttrPropMap<T extends Constructor<any>>(
+  unsafeTarget: T,
   unknownPropertyKey: string | number | symbol,
   customAttribute: string | number | symbol = unknownPropertyKey,
 ) {
-  const instance = makeSureCorePropertiesExist(
-    unsafeInstance as Partial<CoreInternalElement<T>> & T,
-  );
+  const target = makeSureCorePropertiesExist(unsafeTarget);
 
   const propertyKey = unknownPropertyKey as NonFunctionPropertyKeys<T>;
 
@@ -24,7 +22,8 @@ export function createAttrPropMap<T>(
       ? customAttribute
       : (typeof customAttribute).concat('-', String(customAttribute));
 
-  instance.mapAttrsToProps[attributeName] = propertyKey;
+  // eslint-disable-next-line no-param-reassign
+  target.mapAttrsToProps[attributeName] = propertyKey;
 
   return [propertyKey, attributeName] as const;
 }

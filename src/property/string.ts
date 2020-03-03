@@ -9,14 +9,16 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
       customAttribute,
     );
 
-    Object.defineProperty(target, propertyKey, {
+    type Instance = CoreInternalElement<InstanceType<typeof target>>;
+
+    Object.defineProperty(target.prototype, propertyKey, {
       enumerable: true,
       configurable: true,
-      get(this: CoreInternalElement<typeof target>) {
+      get(this: Instance) {
         // return covertAnyToString(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
-      set(this: CoreInternalElement<typeof target>, stringLike: unknown = decorator.defaultValue) {
+      set(this: Instance, stringLike: unknown = decorator.defaultValue) {
         const newValue = covertAnyToString(stringLike, decorator);
         const oldValue = (this.properties[propertyKey] as unknown) as string | null;
 

@@ -1,6 +1,13 @@
+import { AnyConstructor } from './any';
 import { PickPropertyKeysByExtends } from './helper';
 
+type PickThisPropKeys<
+  T extends AnyConstructor,
+  U extends { defaultValue?: unknown }
+> = PickPropertyKeysByExtends<InstanceType<T>, U['defaultValue']>;
+
 interface PropertyDecorator {
+  <T extends AnyConstructor, U extends PickThisPropKeys<T, this>>(target: T, propertyKey: U): void;
   default(value: this['defaultValue']): this;
   defaultValue?: unknown;
   isOptional?: boolean;
@@ -8,19 +15,16 @@ interface PropertyDecorator {
 }
 
 export interface PropertyBooleanDecorator extends PropertyDecorator {
-  <T, U extends PickPropertyKeysByExtends<T, boolean | null>>(target: T, propertyKey: U): void;
   defaultValue: boolean | null;
 }
 
 export interface PropertyNumberDecorator extends PropertyDecorator {
-  <T, U extends PickPropertyKeysByExtends<T, number | null>>(target: T, propertyKey: U): void;
   defaultValue: number | null;
   oneOf?: number[];
   only(...numbers: number[]): this;
 }
 
 export interface PropertyStringDecorator extends PropertyDecorator {
-  <T, U extends PickPropertyKeysByExtends<T, string | null>>(target: T, propertyKey: U): void;
   defaultValue: string | null;
   oneOf?: string[];
   only(...strings: string[]): this;

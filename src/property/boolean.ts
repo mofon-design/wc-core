@@ -9,14 +9,16 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
       customAttribute,
     );
 
-    Object.defineProperty(target, propertyKey, {
+    type Instance = CoreInternalElement<InstanceType<typeof target>>;
+
+    Object.defineProperty(target.prototype, propertyKey, {
       enumerable: true,
       configurable: true,
-      get(this: CoreInternalElement<typeof target>) {
+      get(this: Instance) {
         // return covertAnyToBoolean(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
-      set(this: CoreInternalElement<typeof target>, booleanLike: unknown = decorator.defaultValue) {
+      set(this: Instance, booleanLike: unknown = decorator.defaultValue) {
         const newValue = covertAnyToBoolean(booleanLike, decorator);
         const oldValue = (this.properties[propertyKey] as unknown) as boolean | null;
 

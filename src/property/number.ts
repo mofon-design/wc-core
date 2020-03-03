@@ -9,14 +9,16 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
       customAttribute,
     );
 
-    Object.defineProperty(target, propertyKey, {
+    type Instance = CoreInternalElement<InstanceType<typeof target>>;
+
+    Object.defineProperty(target.prototype, propertyKey, {
       enumerable: true,
       configurable: true,
-      get(this: CoreInternalElement<typeof target>) {
+      get(this: Instance) {
         // return covertAnyToNumber(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
-      set(this: CoreInternalElement<typeof target>, numberLike: unknown = decorator.defaultValue) {
+      set(this: Instance, numberLike: unknown = decorator.defaultValue) {
         // make sure value is not `NaN`
         const newValue = covertAnyToNumber(numberLike, decorator);
         const oldValue = (this.properties[propertyKey] as unknown) as number | null;

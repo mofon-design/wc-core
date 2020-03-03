@@ -1,12 +1,14 @@
-import { CoreInternalElement } from '../types/index';
+import { Constructor, CoreInternalElementConstructor } from '../types/index';
 
 /**
  * Property decorator always fired before element class decorator, so it is necessary
  * to check whether the necessary properties have been initialized.
  */
-export function makeSureCorePropertiesExist<T>(instance: Partial<CoreInternalElement<T>>) {
-  if (!('mapAttrsToProps' in instance)) {
-    Object.defineProperty(instance, 'mapAttrsToProps', {
+export function makeSureCorePropertiesExist<T extends Constructor<any>>(
+  target: T,
+): CoreInternalElementConstructor<InstanceType<T>> & T {
+  if (!('mapAttrsToProps' in target)) {
+    Object.defineProperty(target, 'mapAttrsToProps', {
       value: {},
       configurable: true,
       enumerable: false,
@@ -14,8 +16,8 @@ export function makeSureCorePropertiesExist<T>(instance: Partial<CoreInternalEle
     });
   }
 
-  if (!('properties' in instance)) {
-    Object.defineProperty(instance, 'properties', {
+  if (!('properties' in target.prototype)) {
+    Object.defineProperty(target.prototype, 'properties', {
       value: {},
       configurable: true,
       enumerable: false,
@@ -23,13 +25,13 @@ export function makeSureCorePropertiesExist<T>(instance: Partial<CoreInternalEle
     });
   }
 
-  if (!('stage' in instance)) {
-    Object.defineProperty(instance, 'stage', {
+  if (!('stage' in target.prototype)) {
+    Object.defineProperty(target.prototype, 'stage', {
       configurable: true,
       enumerable: false,
       writable: true,
     });
   }
 
-  return instance as CoreInternalElement<T>;
+  return target as CoreInternalElementConstructor<InstanceType<T>> & T;
 }
