@@ -1,24 +1,16 @@
-import { property, tag } from '../es';
+import { CoreElement, property, tag } from '../../es/index';
 
-class MyExample extends HTMLElement {
+@tag('input-content')
+export class InputContent extends HTMLElement implements CoreElement {
+  @(property('string').fallback('Empty.'))
   value = '';
 
-  /**
-   * @type {HTMLInputElement}
-   */
-  input = null;
+  input = document.createElement('input');
 
-  /**
-   * @type {HTMLParagraphElement}
-   */
-  paragraph = null;
+  paragraph = document.createElement('p');
 
   constructor() {
     super();
-    property('string')(this, 'value');
-
-    this.input = document.createElement('input');
-    this.paragraph = document.createElement('p');
 
     const fragment = new DocumentFragment();
     fragment.appendChild(this.input);
@@ -35,5 +27,3 @@ class MyExample extends HTMLElement {
     this.paragraph.innerText = this.value;
   }
 }
-
-tag('my-example')(MyExample);

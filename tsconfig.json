@@ -16,5 +16,6 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "target": "ES2015"
-  }
+  },
+  "include": ["src"]
 }

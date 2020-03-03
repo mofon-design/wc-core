@@ -1,10 +1,12 @@
+/* eslint-disable no-console */
+/* eslint-disable import/no-extraneous-dependencies */
 // Invoked on the commit-msg git hook by yorkie.
 
+const fs = require('fs');
 const chalk = require('chalk');
+
 const msgPath = process.env.GIT_PARAMS;
-const msg = require('fs')
-  .readFileSync(msgPath, 'utf-8')
-  .trim();
+const msg = fs.readFileSync(msgPath, 'utf-8').trim();
 
 const commitRE = /^(revert: )?(feat|fix|docs|style|refactor|perf|test|workflow|build|ci|chore|types|wip|release|dep)(\(.+\))?: .{1,50}/;
 

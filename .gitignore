@@ -11,6 +11,7 @@
 /coverage
 /es
 /lib
+/example/**/*.js
 
 # misc
 .DS_Store

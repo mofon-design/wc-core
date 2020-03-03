@@ -11,6 +11,7 @@
     "build": "npm run build:es && npm run build:lib",
     "build:es": "rm -rf es/ && tsc --build tsconfig.json",
     "build:lib": "rm -rf lib/ && tsc --build tsconfig.es5.json",
+    "build:example": "node scripts/buildExample.js",
     "lint": "npm run build:es && npm run lint:script && npm run lint:style",
     "lint-fix": "npm run lint-fix:script && npm run lint-fix:style",
     "lint-fix:script": "npm run lint:script -- --fix",
