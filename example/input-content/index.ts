@@ -18,11 +18,11 @@ export class InputContent extends HTMLElement implements CoreElement {
     this.input.addEventListener('input', this.onInput);
   }
 
-  onInput() {
+  onInput = () => {
     this.value = this.input.value;
-  }
+  };
 
-  propertyChangedCallback() {
+  propertyChangedCallback = () => {
     this.paragraph.innerText = this.value;
-  }
+  };
 }
