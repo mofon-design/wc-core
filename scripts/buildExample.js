@@ -50,10 +50,9 @@ function rewriteImportPath(entry, target) {
       if (!match) break;
 
       index += match[0].length + match.index;
-      const prefix = code.slice(0, index - match[1].length);
       const formatter = dependencies.find(dep => dep[0].startsWith(match[1]));
       const importpath = formatter ? formatter[1](match[1]) : match[1];
-      code = `${prefix}${importpath}.js${code.slice(index)}`;
+      code = `${code.slice(0, index - match[1].length)}${importpath}${code.slice(index)}`;
     }
 
     fs.writeFileSync(path.join(absTargetDir, item.name), code, 'utf8');
