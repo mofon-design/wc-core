@@ -77,7 +77,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
      */
     makeSureCorePropertiesExist(WrappedTarget.prototype);
 
-    if (!('observedAttributes' in WrappedTarget)) {
+    if (!WrappedTarget.hasOwnProperty('observedAttributes')) {
       Object.defineProperty(WrappedTarget, 'observedAttributes', {
         configurable: true,
         enumerable: true,
