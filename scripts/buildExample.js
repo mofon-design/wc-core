@@ -50,7 +50,7 @@ function rewriteImportPath(entry, target) {
       if (!match) break;
 
       index += match[0].length + match.index;
-      const formatter = dependencies.find(dep => dep[0].startsWith(match[1]));
+      const formatter = dependencies.find(dep => match[1].startsWith(dep[0]));
       const importpath = formatter ? formatter[1](match[1]) : match[1];
       code = `${code.slice(0, index - match[1].length)}${importpath}${code.slice(index)}`;
     }
