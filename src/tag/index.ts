@@ -49,6 +49,12 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
 
       connectedCallback() {
         this.setElementConnected();
+
+        if (!(this.stage & CoreElementStage.INITIALIZED)) {
+          this.stage |= CoreElementStage.INITIALIZED;
+          this.initialize?.();
+        }
+
         super.connectedCallback?.();
       }
 

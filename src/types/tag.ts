@@ -47,13 +47,23 @@ export interface CustomElementClass {
  */
 export interface CoreElementLifecycle {
   /**
+   * Invoked when the element is first connected to the document. The initialization of
+   * DOM is usually performed here.
+   *
+   * @description
+   * SHOULD NOT manipulate DOM in the constructor. In the standard for custom elements,
+   * operations such as appending children or updating attributes are allowed only if
+   * the element is connected to the document at least once.
+   */
+  initialize?(): void;
+  /**
    * Invoked each time one of the custom element's properties is changed.
    * Which properties to notice change for is decorated by `@property(type)`.
    */
   propertyChangedCallback?<T extends NonFunctionPropertyKeys<this>>(
     property: T,
-    oldValue?: this[T],
-    newValue?: this[T],
+    oldValue: this[T] | undefined,
+    newValue: this[T] | undefined,
   ): void;
 }
 
@@ -102,17 +112,21 @@ export const enum CoreElementStage {
    */
   NULL = 0,
   /**
-   * Indicate whether the node is connected (directly or indirectly) to the context object.
+   * Indicate whether the element is initialized (connected to the context object at lease once).
    */
-  CONNECTED = 1 << 0,
+  INITIALIZED = 1 << 0,
+  /**
+   * Indicate whether the element is connected (directly or indirectly) to the context object.
+   */
+  CONNECTED = 1 << 1,
   /**
    * Reserved value.
    */
-  UPDATING = 1 << 1,
+  UPDATING = 1 << 2,
   /**
    * Indicate that the HTML attribute value is being synchronized to the element property,
    * preventing the property setter from firing `setAttribute()` or `removeAttribute()`
    * which causes loop calls.
    */
-  SYNC_PROPERTY = 1 << 2,
+  SYNC_PROPERTY = 1 << 3,
 }

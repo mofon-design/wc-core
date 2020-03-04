@@ -9,14 +9,15 @@ export class InputContent extends HTMLElement implements CoreElement {
 
   paragraph = document.createElement('p');
 
-  shadow = this.attachShadow({ mode: 'open' });
-
   constructor() {
     super();
-    this.shadow.appendChild(this.input);
-    this.shadow.appendChild(this.paragraph);
     this.input.addEventListener('input', this.onInput);
   }
+
+  initialize = () => {
+    this.appendChild(this.input);
+    this.appendChild(this.paragraph);
+  };
 
   onInput = () => {
     this.value = this.input.value;
