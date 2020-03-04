@@ -2,8 +2,10 @@ import { CoreElement, property, tag } from '../../es/index';
 
 @tag('input-content')
 export class InputContent extends HTMLElement implements CoreElement {
-  @property('string')
-  value = '';
+  @(property('string').fallback('Attribute does not exists'))
+  value!: string;
+
+  button = document.createElement('button');
 
   input = document.createElement('input');
 
@@ -11,7 +13,10 @@ export class InputContent extends HTMLElement implements CoreElement {
 
   constructor() {
     super();
+    this.paragraph.innerText = this.value;
+    this.button.innerText = 'Remove Attribute';
     this.input.addEventListener('input', this.onInput);
+    this.button.addEventListener('click', this.onClickButton);
 
     console.log('constructed, this.value =', this.value);
   }
@@ -22,6 +27,7 @@ export class InputContent extends HTMLElement implements CoreElement {
 
   initialize() {
     this.appendChild(this.input);
+    this.appendChild(this.button);
     this.appendChild(this.paragraph);
 
     console.log('initialized, this.value =', this.value);
@@ -29,6 +35,10 @@ export class InputContent extends HTMLElement implements CoreElement {
 
   onInput = () => {
     this.value = this.input.value;
+  };
+
+  onClickButton = () => {
+    this.value = null!;
   };
 
   propertyChangedCallback() {
