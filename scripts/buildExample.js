@@ -1,13 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 const ChildProcess = require('child_process');
+const dependencies = require('./dependencies');
 
 const RootPath = path.join(__dirname, '../');
 const ExamplePath = path.join(__dirname, '../example');
 const HomePageFile = path.join(ExamplePath, 'index.html');
 const HomePageHTML = fs.readFileSync(HomePageFile, 'utf8');
-const TSCPath = path.join(RootPath, 'node_modules/.bin/tsc');
-const TSCConfig = `-m ESNext -t ES2015 --experimentalDecorators --skipLibCheck`;
+
+ChildProcess.spawnSync('npm', ['run', 'build:es']);
+ChildProcess.spawnSync('rm', ['-rf', path.join(ExamplePath, 'es')]);
+
 const Examples = fs
   .readdirSync(ExamplePath, { withFileTypes: true })
   .filter(item => item.isDirectory())
@@ -16,20 +19,18 @@ const Examples = fs
         <li>
           <a href="${item.name}/index.html">${item.name}</a>
         </li>`,
-  );
+  )
+  .join('');
 
-ChildProcess.spawnSync('npm', ['run', 'build:es']);
-ChildProcess.execSync([TSCPath, 'example/**/*.ts', TSCConfig].join(' '));
 fs.writeFileSync(HomePageFile, HomePageHTML.split('<!--INSTER-LIST-->').join(Examples), 'utf8');
-rewriteImportPath('example', 'example', p => (p.startsWith('../../es') ? p.slice(3) : p));
+rewriteImportPath('example', 'example');
 rewriteImportPath('es', 'example/es');
 
 /**
  * @param {string} entry
  * @param {string} target
- * @param {(v: string) => string} format
  */
-function rewriteImportPath(entry, target, format = v => v) {
+function rewriteImportPath(entry, target) {
   const absEntryDir = path.join(RootPath, entry);
   const absTargetDir = path.join(RootPath, target);
 
@@ -39,7 +40,7 @@ function rewriteImportPath(entry, target, format = v => v) {
 
   fs.readdirSync(absEntryDir, { withFileTypes: true }).forEach(item => {
     if (item.isDirectory()) {
-      return rewriteImportPath(path.join(entry, item.name), path.join(target, item.name), format);
+      return rewriteImportPath(path.join(entry, item.name), path.join(target, item.name));
     }
 
     if (path.extname(item.name) !== '.js') {
@@ -51,8 +52,12 @@ function rewriteImportPath(entry, target, format = v => v) {
     while (code.length > index) {
       const match = code.slice(index).match(/from ['"]([^'"]+)/);
       if (!match) break;
+
       index += match[0].length + match.index;
-      code = `${code.slice(0, index - match[1].length)}${format(match[1])}.js${code.slice(index)}`;
+      const prefix = code.slice(0, index - match[1].length);
+      const formatter = dependencies.find(dep => dep[0].startsWith(match[1]));
+      const importpath = formatter ? formatter[1](match[1]) : match[1];
+      code = `${prefix}${importpath}.js${code.slice(index)}`;
     }
 
     fs.writeFileSync(path.join(absTargetDir, item.name), code, 'utf8');
