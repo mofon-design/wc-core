@@ -1,15 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const ChildProcess = require('child_process');
 const dependencies = require('./dependencies');
 
 const RootPath = path.join(__dirname, '../');
 const ExamplePath = path.join(__dirname, '../example');
 const HomePageFile = path.join(ExamplePath, 'index.html');
 const HomePageHTML = fs.readFileSync(HomePageFile, 'utf8');
-
-ChildProcess.spawnSync('npm', ['run', 'build:es']);
-ChildProcess.spawnSync('rm', ['-rf', path.join(ExamplePath, 'es')]);
 
 const Examples = fs
   .readdirSync(ExamplePath, { withFileTypes: true })
