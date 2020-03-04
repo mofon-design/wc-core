@@ -18,7 +18,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
       },
       set(this: CoreInternalElement<typeof ProtoType>, booleanLike: unknown) {
         const newValue = covertAnyToBoolean(booleanLike, decorator, this.stage);
-        const oldValue = (this.properties[propertyKey] as unknown) as boolean | null;
+        const oldValue = (this.properties[propertyKey] as unknown) as boolean | undefined;
 
         if (newValue === oldValue) return;
         this.properties[propertyKey] = newValue as any;
@@ -40,8 +40,6 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
       },
     });
   };
-
-  decorator.fallbackValue = null;
 
   decorator.fallback = value => {
     decorator.fallbackValue = value;
@@ -66,7 +64,7 @@ function covertAnyToBoolean(
   value: any,
   decorator: PropertyBooleanDecorator,
   stage: CoreElementStage,
-): boolean | null {
+): boolean | undefined {
   if (value === undefined) {
     return decorator.fallbackValue;
   }

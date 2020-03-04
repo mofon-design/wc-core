@@ -19,7 +19,7 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
       set(this: CoreInternalElement<typeof ProtoType>, numberLike: unknown) {
         // make sure value is not `NaN`
         const newValue = covertAnyToNumber(numberLike, decorator);
-        const oldValue = (this.properties[propertyKey] as unknown) as number | null;
+        const oldValue = (this.properties[propertyKey] as unknown) as number | undefined;
 
         if (newValue === oldValue) return;
         this.properties[propertyKey] = newValue as any;
@@ -30,7 +30,7 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
          */
 
         if (!(this.stage & CoreElementStage.SYNC_PROPERTY)) {
-          if (newValue !== null) {
+          if (newValue !== undefined) {
             this.setAttribute(attributeName, String(newValue));
           } else {
             this.removeAttribute(attributeName);
@@ -41,8 +41,6 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
       },
     });
   };
-
-  decorator.fallbackValue = null;
 
   decorator.fallback = value => {
     decorator.fallbackValue = value;
@@ -61,9 +59,9 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
  * Covert any type of value to a number.
  *
  * @description
- * `undefined` and `''` will be treated as `null`, and return fallback value.
+ * `null` and `''` will be treated as `undefined`, and return fallback value.
  */
-function covertAnyToNumber(value: any, decorator: PropertyNumberDecorator): number | null {
+function covertAnyToNumber(value: any, decorator: PropertyNumberDecorator): number | undefined {
   /**
    * - Number('') === 0
    * - Number(null) === 0

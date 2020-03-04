@@ -13,15 +13,15 @@ interface PropertyDecorator {
   /**
    * The fallback value of the property.
    */
-  fallbackValue: unknown;
+  fallbackValue?: unknown;
 }
 
 export interface PropertyBooleanDecorator extends PropertyDecorator {
-  fallbackValue: boolean | null;
+  fallbackValue?: boolean;
 }
 
 export interface PropertyNumberDecorator extends PropertyDecorator {
-  fallbackValue: number | null;
+  fallbackValue?: number;
   /**
    * The value must be at least equal to one of the members of the array.
    */
@@ -33,7 +33,7 @@ export interface PropertyNumberDecorator extends PropertyDecorator {
 }
 
 export interface PropertyStringDecorator extends PropertyDecorator {
-  fallbackValue: string | null;
+  fallbackValue?: string;
   /**
    * The value must be at least equal to one of the members of the array.
    */

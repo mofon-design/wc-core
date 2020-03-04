@@ -52,8 +52,8 @@ export interface CoreElementLifecycle {
    */
   propertyChangedCallback?<T extends NonFunctionPropertyKeys<this>>(
     property: T,
-    oldValue: this[T],
-    newValue: this[T],
+    oldValue?: this[T],
+    newValue?: this[T],
   ): void;
 }
 

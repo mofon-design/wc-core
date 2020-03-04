@@ -18,7 +18,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
       },
       set(this: CoreInternalElement<typeof ProtoType>, stringLike: unknown) {
         const newValue = covertAnyToString(stringLike, decorator);
-        const oldValue = (this.properties[propertyKey] as unknown) as string | null;
+        const oldValue = (this.properties[propertyKey] as unknown) as string | undefined;
 
         if (newValue === oldValue) return;
         this.properties[propertyKey] = newValue as any;
@@ -29,7 +29,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
          */
 
         if (!(this.stage & CoreElementStage.SYNC_PROPERTY)) {
-          if (newValue !== null) {
+          if (newValue !== undefined) {
             this.setAttribute(attributeName, newValue);
           } else {
             this.removeAttribute(attributeName);
@@ -40,8 +40,6 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
       },
     });
   };
-
-  decorator.fallbackValue = null;
 
   decorator.fallback = value => {
     decorator.fallbackValue = value;
@@ -56,7 +54,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
   return decorator;
 }
 
-function covertAnyToString(value: any, decorator: PropertyStringDecorator) {
+function covertAnyToString(value: any, decorator: PropertyStringDecorator): string | undefined {
   if (value === null || value === undefined) {
     return decorator.fallbackValue;
   }
