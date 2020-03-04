@@ -7,6 +7,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
       ProtoType,
       unknownPropertyKey,
       customAttribute,
+      decorator,
     );
 
     Object.defineProperty(ProtoType, propertyKey, {

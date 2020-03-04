@@ -7,6 +7,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
       ProtoType,
       unknownPropertyKey,
       customAttribute,
+      decorator,
     );
 
     Object.defineProperty(ProtoType, propertyKey, {
