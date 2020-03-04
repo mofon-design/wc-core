@@ -76,7 +76,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
 
         if (!(this.stage & CoreElementStage.INITIALIZED)) {
           this.stage |= CoreElementStage.INITIALIZED;
-          this.initialize?.();
+          this.initialize?.call(this);
         }
 
         callSuperLifecycle(this, 'connectedCallback');

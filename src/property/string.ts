@@ -37,7 +37,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
           }
         }
 
-        this.propertyChangedCallback?.(propertyKey, oldValue, newValue);
+        this.propertyChangedCallback?.call(this, propertyKey, oldValue, newValue);
       },
     });
   };
