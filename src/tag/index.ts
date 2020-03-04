@@ -18,7 +18,11 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
       // @ts-ignore
       stage: CoreInternalElement<InstanceType<T>>['stage'];
 
-      attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
+      attributeChangedCallback(
+        name: string,
+        oldValue: string | null,
+        newValue: string | null,
+      ): void {
         if (oldValue === newValue) return;
 
         /**
@@ -38,29 +42,49 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
          * }
          * ```
          */
-        this.stage |= CoreElementStage.SYNC_PROPERTY;
+        this.stage |= CoreElementStage.SYNC_ATTRIBUTE;
         const propertyKey: NonFunctionPropertyKeys<InstanceType<T>> =
           WrappedTarget.prototype.mapAttrsToProps[name];
         this.properties[propertyKey] = newValue as any;
-        this.stage &= ~CoreElementStage.SYNC_PROPERTY;
+        this.stage &= ~CoreElementStage.SYNC_ATTRIBUTE;
 
         super.attributeChangedCallback?.(name, oldValue, newValue);
       }
 
-      connectedCallback() {
+      connectedCallback(): void {
         this.setElementConnected();
 
         if (!(this.stage & CoreElementStage.INITIALIZED)) {
           this.stage |= CoreElementStage.INITIALIZED;
-          this.initialize?.();
+          this.initialize();
         }
 
         super.connectedCallback?.();
       }
 
-      disconnectedCallback() {
+      disconnectedCallback(): void {
         this.setElementConnected();
         super.disconnectedCallback?.();
+      }
+
+      initialize(): void {
+        super.initialize?.();
+      }
+
+      shouldSyncPropertyToAttribute(
+        property: keyof any,
+        oldValue: unknown | undefined,
+        newValue: unknown | undefined,
+        attribute: string,
+      ): boolean {
+        if (super.shouldSyncPropertyToAttribute !== undefined) {
+          return super.shouldSyncPropertyToAttribute(property, oldValue, newValue, attribute);
+        }
+
+        return !!(
+          !(this.stage & CoreElementStage.SYNC_ATTRIBUTE) &&
+          this.stage & CoreElementStage.INITIALIZED
+        );
       }
 
       /**
@@ -69,7 +93,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
        *
        * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
        */
-      private setElementConnected() {
+      private setElementConnected(): void {
         if (this.isConnected) {
           this.stage |= CoreElementStage.CONNECTED;
         } else {

@@ -1,4 +1,4 @@
-import { CoreElementStage, CoreInternalElement, PropertyStringDecorator } from '../types/index';
+import { CoreInternalElement, PropertyStringDecorator } from '../types/index';
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyStringDecorator(customAttribute?: string): PropertyStringDecorator {
@@ -29,7 +29,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
          * to ensure the consistency between them.
          */
 
-        if (!(this.stage & CoreElementStage.SYNC_PROPERTY)) {
+        if (this.shouldSyncPropertyToAttribute(propertyKey, oldValue, newValue, attributeName)) {
           if (newValue !== undefined) {
             this.setAttribute(attributeName, newValue);
           } else {
@@ -37,7 +37,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
           }
         }
 
-        this.propertyChangedCallback?.(propertyKey as any, oldValue, newValue);
+        this.propertyChangedCallback?.(propertyKey, oldValue, newValue);
       },
     });
   };

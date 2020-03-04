@@ -60,11 +60,27 @@ export interface CoreElementLifecycle {
    * Invoked each time one of the custom element's properties is changed.
    * Which properties to notice change for is decorated by `@property(type)`.
    */
-  propertyChangedCallback?<T extends NonFunctionPropertyKeys<this>>(
-    property: T,
-    oldValue: this[T] | undefined,
-    newValue: this[T] | undefined,
+  propertyChangedCallback?(
+    property: keyof any,
+    oldValue: unknown | undefined,
+    newValue: unknown | undefined,
   ): void;
+  /**
+   * Invoked each time one of the custom element's properties is changed.
+   * Should return a boolean value indicating whether the new value needs to be
+   * synchronized to the HTML attribute.
+   *
+   * @default
+   * ```ts
+   * (this.stage & CoreElementStage.INITIALIZED) && !(this.stage & CoreElementStage.SYNC_ATTRIBUTE)
+   * ```
+   */
+  shouldSyncPropertyToAttribute?(
+    property: keyof any,
+    oldValue: unknown | undefined,
+    newValue: unknown | undefined,
+    attribute: string,
+  ): boolean;
 }
 
 export interface CoreElement extends CustomElement, CoreElementLifecycle {}
@@ -88,6 +104,7 @@ export interface CoreInternalElement<T> extends CoreElement {
    * `this.__properties`, SHOULD only be accessed in the element property accessor.
    */
   properties: Pick<T, NonFunctionPropertyKeys<T>>;
+  shouldSyncPropertyToAttribute: Exclude<CoreElement['shouldSyncPropertyToAttribute'], undefined>;
   /**
    * Indicate the state of the current element.
    */
@@ -128,5 +145,5 @@ export const enum CoreElementStage {
    * preventing the property setter from firing `setAttribute()` or `removeAttribute()`
    * which causes loop calls.
    */
-  SYNC_PROPERTY = 1 << 3,
+  SYNC_ATTRIBUTE = 1 << 3,
 }

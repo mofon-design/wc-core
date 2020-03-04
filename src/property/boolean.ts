@@ -29,7 +29,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
          * to ensure the consistency between them.
          */
 
-        if (!(this.stage & CoreElementStage.SYNC_PROPERTY)) {
+        if (this.shouldSyncPropertyToAttribute(propertyKey, oldValue, newValue, attributeName)) {
           if (newValue) {
             this.setAttribute(attributeName, '');
           } else {
@@ -37,7 +37,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
           }
         }
 
-        this.propertyChangedCallback?.(propertyKey as any, oldValue, newValue);
+        this.propertyChangedCallback?.(propertyKey, oldValue, newValue);
       },
     });
   };
@@ -70,7 +70,7 @@ function covertAnyToBoolean(
     return decorator.fallbackValue;
   }
 
-  if (typeof value === 'string' && stage & CoreElementStage.SYNC_PROPERTY) {
+  if (typeof value === 'string' && stage & CoreElementStage.SYNC_ATTRIBUTE) {
     return true;
   }
 
