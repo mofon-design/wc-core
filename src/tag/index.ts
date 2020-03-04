@@ -1,5 +1,10 @@
 import { makeSureCorePropertiesExist } from '../property/makeSureCorePropertiesExist';
-import { CoreElementConstructor, CoreElementStage, CoreInternalElement } from '../types/index';
+import {
+  CoreElementConstructor,
+  CoreElementStage,
+  CoreInternalElement,
+  NonFunctionPropertyKeys,
+} from '../types/index';
 
 export function tag(tagName: string, options?: ElementDefinitionOptions) {
   return <T extends CoreElementConstructor>(Target: T): T => {
@@ -34,7 +39,9 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
          * ```
          */
         this.stage |= CoreElementStage.SYNC_PROPERTY;
-        this.properties[this.mapAttrsToProps[name]] = newValue as any;
+        const propertyKey: NonFunctionPropertyKeys<InstanceType<T>> =
+          WrappedTarget.prototype.mapAttrsToProps[name];
+        this.properties[propertyKey] = newValue as any;
         this.stage &= ~CoreElementStage.SYNC_PROPERTY;
 
         super.attributeChangedCallback?.(name, oldValue, newValue);

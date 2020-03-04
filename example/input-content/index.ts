@@ -2,7 +2,7 @@ import { CoreElement, property, tag } from '../../es/index';
 
 @tag('input-content')
 export class InputContent extends HTMLElement implements CoreElement {
-  @(property('string').fallback('Empty.'))
+  @property('string')
   value = '';
 
   input = document.createElement('input');

@@ -67,6 +67,10 @@ export interface CoreElementConstructor extends Constructor<CoreElement>, Custom
 export interface CoreInternalElement<T> extends CoreElement {
   /**
    * Map HTML attribute names to element property keys.
+   *
+   * @deprecated
+   * `mapAttrsToProps` is a **static constant** attach to the `CoreInternalElement.prototype`,
+   * and should not be used as a property of any instance.
    */
   mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
   /**
