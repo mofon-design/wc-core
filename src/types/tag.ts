@@ -70,21 +70,26 @@ export interface CoreInternalElement<T> extends CoreElement {
    *
    * @deprecated
    * `mapAttrsToProps` is a **static constant** attach to the `CoreInternalElement.prototype`,
-   * and should not be used as a property of any instance.
+   * and SHOULD NOT be used as a property of any instance.
    */
   mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
   /**
-   * The actual storage location of the element property value for the element property accessor.
-   *
-   * @note
-   * DO NOT access `properties` directly or modify the value, otherwise it will cause the problem
-   * of inconsistency between HTML attributes and element properties.
+   * A **static constant** getter on the `CoreInternalElement.prototype` which forwards access to
+   * `this.__properties`, SHOULD only be accessed in the element property accessor.
    */
   properties: Pick<T, NonFunctionPropertyKeys<T>>;
   /**
    * Indicate the state of the current element.
    */
   stage: CoreElementStage;
+  /**
+   * The actual storage location of the element property value for the element property accessor.
+   *
+   * @note
+   * DO NOT access `__properties` directly or modify the value, otherwise it will cause the problem
+   * of inconsistency between HTML attributes and element properties.
+   */
+  __properties?: Partial<Pick<T, NonFunctionPropertyKeys<T>>>;
 }
 
 export interface CoreInternalElementConstructor<T>

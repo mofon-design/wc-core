@@ -18,10 +18,20 @@ export function makeSureCorePropertiesExist<T>(UnsafeProtoType: T): CoreInternal
 
   if (!('properties' in ProtoType)) {
     Object.defineProperty(ProtoType, 'properties', {
-      value: {},
       configurable: true,
       enumerable: false,
-      writable: false,
+      get(this: CoreInternalElement<T>) {
+        /* eslint-disable no-underscore-dangle */
+        if (!this.__properties)
+          Object.defineProperty(this, '__properties', {
+            value: {},
+            configurable: true,
+            enumerable: false,
+            writable: false,
+          });
+        return this.__properties;
+        /* eslint-enable no-underscore-dangle */
+      },
     });
   }
 
