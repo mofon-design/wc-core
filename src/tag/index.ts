@@ -1,19 +1,42 @@
 /* eslint-disable no-underscore-dangle */
 import { makeSureCorePropertiesExist } from '../property/makeSureCorePropertiesExist';
-import { CoreElementConstructor, CoreElementStage, CoreInternalElement } from '../types/index';
+import {
+  CoreElementConstructor,
+  CoreElementLifecycle,
+  CoreElementStage,
+  CoreInternalElement,
+} from '../types/index';
+import { callSuperLifecycle, rewriteLifecycle } from './superLifecycle';
 
 export function tag(tagName: string, options?: ElementDefinitionOptions) {
   return <T extends CoreElementConstructor>(Target: T): T => {
-    const WrappedTarget = class extends Target implements CoreInternalElement<InstanceType<T>> {
-      // @ts-ignore
-      mapAttrsToProps: CoreInternalElement<InstanceType<T>>['mapAttrsToProps'];
+    /**
+     * In case property decorator is not called at least once.
+     */
+    makeSureCorePropertiesExist(Target.prototype);
 
-      // @ts-ignore
-      properties: CoreInternalElement<InstanceType<T>>['properties'];
+    const privateMethods = {
+      __setElementConnected(this: CoreInternalElement<InstanceType<T>>): void {
+        if (this.isConnected) {
+          this.stage |= CoreElementStage.CONNECTED;
+        } else {
+          this.stage &= ~CoreElementStage.CONNECTED;
+        }
+      },
+    };
 
-      // @ts-ignore
-      stage: CoreInternalElement<InstanceType<T>>['stage'];
+    const privateMethodKeys = Object.keys(privateMethods) as (keyof typeof privateMethods)[];
 
+    privateMethodKeys.forEach(privateMethodKey => {
+      Object.defineProperty(Target.prototype, privateMethodKey, {
+        configurable: true,
+        enumerable: false,
+        value: privateMethods[privateMethodKey],
+        writable: false,
+      });
+    });
+
+    const lifecycle: ThisType<CoreInternalElement<InstanceType<T>>> & CoreElementLifecycle = {
       attributeChangedCallback(
         name: string,
         oldValue: string | null,
@@ -21,50 +44,48 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
       ): void {
         if (oldValue === newValue) return;
 
-        /**
-         * Prevent the property setter from loop calls.
-         *
-         * Do not change the stage when `setAttribute()` or `removeAttribute()` is fired
-         * by the property setter to prevent `setAttribute()` or `removeAttribute()`
-         * triggering `attributeChangedCallback()` in an asynchronous manner.
-         *
-         * @deprecated
-         * ```ts
-         * set property(value: string | null) {
-         *   this.stage |= CoreElementStage.SYNC_ATTRIBUTE;
-         *   if (value === null) this.removeAttribute();
-         *   else this.setAttribute('example', value);
-         *   this.stage &= ~CoreElementStage.SYNC_ATTRIBUTE;
-         * }
-         * ```
-         */
-        this.stage |= CoreElementStage.SYNC_ATTRIBUTE;
-        const propertyKey: keyof this = WrappedTarget.prototype.mapAttrsToProps[name];
-        this[propertyKey] = newValue as any;
-        this.stage &= ~CoreElementStage.SYNC_ATTRIBUTE;
+        if (Target.prototype.mapAttrsToProps[name] !== undefined) {
+          /**
+           * Prevent the property setter from loop calls.
+           *
+           * Do not change the stage when `setAttribute()` or `removeAttribute()` is fired
+           * by the property setter to prevent `setAttribute()` or `removeAttribute()`
+           * triggering `attributeChangedCallback()` in an asynchronous manner.
+           *
+           * @deprecated
+           * ```ts
+           * set property(value: string | null) {
+           *   this.stage |= CoreElementStage.SYNC_ATTRIBUTE;
+           *   if (value === null) this.removeAttribute();
+           *   else this.setAttribute('example', value);
+           *   this.stage &= ~CoreElementStage.SYNC_ATTRIBUTE;
+           * }
+           * ```
+           */
 
-        super.attributeChangedCallback?.(name, oldValue, newValue);
-      }
+          this.stage |= CoreElementStage.SYNC_ATTRIBUTE;
+          (this as any)[Target.prototype.mapAttrsToProps[name]] = newValue;
+          this.stage &= ~CoreElementStage.SYNC_ATTRIBUTE;
+        }
+
+        callSuperLifecycle(this, 'attributeChangedCallback', name, oldValue, newValue);
+      },
 
       connectedCallback(): void {
         this.__setElementConnected();
 
         if (!(this.stage & CoreElementStage.INITIALIZED)) {
           this.stage |= CoreElementStage.INITIALIZED;
-          this.initialize();
+          this.initialize?.();
         }
 
-        super.connectedCallback?.();
-      }
+        callSuperLifecycle(this, 'connectedCallback');
+      },
 
       disconnectedCallback(): void {
         this.__setElementConnected();
-        super.disconnectedCallback?.();
-      }
-
-      initialize(): void {
-        super.initialize?.();
-      }
+        callSuperLifecycle(this, 'disconnectedCallback');
+      },
 
       shouldSyncPropertyToAttribute(
         property: keyof any,
@@ -72,48 +93,40 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
         newValue: unknown | undefined,
         attribute: string,
       ): boolean {
-        if (super.shouldSyncPropertyToAttribute !== undefined) {
-          return super.shouldSyncPropertyToAttribute(property, oldValue, newValue, attribute);
+        const superResult = callSuperLifecycle(
+          this,
+          'shouldSyncPropertyToAttribute',
+          property,
+          oldValue,
+          newValue,
+          attribute,
+        );
+
+        if (callSuperLifecycle.returnValueIsExists(superResult)) {
+          return superResult;
         }
 
         return !!(
           !(this.stage & CoreElementStage.SYNC_ATTRIBUTE) &&
           this.stage & CoreElementStage.INITIALIZED
         );
-      }
-
-      /**
-       * Determine whether the element has been connected to the document according to
-       * `Node.isConnected`, and update the current stage.
-       *
-       * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
-       */
-      private __setElementConnected(): void {
-        if (this.isConnected) {
-          this.stage |= CoreElementStage.CONNECTED;
-        } else {
-          this.stage &= ~CoreElementStage.CONNECTED;
-        }
-      }
+      },
     };
 
-    /**
-     * In case property decorator is not called at least once.
-     */
-    makeSureCorePropertiesExist(WrappedTarget.prototype);
+    rewriteLifecycle(Target, lifecycle);
 
-    if (!WrappedTarget.hasOwnProperty('observedAttributes')) {
-      Object.defineProperty(WrappedTarget, 'observedAttributes', {
+    if (!Target.hasOwnProperty('observedAttributes')) {
+      Object.defineProperty(Target, 'observedAttributes', {
         configurable: true,
         enumerable: true,
         get() {
-          return Object.keys(WrappedTarget.prototype.mapAttrsToProps);
+          return Object.keys(Target.prototype.mapAttrsToProps);
         },
       });
     }
 
-    window.customElements.define(tagName, WrappedTarget, options);
+    window.customElements.define(tagName, Target, options);
 
-    return (WrappedTarget as unknown) as T;
+    return Target;
   };
 }

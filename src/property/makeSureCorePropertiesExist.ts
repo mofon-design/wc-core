@@ -48,7 +48,7 @@ export function makeSureCorePropertiesExist<T>(UnsafeProtoType: T): CoreInternal
 
         if (!this.hasOwnProperty('__properties'))
           Object.defineProperty(this, '__properties', {
-            value: { ...ProtoType.__properties },
+            value: { ...this.__properties },
             configurable: true,
             enumerable: false,
             writable: false,

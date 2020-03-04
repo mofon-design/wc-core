@@ -45,7 +45,7 @@ export interface CustomElementClass {
 /**
  * Non-native life cycle methods, which can be used with decorated by `@tag('tagName')`.
  */
-export interface CoreElementLifecycle {
+export interface CoreElementLifecycle extends CustomElementLifecycle {
   /**
    * Invoked when the element is first connected to the document. The initialization of
    * DOM is usually performed here.
@@ -117,6 +117,13 @@ export interface CoreInternalElement<T> extends CoreElement {
    * of inconsistency between HTML attributes and element properties.
    */
   __properties?: Partial<Pick<T, NonFunctionPropertyKeys<T>>>;
+  /**
+   * Determine whether the element has been connected to the document according to
+   * `Node.isConnected`, and update the current stage.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
+   */
+  __setElementConnected(): void;
 }
 
 export interface CoreInternalElementConstructor<T>

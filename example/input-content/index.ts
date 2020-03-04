@@ -16,24 +16,24 @@ export class InputContent extends HTMLElement implements CoreElement {
     console.log('constructed, this.value =', this.value);
   }
 
-  attributeChangedCallback = () => {
+  attributeChangedCallback() {
     console.log('attribute changed, this.value =', this.value);
-  };
+  }
 
-  initialize = () => {
+  initialize() {
     this.appendChild(this.input);
     this.appendChild(this.paragraph);
 
     console.log('initialized, this.value =', this.value);
-  };
+  }
 
   onInput = () => {
     this.value = this.input.value;
   };
 
-  propertyChangedCallback = () => {
+  propertyChangedCallback() {
     this.paragraph.innerText = this.value;
 
     console.log('property changed, this.value =', this.value);
-  };
+  }
 }

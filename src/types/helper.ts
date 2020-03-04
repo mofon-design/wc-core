@@ -16,6 +16,8 @@ export type PickPropertiesByExtends<T, U> = Pick<T, PickPropertyKeysByExtends<T,
 
 export type OmitPropertiesByExtends<T, U> = Pick<T, OmitPropertyKeysByExtends<T, U>>;
 
-export type NonFunctionPropertyKeys<T> = OmitPropertyKeysByExtends<T, AnyFunction>;
+export type NonFunctionPropertyKeys<T> = OmitPropertyKeysByExtends<T, AnyFunction | undefined>;
 
 export type OmitUnion<T, U> = T & Pick<U, Exclude<keyof U, keyof T>>;
+
+export type ArgsType<T extends AnyFunction> = T extends (...args: infer U) => any ? U : never;
