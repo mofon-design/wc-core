@@ -1,10 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import { makeSureCorePropertiesExist } from '../property/makeSureCorePropertiesExist';
-import {
-  CoreElementConstructor,
-  CoreElementStage,
-  CoreInternalElement,
-  NonFunctionPropertyKeys,
-} from '../types/index';
+import { CoreElementConstructor, CoreElementStage, CoreInternalElement } from '../types/index';
 
 export function tag(tagName: string, options?: ElementDefinitionOptions) {
   return <T extends CoreElementConstructor>(Target: T): T => {
@@ -43,16 +39,15 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
          * ```
          */
         this.stage |= CoreElementStage.SYNC_ATTRIBUTE;
-        const propertyKey: NonFunctionPropertyKeys<InstanceType<T>> =
-          WrappedTarget.prototype.mapAttrsToProps[name];
-        this.properties[propertyKey] = newValue as any;
+        const propertyKey: keyof this = WrappedTarget.prototype.mapAttrsToProps[name];
+        this[propertyKey] = newValue as any;
         this.stage &= ~CoreElementStage.SYNC_ATTRIBUTE;
 
         super.attributeChangedCallback?.(name, oldValue, newValue);
       }
 
       connectedCallback(): void {
-        this.setElementConnected();
+        this.__setElementConnected();
 
         if (!(this.stage & CoreElementStage.INITIALIZED)) {
           this.stage |= CoreElementStage.INITIALIZED;
@@ -63,7 +58,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
       }
 
       disconnectedCallback(): void {
-        this.setElementConnected();
+        this.__setElementConnected();
         super.disconnectedCallback?.();
       }
 
@@ -93,7 +88,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
        *
        * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
        */
-      private setElementConnected(): void {
+      private __setElementConnected(): void {
         if (this.isConnected) {
           this.stage |= CoreElementStage.CONNECTED;
         } else {
