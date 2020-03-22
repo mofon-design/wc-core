@@ -56,7 +56,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
            * ```ts
            * set property(value: string | null) {
            *   this.stage |= CoreElementStage.SYNC_ATTRIBUTE;
-           *   if (value === null) this.removeAttribute();
+           *   if (value === null) this.removeAttribute('example');
            *   else this.setAttribute('example', value);
            *   this.stage &= ~CoreElementStage.SYNC_ATTRIBUTE;
            * }
