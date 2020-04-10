@@ -14,11 +14,11 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
       enumerable: true,
       configurable: true,
       get(this: CoreInternalElement<typeof ProtoType>) {
-        // return covertAnyToString(this.getAttribute(attributeName), decorator);
+        // return convertAnyToString(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
       set(this: CoreInternalElement<typeof ProtoType>, stringLike: unknown) {
-        const newValue = covertAnyToString(stringLike, decorator);
+        const newValue = convertAnyToString(stringLike, decorator);
         const oldValue = (this.properties[propertyKey] as unknown) as string | undefined;
 
         if (newValue === oldValue) return;
@@ -55,7 +55,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
   return decorator;
 }
 
-function covertAnyToString(value: any, decorator: PropertyStringDecorator): string | undefined {
+function convertAnyToString(value: any, decorator: PropertyStringDecorator): string | undefined {
   if (value === null || value === undefined) {
     return decorator.fallbackValue;
   }

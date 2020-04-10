@@ -14,11 +14,11 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
       enumerable: true,
       configurable: true,
       get(this: CoreInternalElement<typeof ProtoType>) {
-        // return covertAnyToBoolean(this.getAttribute(attributeName), decorator);
+        // return convertAnyToBoolean(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
       set(this: CoreInternalElement<typeof ProtoType>, booleanLike: unknown) {
-        const newValue = covertAnyToBoolean(booleanLike, decorator, this.stage);
+        const newValue = convertAnyToBoolean(booleanLike, decorator, this.stage);
         const oldValue = (this.properties[propertyKey] as unknown) as boolean | undefined;
 
         if (newValue === oldValue) return;
@@ -61,7 +61,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
  * <my-element bool-attribute="">True</my-element>
  * ```
  */
-function covertAnyToBoolean(
+function convertAnyToBoolean(
   value: any,
   decorator: PropertyBooleanDecorator,
   stage: CoreElementStage,

@@ -14,12 +14,12 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
       enumerable: true,
       configurable: true,
       get(this: CoreInternalElement<typeof ProtoType>) {
-        // return covertAnyToNumber(this.getAttribute(attributeName), decorator);
+        // return convertAnyToNumber(this.getAttribute(attributeName), decorator);
         return this.properties[propertyKey];
       },
       set(this: CoreInternalElement<typeof ProtoType>, numberLike: unknown) {
         // make sure value is not `NaN`
-        const newValue = covertAnyToNumber(numberLike, decorator);
+        const newValue = convertAnyToNumber(numberLike, decorator);
         const oldValue = (this.properties[propertyKey] as unknown) as number | undefined;
 
         if (newValue === oldValue) return;
@@ -57,12 +57,12 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
 }
 
 /**
- * Covert any type of value to a number.
+ * Convert any type of value to a number.
  *
  * @description
  * `null` and `''` will be treated as `undefined`, and return fallback value.
  */
-function covertAnyToNumber(value: any, decorator: PropertyNumberDecorator): number | undefined {
+function convertAnyToNumber(value: any, decorator: PropertyNumberDecorator): number | undefined {
   /**
    * - Number('') === 0
    * - Number(null) === 0
