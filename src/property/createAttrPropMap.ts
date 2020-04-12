@@ -1,5 +1,5 @@
 import { NonFunctionPropertyKeys, PropertyDecoratorMap } from '../types/index';
-import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
+import { makeSureCorePropertiesExist } from '../tag/makeSureCorePropertiesExist';
 
 /**
  * Initialize the mapping of HTML attribute names to class property keys for custom elements,

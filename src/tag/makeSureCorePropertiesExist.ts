@@ -1,4 +1,5 @@
 import { CoreElementStage, CoreInternalElement } from '../types/index';
+import { PropertiesKey } from './privatePropertiesKey';
 
 /**
  * Property decorator always fired before element class decorator, so it is necessary
@@ -46,14 +47,14 @@ export function makeSureCorePropertiesExist<T>(UnsafeProtoType: T): CoreInternal
          * is a shallow copy from its own prototype,
          */
 
-        if (!this.hasOwnProperty('__properties'))
-          Object.defineProperty(this, '__properties', {
-            value: { ...this.__properties },
+        if (!this.hasOwnProperty(PropertiesKey))
+          Object.defineProperty(this, PropertiesKey, {
+            value: { ...this[PropertiesKey] },
             configurable: true,
             enumerable: false,
             writable: false,
           });
-        return this.__properties;
+        return this[PropertiesKey];
 
         /* eslint-enable no-underscore-dangle */
       },

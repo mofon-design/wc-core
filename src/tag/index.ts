@@ -1,11 +1,11 @@
-/* eslint-disable no-underscore-dangle */
-import { makeSureCorePropertiesExist } from '../property/makeSureCorePropertiesExist';
+import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
 import {
   CoreElementConstructor,
   CoreElementLifecycle,
   CoreElementStage,
   CoreInternalElement,
 } from '../types/index';
+import { SetElementConnectedKey } from './privatePropertiesKey';
 import { callSuperLifecycle, rewriteLifecycle } from './superLifecycle';
 
 export function tag(tagName: string, options?: ElementDefinitionOptions) {
@@ -16,7 +16,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
     makeSureCorePropertiesExist(Target.prototype);
 
     const privateMethods = {
-      __setElementConnected(this: CoreInternalElement<InstanceType<T>>): void {
+      [SetElementConnectedKey](this: CoreInternalElement<InstanceType<T>>): void {
         if (this.isConnected) {
           this.stage |= CoreElementStage.CONNECTED;
         } else {
@@ -72,7 +72,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
       },
 
       connectedCallback(): void {
-        this.__setElementConnected();
+        this[SetElementConnectedKey]();
 
         if (!(this.stage & CoreElementStage.INITIALIZED)) {
           this.stage |= CoreElementStage.INITIALIZED;
@@ -83,7 +83,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
       },
 
       disconnectedCallback(): void {
-        this.__setElementConnected();
+        this[SetElementConnectedKey]();
         callSuperLifecycle(this, 'disconnectedCallback');
       },
 

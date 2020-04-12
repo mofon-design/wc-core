@@ -1,3 +1,4 @@
+import { AnyFunction } from './any';
 import { Constructor, NonFunctionPropertyKeys } from './helper';
 
 /**
@@ -112,18 +113,25 @@ export interface CoreInternalElement<T> extends CoreElement {
   /**
    * The actual storage location of the element property value for the element property accessor.
    *
-   * @note
+   * @deprecated
    * DO NOT access `__properties` directly or modify the value, otherwise it will cause the problem
    * of inconsistency between HTML attributes and element properties.
    */
   __properties?: Partial<Pick<T, NonFunctionPropertyKeys<T>>>;
   /**
+   * @deprecated
    * Determine whether the element has been connected to the document according to
    * `Node.isConnected`, and update the current stage.
    *
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
    */
   __setElementConnected(): void;
+  /**
+   * @deprecated
+   * The life cycle function has been tamper-proofed, and `superLifecycle` is used to store
+   * the original life cycle function of the wrapped class.
+   */
+  __superLifecycle: Record<string, AnyFunction>;
 }
 
 export interface CoreInternalElementConstructor<T>

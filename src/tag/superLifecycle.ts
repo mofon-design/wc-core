@@ -1,7 +1,7 @@
-/* eslint-disable no-underscore-dangle */
 import { AnyConstructor, AnyFunction, ArgsType, PickPropertyKeysByExtends } from '../types/index';
+import { SuperLifecycleKey } from './privatePropertiesKey';
 
-type RewritedInstance<T, U> = T & { __superLifecycle?: Partial<U> };
+type RewritedInstance<T, U> = T & { [key in typeof SuperLifecycleKey]?: Partial<U> };
 
 /**
  * After being wrapped by a class decorator, the lifecycle callbacks will be defined to
@@ -21,9 +21,9 @@ type RewritedInstance<T, U> = T & { __superLifecycle?: Partial<U> };
 export function rewriteLifecycle<T extends AnyConstructor, U>(Target: T, lifecycle: U) {
   const lifecycleKeys = Object.keys(lifecycle) as (keyof U)[];
 
-  if (!Target.prototype.hasOwnProperty('__superLifecycle')) {
-    Object.defineProperty(Target.prototype, '__superLifecycle', {
-      value: { ...Target.prototype.__superLifecycle },
+  if (!Target.prototype.hasOwnProperty(SuperLifecycleKey)) {
+    Object.defineProperty(Target.prototype, SuperLifecycleKey, {
+      value: { ...Target.prototype[SuperLifecycleKey] },
       configurable: true,
       enumerable: false,
       writable: false,
@@ -40,7 +40,7 @@ export function rewriteLifecycle<T extends AnyConstructor, U>(Target: T, lifecyc
      * }
      */
     // eslint-disable-next-line no-param-reassign
-    Target.prototype.__superLifecycle[lifecycleKey] = Target.prototype[lifecycleKey];
+    Target.prototype[SuperLifecycleKey][lifecycleKey] = Target.prototype[lifecycleKey];
 
     /**
      * @example
@@ -57,14 +57,14 @@ export function rewriteLifecycle<T extends AnyConstructor, U>(Target: T, lifecyc
         return lifecycle[lifecycleKey];
       },
       set<V extends keyof U>(this: RewritedInstance<T, U>, value: U[V]) {
-        if (!this.hasOwnProperty('__superLifecycle'))
-          Object.defineProperty(this, '__superLifecycle', {
-            value: { ...this.__superLifecycle },
+        if (!this.hasOwnProperty(SuperLifecycleKey))
+          Object.defineProperty(this, SuperLifecycleKey, {
+            value: { ...this[SuperLifecycleKey] },
             configurable: true,
             enumerable: false,
             writable: false,
           });
-        this.__superLifecycle![lifecycleKey as V] = value;
+        this[SuperLifecycleKey]![lifecycleKey as V] = value;
       },
     });
   });
@@ -74,7 +74,7 @@ export function callSuperLifecycle<
   T,
   U extends PickPropertyKeysByExtends<T, AnyFunction | undefined>
 >(thisType: T, lifecycleKey: U, ...args: ArgsType<T[U]>): ReturnType<T[U]> | symbol {
-  const superLifecycle = (thisType as { __superLifecycle?: Partial<T> }).__superLifecycle;
+  const superLifecycle = (thisType as RewritedInstance<T, T>)[SuperLifecycleKey];
 
   if (!superLifecycle || !superLifecycle[lifecycleKey]) {
     return callSuperLifecycle.NOT_EXISTS;
