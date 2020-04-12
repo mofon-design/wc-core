@@ -1,5 +1,6 @@
 import { NonFunctionPropertyKeys, PropertyDecoratorMap } from '../types/index';
 import { makeSureCorePropertiesExist } from '../tag/makeSureCorePropertiesExist';
+import { setPropertyValue } from './accessPropertyValue';
 
 /**
  * Initialize the mapping of HTML attribute names to class property keys for custom elements,
@@ -29,7 +30,7 @@ export function createAttrPropMap<T>(
   ProtoType.mapAttrsToProps[attributeName] = propertyKey;
 
   /** use `fallbackValue` as initial property */
-  ProtoType.properties[propertyKey] = decorator.fallbackValue as any;
+  setPropertyValue(ProtoType, propertyKey, decorator.fallbackValue as any);
 
   return [propertyKey, attributeName] as const;
 }

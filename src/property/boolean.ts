@@ -1,4 +1,5 @@
 import { CoreElementStage, CoreInternalElement, PropertyBooleanDecorator } from '../types/index';
+import { getPropertyValue, setPropertyValue } from './accessPropertyValue';
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyBooleanDecorator(customAttribute?: string): PropertyBooleanDecorator {
@@ -15,14 +16,14 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
       configurable: true,
       get(this: CoreInternalElement<typeof ProtoType>) {
         // return convertAnyToBoolean(this.getAttribute(attributeName), decorator);
-        return this.properties[propertyKey];
+        return getPropertyValue(this, propertyKey);
       },
       set(this: CoreInternalElement<typeof ProtoType>, booleanLike: unknown) {
         const newValue = convertAnyToBoolean(booleanLike, decorator, this.stage);
-        const oldValue = (this.properties[propertyKey] as unknown) as boolean | undefined;
+        const oldValue = (getPropertyValue(this, propertyKey) as unknown) as boolean | undefined;
 
         if (newValue === oldValue) return;
-        this.properties[propertyKey] = newValue as any;
+        setPropertyValue(this, propertyKey, newValue as any);
 
         /**
          * Sync property value to HTML attribute before fire `propertyChangedCallback`,

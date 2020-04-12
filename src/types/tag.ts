@@ -100,11 +100,6 @@ export interface CoreInternalElement<T> extends CoreElement {
    * and SHOULD NOT be used as a property of any instance.
    */
   mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
-  /**
-   * A **static constant** getter on the `CoreInternalElement.prototype` which forwards access to
-   * `this.__properties`, SHOULD only be accessed in the element property accessor.
-   */
-  properties: Pick<T, NonFunctionPropertyKeys<T>>;
   shouldSyncPropertyToAttribute: Exclude<CoreElement['shouldSyncPropertyToAttribute'], undefined>;
   /**
    * Indicate the state of the current element.
@@ -117,7 +112,7 @@ export interface CoreInternalElement<T> extends CoreElement {
    * DO NOT access `__properties` directly or modify the value, otherwise it will cause the problem
    * of inconsistency between HTML attributes and element properties.
    */
-  __properties?: Partial<Pick<T, NonFunctionPropertyKeys<T>>>;
+  __properties: Partial<Pick<T, NonFunctionPropertyKeys<T>>>;
   /**
    * @deprecated
    * Determine whether the element has been connected to the document according to

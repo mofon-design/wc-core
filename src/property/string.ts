@@ -1,4 +1,5 @@
 import { CoreInternalElement, PropertyStringDecorator } from '../types/index';
+import { getPropertyValue, setPropertyValue } from './accessPropertyValue';
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyStringDecorator(customAttribute?: string): PropertyStringDecorator {
@@ -15,14 +16,14 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
       configurable: true,
       get(this: CoreInternalElement<typeof ProtoType>) {
         // return convertAnyToString(this.getAttribute(attributeName), decorator);
-        return this.properties[propertyKey];
+        return getPropertyValue(this, propertyKey);
       },
       set(this: CoreInternalElement<typeof ProtoType>, stringLike: unknown) {
         const newValue = convertAnyToString(stringLike, decorator);
-        const oldValue = (this.properties[propertyKey] as unknown) as string | undefined;
+        const oldValue = (getPropertyValue(this, propertyKey) as unknown) as string | undefined;
 
         if (newValue === oldValue) return;
-        this.properties[propertyKey] = newValue as any;
+        setPropertyValue(this, propertyKey, newValue as any);
 
         /**
          * Sync property value to HTML attribute before fire `propertyChangedCallback`,

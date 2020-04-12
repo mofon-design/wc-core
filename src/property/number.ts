@@ -1,4 +1,5 @@
 import { CoreInternalElement, PropertyNumberDecorator } from '../types/index';
+import { getPropertyValue, setPropertyValue } from './accessPropertyValue';
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyNumberDecorator(customAttribute?: string): PropertyNumberDecorator {
@@ -15,15 +16,15 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
       configurable: true,
       get(this: CoreInternalElement<typeof ProtoType>) {
         // return convertAnyToNumber(this.getAttribute(attributeName), decorator);
-        return this.properties[propertyKey];
+        return getPropertyValue(this, propertyKey);
       },
       set(this: CoreInternalElement<typeof ProtoType>, numberLike: unknown) {
         // make sure value is not `NaN`
         const newValue = convertAnyToNumber(numberLike, decorator);
-        const oldValue = (this.properties[propertyKey] as unknown) as number | undefined;
+        const oldValue = (getPropertyValue(this, propertyKey) as unknown) as number | undefined;
 
         if (newValue === oldValue) return;
-        this.properties[propertyKey] = newValue as any;
+        setPropertyValue(this, propertyKey, newValue as any);
 
         /**
          * Sync property value to HTML attribute before fire `propertyChangedCallback`,
