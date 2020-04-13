@@ -115,7 +115,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
 
     overrideLifecycle(Target, lifecycle);
 
-    if (!Target.hasOwnProperty('observedAttributes')) {
+    if (!Object.prototype.hasOwnProperty.call(Target, 'observedAttributes')) {
       Object.defineProperty(Target, 'observedAttributes', {
         configurable: true,
         enumerable: true,

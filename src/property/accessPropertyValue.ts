@@ -20,7 +20,7 @@ export function getPropertyValue<T, U extends NonFunctionPropertyKeys<T>>(
   self: CoreInternalElement<T>,
   key: U,
 ): T[U] | undefined {
-  if (!self.hasOwnProperty(PropertiesKey)) {
+  if (!Object.prototype.hasOwnProperty.call(self, PropertiesKey)) {
     Object.defineProperty(self, PropertiesKey, {
       configurable: true,
       enumerable: false,
@@ -37,7 +37,7 @@ export function setPropertyValue<T, U extends NonFunctionPropertyKeys<T>>(
   key: U,
   value: T[U],
 ): void {
-  if (!self.hasOwnProperty(PropertiesKey)) {
+  if (!Object.prototype.hasOwnProperty.call(self, PropertiesKey)) {
     Object.defineProperty(self, PropertiesKey, {
       configurable: true,
       enumerable: false,

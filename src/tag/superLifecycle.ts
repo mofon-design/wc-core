@@ -21,7 +21,7 @@ type RewritedInstance<T, U> = T & { [key in typeof SuperLifecycleKey]?: Partial<
 export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecycle: U) {
   const lifecycleKeys = Object.keys(lifecycle) as (keyof U)[];
 
-  if (!Target.prototype.hasOwnProperty(SuperLifecycleKey)) {
+  if (!Object.prototype.hasOwnProperty.call(Target.prototype, SuperLifecycleKey)) {
     Object.defineProperty(Target.prototype, SuperLifecycleKey, {
       value: { ...Target.prototype[SuperLifecycleKey] },
       configurable: true,
@@ -57,7 +57,7 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
         return lifecycle[lifecycleKey];
       },
       set<V extends keyof U>(this: RewritedInstance<T, U>, value: U[V]) {
-        if (!this.hasOwnProperty(SuperLifecycleKey))
+        if (!Object.prototype.hasOwnProperty.call(this, SuperLifecycleKey))
           Object.defineProperty(this, SuperLifecycleKey, {
             value: { ...this[SuperLifecycleKey] },
             configurable: true,

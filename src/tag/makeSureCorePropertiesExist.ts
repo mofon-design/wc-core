@@ -7,7 +7,7 @@ import { CoreElementStage, CoreInternalElement } from '../types/index';
 export function makeSureCorePropertiesExist<T>(UnsafeProtoType: T): CoreInternalElement<T> & T {
   const ProtoType = UnsafeProtoType as CoreInternalElement<T> & T;
 
-  if (!ProtoType.hasOwnProperty('mapAttrsToProps')) {
+  if (!Object.prototype.hasOwnProperty.call(ProtoType, 'mapAttrsToProps')) {
     Object.defineProperty(ProtoType, 'mapAttrsToProps', {
       value: { ...ProtoType.mapAttrsToProps },
       configurable: true,
