@@ -1,12 +1,12 @@
-import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
 import {
   CoreElementConstructor,
   CoreElementLifecycle,
   CoreElementStage,
   CoreInternalElement,
 } from '../types/index';
+import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
 import { SetElementConnectedKey } from './privatePropertiesKey';
-import { callSuperLifecycle, rewriteLifecycle } from './superLifecycle';
+import { callSuperLifecycle, overrideLifecycle } from './superLifecycle';
 
 export function tag(tagName: string, options?: ElementDefinitionOptions) {
   return <T extends CoreElementConstructor>(Target: T): T => {
@@ -113,7 +113,7 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
       },
     };
 
-    rewriteLifecycle(Target, lifecycle);
+    overrideLifecycle(Target, lifecycle);
 
     if (!Target.hasOwnProperty('observedAttributes')) {
       Object.defineProperty(Target, 'observedAttributes', {

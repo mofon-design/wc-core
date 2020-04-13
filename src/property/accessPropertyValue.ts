@@ -21,7 +21,12 @@ export function getPropertyValue<T, U extends NonFunctionPropertyKeys<T>>(
   key: U,
 ): T[U] | undefined {
   if (!self.hasOwnProperty(PropertiesKey)) {
-    self[PropertiesKey] = { ...self[PropertiesKey] };
+    Object.defineProperty(self, PropertiesKey, {
+      configurable: true,
+      enumerable: false,
+      value: { ...self[PropertiesKey] },
+      writable: true,
+    });
   }
 
   return self[PropertiesKey][key];
@@ -33,7 +38,12 @@ export function setPropertyValue<T, U extends NonFunctionPropertyKeys<T>>(
   value: T[U],
 ): void {
   if (!self.hasOwnProperty(PropertiesKey)) {
-    self[PropertiesKey] = { ...self[PropertiesKey] };
+    Object.defineProperty(self, PropertiesKey, {
+      configurable: true,
+      enumerable: false,
+      value: { ...self[PropertiesKey] },
+      writable: true,
+    });
   }
 
   self[PropertiesKey][key] = value;

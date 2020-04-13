@@ -1,5 +1,5 @@
-import { NonFunctionPropertyKeys, PropertyDecoratorMap } from '../types/index';
 import { makeSureCorePropertiesExist } from '../tag/makeSureCorePropertiesExist';
+import { NonFunctionPropertyKeys, PropertyDecoratorMap } from '../types/index';
 import { setPropertyValue } from './accessPropertyValue';
 
 /**

@@ -18,7 +18,7 @@ type RewritedInstance<T, U> = T & { [key in typeof SuperLifecycleKey]?: Partial<
  * tag('my-element')(MyElement);
  * ```
  */
-export function rewriteLifecycle<T extends AnyConstructor, U>(Target: T, lifecycle: U) {
+export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecycle: U) {
   const lifecycleKeys = Object.keys(lifecycle) as (keyof U)[];
 
   if (!Target.prototype.hasOwnProperty(SuperLifecycleKey)) {
