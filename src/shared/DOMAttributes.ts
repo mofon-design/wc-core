@@ -31,7 +31,12 @@ export interface DOMAttributeInfo {
   type: DOMAttributeType;
 }
 
-export const SpecialAttributes: Record<string, DOMAttributeInfo> = {
+export const SpecialAttributesNameMap: Record<string, string> = {
+  htmlFor: 'for',
+  className: 'class',
+};
+
+export const NonStringTypeAttributesInfo: Record<string, DOMAttributeInfo> = {
   // These are "enumerated" HTML attributes that accept "true" and "false".
   // In React, we let users pass `true` and `false` even though technically
   // these aren't boolean attributes (they are coerced to strings).

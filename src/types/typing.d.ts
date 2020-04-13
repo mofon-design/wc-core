@@ -32,9 +32,12 @@ declare namespace MDWC {
     ref?: LegacyRef<T>;
   }
 
-  interface DetailedHTMLProps<T extends {}> extends T, ClassAttributes<T> {}
+  type DetailedHTMLProps<T> = Partial<Pick<T, Exclude<keyof T, 'style'>>> &
+    ClassAttributes<T> & {
+      style?: Partial<CSSStyleDeclaration>;
+    };
 
-  interface SVGProps<T> extends SVGAttributes<T>, ClassAttributes<T> {}
+  interface SVGProps<T> extends SVGAttributes, ClassAttributes<T> {}
 
   type Booleanish = boolean | 'true' | 'false';
 
@@ -317,7 +320,7 @@ declare namespace MDWC {
    */
   interface SVGAttributes extends AriaAttributes {
     // Attributes which also defined in HTMLAttributes
-    class?: string;
+    className?: string;
     color?: string;
     height?: number | string;
     id?: string;
@@ -327,7 +330,7 @@ declare namespace MDWC {
     method?: string;
     min?: number | string;
     name?: string;
-    style?: string;
+    style?: Partial<CSSStyleDeclaration>;
     target?: string;
     type?: string;
     width?: number | string;
