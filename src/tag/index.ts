@@ -8,8 +8,18 @@ import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
 import { SetElementConnectedKey } from './privatePropertiesKey';
 import { callSuperLifecycle, overrideLifecycle } from './superLifecycle';
 
-export function tag(tagName: string, options?: ElementDefinitionOptions) {
-  return <T extends CoreElementConstructor>(Target: T): T => {
+/**
+ * @param tagName
+ * Name for the new custom element.
+ * Note that custom element names must contain a hyphen.
+ * @param options
+ * Object that controls how the element is defined.
+ * One option is currently supported:
+ * - `extends`: String specifying the name of a built-in element to extend.
+ *              Used to create a customized built-in element.
+ */
+export function tag<U extends string>(tagName: U, options?: ElementDefinitionOptions) {
+  return <T extends CoreElementConstructor<U>>(Target: T): T => {
     /**
      * In case property decorator is not called at least once.
      */
@@ -122,6 +132,15 @@ export function tag(tagName: string, options?: ElementDefinitionOptions) {
         get() {
           return Object.keys(Target.prototype.mapAttrsToProps);
         },
+      });
+    }
+
+    if (!Object.prototype.hasOwnProperty.call(Target, 'tagName') || Target.tagName !== tagName) {
+      Object.defineProperty(Target, 'tagName', {
+        configurable: true,
+        enumerable: true,
+        value: tagName,
+        writable: false,
       });
     }
 

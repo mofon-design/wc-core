@@ -20,7 +20,7 @@ export interface CustomElementLifecycle {
    * This will happen each time the node is moved, and may happen before the element's
    * contents have been fully parsed.
    *
-   * @note
+   * @description
    * `connectedCallback` may be called once your element is no longer connected,
    * use `Node.isConnected` to make sure.
    */
@@ -36,11 +36,15 @@ export interface CustomElementLifecycle {
  */
 export interface CustomElement extends HTMLElement, CustomElementLifecycle {}
 
-export interface CustomElementClass {
+export interface CustomElementClass<T extends string = string> {
   /**
    * A static accessor that specifies which attributes should be noted for changes.
    */
   observedAttributes?: string[];
+  /**
+   * Name for the new custom element. Note that custom element names must contain a hyphen.
+   */
+  tagName?: T;
 }
 
 /**
@@ -86,7 +90,9 @@ export interface CoreElementLifecycle extends CustomElementLifecycle {
 
 export interface CoreElement extends CustomElement, CoreElementLifecycle {}
 
-export interface CoreElementConstructor extends Constructor<CoreElement>, CustomElementClass {}
+export interface CoreElementConstructor<T extends string = string>
+  extends Constructor<CoreElement>,
+    CustomElementClass<T> {}
 
 /**
  * Custom element class decorated by `@tag(tagName)` class decorator.
