@@ -6,7 +6,7 @@
   "main": "lib/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
-  "typings": "es/index.d.ts",
+  "typings": "typings.d.ts",
   "scripts": {
     "build": "npm run build:es && npm run build:lib",
     "build:es": "rm -rf es/ && tsc --build tsconfig.json",
@@ -57,7 +57,8 @@
   },
   "files": [
     "es",
-    "lib"
+    "lib",
+    "typings.d.ts"
   ],
   "bugs": {
     "url": "https://github.com/mofon-design/wc-core/issues"

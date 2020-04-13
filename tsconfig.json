@@ -20,5 +20,5 @@
     "strictPropertyInitialization": true,
     "target": "ES2015"
   },
-  "include": ["src"]
+  "include": ["src", "typings.d.ts"]
 }
