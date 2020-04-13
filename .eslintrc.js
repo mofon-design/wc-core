@@ -5,4 +5,9 @@ module.exports = {
     'no-bitwise': 0,
     'no-unused-expressions': 0,
   },
+  settings: {
+    react: {
+      pragma: 'MDWC',
+    },
+  },
 };

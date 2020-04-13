@@ -5,6 +5,8 @@
     "declaration": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "jsx": "react",
+    "jsxFactory": "MDWC.h",
     "module": "ESNext",
     "noImplicitAny": true,
     "noImplicitThis": true,
