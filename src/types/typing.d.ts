@@ -1,0 +1,794 @@
+declare namespace MDWC {
+  type Key = string | number;
+
+  interface RefObject<T> {
+    readonly current: T | null;
+  }
+
+  interface RefCallback<T> {
+    (instance: T | null): void;
+  }
+
+  type Ref<T> = RefCallback<T> | RefObject<T> | null;
+
+  type LegacyRef<T> = string | Ref<T>;
+
+  interface Element {
+    attributes: Record<string, string | null>;
+    children?: Element | string;
+    tagName: string;
+  }
+
+  interface Props<T> {
+    key?: Key;
+    ref?: LegacyRef<T>;
+  }
+
+  interface Attributes {
+    key?: Key;
+  }
+
+  interface ClassAttributes<T> extends Attributes {
+    ref?: LegacyRef<T>;
+  }
+
+  interface DetailedHTMLProps<T extends {}> extends T, ClassAttributes<T> {}
+
+  interface SVGProps<T> extends SVGAttributes<T>, ClassAttributes<T> {}
+
+  type Booleanish = boolean | 'true' | 'false';
+
+  /**
+   * All the WAI-ARIA 1.1 attributes from https://www.w3.org/TR/wai-aria-1.1/
+   *
+   * @see {@link https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/react/index.d.ts|types/react}
+   */
+  interface AriaAttributes {
+    /**
+     * Identifies the currently active element when DOM focus is on a composite widget,
+     * textbox, group, or application.
+     */
+    'aria-activedescendant'?: string;
+    /**
+     * Indicates whether assistive technologies will present all, or only parts of,
+     * the changed region based on the change notifications defined by the aria-relevant attribute.
+     */
+    'aria-atomic'?: boolean | 'false' | 'true';
+    /**
+     * Indicates whether inputting text could trigger display of one or more predictions
+     * of the user's intended value for an input and specifies how predictions would be
+     * presented if they are made.
+     */
+    'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both';
+    /**
+     * Indicates an element is being modified and that assistive technologies MAY want to
+     * wait until the modifications are complete before exposing them to the user.
+     */
+    'aria-busy'?: boolean | 'false' | 'true';
+    /**
+     * Indicates the current "checked" state of checkboxes, radio buttons, and other widgets.
+     *
+     * @see aria-pressed @see aria-selected.
+     */
+    'aria-checked'?: boolean | 'false' | 'mixed' | 'true';
+    /**
+     * Defines the total number of columns in a table, grid, or treegrid.
+     *
+     * @see aria-colindex.
+     */
+    'aria-colcount'?: number;
+    /**
+     * Defines an element's column index or position with respect to the total number
+     * of columns within a table, grid, or treegrid.
+     *
+     * @see aria-colcount @see aria-colspan.
+     */
+    'aria-colindex'?: number;
+    /**
+     * Defines the number of columns spanned by a cell or gridcell within a table, grid, or treegrid.
+     *
+     * @see aria-colindex @see aria-rowspan.
+     */
+    'aria-colspan'?: number;
+    /**
+     * Identifies the element (or elements) whose contents or presence are controlled
+     * by the current element.
+     *
+     * @see aria-owns.
+     */
+    'aria-controls'?: string;
+    /**
+     * Indicates the element that represents the current item within a container or set
+     * of related elements.
+     */
+    'aria-current'?: boolean | 'false' | 'true' | 'page' | 'step' | 'location' | 'date' | 'time';
+    /**
+     * Identifies the element (or elements) that describes the object.
+     *
+     * @see aria-labelledby
+     */
+    'aria-describedby'?: string;
+    /**
+     * Identifies the element that provides a detailed, extended description for the object.
+     *
+     * @see aria-describedby.
+     */
+    'aria-details'?: string;
+    /**
+     * Indicates that the element is perceivable but disabled, so it is not editable
+     * or otherwise operable.
+     *
+     * @see aria-hidden @see aria-readonly.
+     */
+    'aria-disabled'?: boolean | 'false' | 'true';
+    /**
+     * Indicates what functions can be performed when a dragged object is released on the drop target.
+     *
+     * @deprecated in ARIA 1.1
+     */
+    'aria-dropeffect'?: 'none' | 'copy' | 'execute' | 'link' | 'move' | 'popup';
+    /**
+     * Identifies the element that provides an error message for the object.
+     *
+     * @see aria-invalid @see aria-describedby.
+     */
+    'aria-errormessage'?: string;
+    /**
+     * Indicates whether the element, or another grouping element it controls,
+     * is currently expanded or collapsed.
+     */
+    'aria-expanded'?: boolean | 'false' | 'true';
+    /**
+     * Identifies the next element (or elements) in an alternate reading order of content which,
+     * at the user's discretion, allows assistive technology to override the general default
+     * of reading in document source order.
+     */
+    'aria-flowto'?: string;
+    /**
+     * Indicates an element's "grabbed" state in a drag-and-drop operation.
+     *
+     * @deprecated in ARIA 1.1
+     */
+    'aria-grabbed'?: boolean | 'false' | 'true';
+    /**
+     * Indicates the availability and type of interactive popup element, such as menu or dialog,
+     * that can be triggered by an element.
+     */
+    'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog';
+    /**
+     * Indicates whether the element is exposed to an accessibility API.
+     *
+     * @see aria-disabled.
+     */
+    'aria-hidden'?: boolean | 'false' | 'true';
+    /**
+     * Indicates the entered value does not conform to the format expected by the application.
+     *
+     * @see aria-errormessage.
+     */
+    'aria-invalid'?: boolean | 'false' | 'true' | 'grammar' | 'spelling';
+    /**
+     * Indicates keyboard shortcuts that an author has implemented to activate
+     * or give focus to an element.
+     */
+    'aria-keyshortcuts'?: string;
+    /**
+     * Defines a string value that labels the current element.
+     *
+     * @see aria-labelledby.
+     */
+    'aria-label'?: string;
+    /**
+     * Identifies the element (or elements) that labels the current element.
+     *
+     * @see aria-describedby.
+     */
+    'aria-labelledby'?: string;
+    /**
+     * Defines the hierarchical level of an element within a structure.
+     */
+    'aria-level'?: number;
+    /**
+     * Indicates that an element will be updated, and describes the types of updates the user agents,
+     * assistive technologies, and user can expect from the live region.
+     */
+    'aria-live'?: 'off' | 'assertive' | 'polite';
+    /**
+     * Indicates whether an element is modal when displayed.
+     */
+    'aria-modal'?: boolean | 'false' | 'true';
+    /**
+     * Indicates whether a text box accepts multiple lines of input or only a single line.
+     */
+    'aria-multiline'?: boolean | 'false' | 'true';
+    /**
+     * Indicates that the user may select more than one item from the current selectable descendants.
+     */
+    'aria-multiselectable'?: boolean | 'false' | 'true';
+    /**
+     * Indicates whether the element's orientation is horizontal, vertical, or unknown/ambiguous.
+     */
+    'aria-orientation'?: 'horizontal' | 'vertical';
+    /**
+     * Identifies an element (or elements) in order to define a visual, functional,
+     * or contextual parent / child relationship between DOM elements where the DOM hierarchy
+     * cannot be used to represent the relationship.
+     * @see aria-controls.
+     */
+    'aria-owns'?: string;
+    /**
+     * Defines a short hint (a word or short phrase) intended to aid the user with data entry
+     * when the control has no value. A hint could be a sample value or a brief description
+     * of the expected format.
+     */
+    'aria-placeholder'?: string;
+    /**
+     * Defines an element's number or position in the current set of listitems or treeitems.
+     * Not required if all elements in the set are present in the DOM.
+     *
+     * @see aria-setsize.
+     */
+    'aria-posinset'?: number;
+    /**
+     * Indicates the current "pressed" state of toggle buttons.
+     *
+     * @see aria-checked @see aria-selected.
+     */
+    'aria-pressed'?: boolean | 'false' | 'mixed' | 'true';
+    /**
+     * Indicates that the element is not editable, but is otherwise operable.
+     *
+     * @see aria-disabled.
+     */
+    'aria-readonly'?: boolean | 'false' | 'true';
+    /**
+     * Indicates what notifications the user agent will trigger when the accessibility tree
+     * within a live region is modified.
+     *
+     * @see aria-atomic.
+     */
+    'aria-relevant'?: 'additions' | 'additions text' | 'all' | 'removals' | 'text';
+    /**
+     * Indicates that user input is required on the element before a form may be submitted.
+     */
+    'aria-required'?: boolean | 'false' | 'true';
+    /**
+     * Defines a human-readable, author-localized description for the role of an element.
+     */
+    'aria-roledescription'?: string;
+    /**
+     * Defines the total number of rows in a table, grid, or treegrid.
+     *
+     * @see aria-rowindex.
+     */
+    'aria-rowcount'?: number;
+    /**
+     * Defines an element's row index or position with respect to the total number
+     * of rows within a table, grid, or treegrid.
+     *
+     * @see aria-rowcount @see aria-rowspan.
+     */
+    'aria-rowindex'?: number;
+    /**
+     * Defines the number of rows spanned by a cell or gridcell within a table, grid, or treegrid.
+     *
+     * @see aria-rowindex @see aria-colspan.
+     */
+    'aria-rowspan'?: number;
+    /**
+     * Indicates the current "selected" state of various widgets.
+     *
+     * @see aria-checked @see aria-pressed.
+     */
+    'aria-selected'?: boolean | 'false' | 'true';
+    /**
+     * Defines the number of items in the current set of listitems or treeitems.
+     * Not required if all elements in the set are present in the DOM.
+     *
+     * @see aria-posinset.
+     */
+    'aria-setsize'?: number;
+    /**
+     * Indicates if items in a table or grid are sorted in ascending or descending order.
+     */
+    'aria-sort'?: 'none' | 'ascending' | 'descending' | 'other';
+    /**
+     * Defines the maximum allowed value for a range widget.
+     */
+    'aria-valuemax'?: number;
+    /**
+     * Defines the minimum allowed value for a range widget.
+     */
+    'aria-valuemin'?: number;
+    /**
+     * Defines the current value for a range widget.
+     *
+     * @see aria-valuetext.
+     */
+    'aria-valuenow'?: number;
+    /**
+     * Defines the human readable text alternative of aria-valuenow for a range widget.
+     */
+    'aria-valuetext'?: string;
+  }
+
+  /**
+   * @see {@link https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/react/index.d.ts|types/react}
+   */
+  interface SVGAttributes extends AriaAttributes {
+    // Attributes which also defined in HTMLAttributes
+    class?: string;
+    color?: string;
+    height?: number | string;
+    id?: string;
+    lang?: string;
+    max?: number | string;
+    media?: string;
+    method?: string;
+    min?: number | string;
+    name?: string;
+    style?: string;
+    target?: string;
+    type?: string;
+    width?: number | string;
+
+    // Other HTML properties supported by SVG elements in browsers
+    role?: string;
+    tabIndex?: number;
+    crossOrigin?: 'anonymous' | 'use-credentials' | '';
+
+    // SVG Specific attributes
+    accentHeight?: number | string;
+    accumulate?: 'none' | 'sum';
+    additive?: 'replace' | 'sum';
+    alignmentBaseline?:
+      | 'auto'
+      | 'baseline'
+      | 'before-edge'
+      | 'text-before-edge'
+      | 'middle'
+      | 'central'
+      | 'after-edge'
+      | 'text-after-edge'
+      | 'ideographic'
+      | 'alphabetic'
+      | 'hanging'
+      | 'mathematical'
+      | 'inherit';
+    allowReorder?: 'no' | 'yes';
+    alphabetic?: number | string;
+    amplitude?: number | string;
+    arabicForm?: 'initial' | 'medial' | 'terminal' | 'isolated';
+    ascent?: number | string;
+    attributeName?: string;
+    attributeType?: string;
+    autoReverse?: Booleanish;
+    azimuth?: number | string;
+    baseFrequency?: number | string;
+    baselineShift?: number | string;
+    baseProfile?: number | string;
+    bbox?: number | string;
+    begin?: number | string;
+    bias?: number | string;
+    by?: number | string;
+    calcMode?: number | string;
+    capHeight?: number | string;
+    clip?: number | string;
+    clipPath?: string;
+    clipPathUnits?: number | string;
+    clipRule?: number | string;
+    colorInterpolation?: number | string;
+    colorInterpolationFilters?: 'auto' | 'sRGB' | 'linearRGB' | 'inherit';
+    colorProfile?: number | string;
+    colorRendering?: number | string;
+    contentScriptType?: number | string;
+    contentStyleType?: number | string;
+    cursor?: number | string;
+    cx?: number | string;
+    cy?: number | string;
+    d?: string;
+    decelerate?: number | string;
+    descent?: number | string;
+    diffuseConstant?: number | string;
+    direction?: number | string;
+    display?: number | string;
+    divisor?: number | string;
+    dominantBaseline?: number | string;
+    dur?: number | string;
+    dx?: number | string;
+    dy?: number | string;
+    edgeMode?: number | string;
+    elevation?: number | string;
+    enableBackground?: number | string;
+    end?: number | string;
+    exponent?: number | string;
+    externalResourcesRequired?: Booleanish;
+    fill?: string;
+    fillOpacity?: number | string;
+    fillRule?: 'nonzero' | 'evenodd' | 'inherit';
+    filter?: string;
+    filterRes?: number | string;
+    filterUnits?: number | string;
+    floodColor?: number | string;
+    floodOpacity?: number | string;
+    focusable?: Booleanish | 'auto';
+    fontFamily?: string;
+    fontSize?: number | string;
+    fontSizeAdjust?: number | string;
+    fontStretch?: number | string;
+    fontStyle?: number | string;
+    fontVariant?: number | string;
+    fontWeight?: number | string;
+    format?: number | string;
+    from?: number | string;
+    fx?: number | string;
+    fy?: number | string;
+    g1?: number | string;
+    g2?: number | string;
+    glyphName?: number | string;
+    glyphOrientationHorizontal?: number | string;
+    glyphOrientationVertical?: number | string;
+    glyphRef?: number | string;
+    gradientTransform?: string;
+    gradientUnits?: string;
+    hanging?: number | string;
+    horizAdvX?: number | string;
+    horizOriginX?: number | string;
+    href?: string;
+    ideographic?: number | string;
+    imageRendering?: number | string;
+    in2?: number | string;
+    in?: string;
+    intercept?: number | string;
+    k1?: number | string;
+    k2?: number | string;
+    k3?: number | string;
+    k4?: number | string;
+    k?: number | string;
+    kernelMatrix?: number | string;
+    kernelUnitLength?: number | string;
+    kerning?: number | string;
+    keyPoints?: number | string;
+    keySplines?: number | string;
+    keyTimes?: number | string;
+    lengthAdjust?: number | string;
+    letterSpacing?: number | string;
+    lightingColor?: number | string;
+    limitingConeAngle?: number | string;
+    local?: number | string;
+    markerEnd?: string;
+    markerHeight?: number | string;
+    markerMid?: string;
+    markerStart?: string;
+    markerUnits?: number | string;
+    markerWidth?: number | string;
+    mask?: string;
+    maskContentUnits?: number | string;
+    maskUnits?: number | string;
+    mathematical?: number | string;
+    mode?: number | string;
+    numOctaves?: number | string;
+    offset?: number | string;
+    opacity?: number | string;
+    operator?: number | string;
+    order?: number | string;
+    orient?: number | string;
+    orientation?: number | string;
+    origin?: number | string;
+    overflow?: number | string;
+    overlinePosition?: number | string;
+    overlineThickness?: number | string;
+    paintOrder?: number | string;
+    panose1?: number | string;
+    path?: string;
+    pathLength?: number | string;
+    patternContentUnits?: string;
+    patternTransform?: number | string;
+    patternUnits?: string;
+    pointerEvents?: number | string;
+    points?: string;
+    pointsAtX?: number | string;
+    pointsAtY?: number | string;
+    pointsAtZ?: number | string;
+    preserveAlpha?: Booleanish;
+    preserveAspectRatio?: string;
+    primitiveUnits?: number | string;
+    r?: number | string;
+    radius?: number | string;
+    refX?: number | string;
+    refY?: number | string;
+    renderingIntent?: number | string;
+    repeatCount?: number | string;
+    repeatDur?: number | string;
+    requiredExtensions?: number | string;
+    requiredFeatures?: number | string;
+    restart?: number | string;
+    result?: string;
+    rotate?: number | string;
+    rx?: number | string;
+    ry?: number | string;
+    scale?: number | string;
+    seed?: number | string;
+    shapeRendering?: number | string;
+    slope?: number | string;
+    spacing?: number | string;
+    specularConstant?: number | string;
+    specularExponent?: number | string;
+    speed?: number | string;
+    spreadMethod?: string;
+    startOffset?: number | string;
+    stdDeviation?: number | string;
+    stemh?: number | string;
+    stemv?: number | string;
+    stitchTiles?: number | string;
+    stopColor?: string;
+    stopOpacity?: number | string;
+    strikethroughPosition?: number | string;
+    strikethroughThickness?: number | string;
+    string?: number | string;
+    stroke?: string;
+    strokeDasharray?: string | number;
+    strokeDashoffset?: string | number;
+    strokeLinecap?: 'butt' | 'round' | 'square' | 'inherit';
+    strokeLinejoin?: 'miter' | 'round' | 'bevel' | 'inherit';
+    strokeMiterlimit?: number | string;
+    strokeOpacity?: number | string;
+    strokeWidth?: number | string;
+    surfaceScale?: number | string;
+    systemLanguage?: number | string;
+    tableValues?: number | string;
+    targetX?: number | string;
+    targetY?: number | string;
+    textAnchor?: string;
+    textDecoration?: number | string;
+    textLength?: number | string;
+    textRendering?: number | string;
+    to?: number | string;
+    transform?: string;
+    u1?: number | string;
+    u2?: number | string;
+    underlinePosition?: number | string;
+    underlineThickness?: number | string;
+    unicode?: number | string;
+    unicodeBidi?: number | string;
+    unicodeRange?: number | string;
+    unitsPerEm?: number | string;
+    vAlphabetic?: number | string;
+    values?: string;
+    vectorEffect?: number | string;
+    version?: string;
+    vertAdvY?: number | string;
+    vertOriginX?: number | string;
+    vertOriginY?: number | string;
+    vHanging?: number | string;
+    vIdeographic?: number | string;
+    viewBox?: string;
+    viewTarget?: number | string;
+    visibility?: number | string;
+    vMathematical?: number | string;
+    widths?: number | string;
+    wordSpacing?: number | string;
+    writingMode?: number | string;
+    x1?: number | string;
+    x2?: number | string;
+    x?: number | string;
+    xChannelSelector?: string;
+    xHeight?: number | string;
+    xlinkActuate?: string;
+    xlinkArcrole?: string;
+    xlinkHref?: string;
+    xlinkRole?: string;
+    xlinkShow?: string;
+    xlinkTitle?: string;
+    xlinkType?: string;
+    xmlBase?: string;
+    xmlLang?: string;
+    xmlns?: string;
+    xmlnsXlink?: string;
+    xmlSpace?: string;
+    y1?: number | string;
+    y2?: number | string;
+    y?: number | string;
+    yChannelSelector?: string;
+    z?: number | string;
+    zoomAndPan?: string;
+  }
+}
+
+export = MDWC;
+export as namespace MDWC;
+
+declare global {
+  namespace JSX {
+    interface Element extends MDWC.Element {}
+
+    interface ElementChildrenAttribute {
+      children: {};
+    }
+
+    interface IntrinsicAttributes extends MDWC.Attributes {}
+    interface IntrinsicClassAttributes<T> extends MDWC.ClassAttributes<T> {}
+
+    interface IntrinsicElements {
+      // HTML
+      a: MDWC.DetailedHTMLProps<HTMLAnchorElement>;
+      abbr: MDWC.DetailedHTMLProps<HTMLElement>;
+      address: MDWC.DetailedHTMLProps<HTMLElement>;
+      area: MDWC.DetailedHTMLProps<HTMLAreaElement>;
+      article: MDWC.DetailedHTMLProps<HTMLElement>;
+      aside: MDWC.DetailedHTMLProps<HTMLElement>;
+      audio: MDWC.DetailedHTMLProps<HTMLAudioElement>;
+      b: MDWC.DetailedHTMLProps<HTMLElement>;
+      base: MDWC.DetailedHTMLProps<HTMLBaseElement>;
+      bdi: MDWC.DetailedHTMLProps<HTMLElement>;
+      bdo: MDWC.DetailedHTMLProps<HTMLElement>;
+      big: MDWC.DetailedHTMLProps<HTMLElement>;
+      blockquote: MDWC.DetailedHTMLProps<HTMLElement>;
+      body: MDWC.DetailedHTMLProps<HTMLBodyElement>;
+      br: MDWC.DetailedHTMLProps<HTMLBRElement>;
+      button: MDWC.DetailedHTMLProps<HTMLButtonElement>;
+      canvas: MDWC.DetailedHTMLProps<HTMLCanvasElement>;
+      caption: MDWC.DetailedHTMLProps<HTMLElement>;
+      cite: MDWC.DetailedHTMLProps<HTMLElement>;
+      code: MDWC.DetailedHTMLProps<HTMLElement>;
+      col: MDWC.DetailedHTMLProps<HTMLTableColElement>;
+      colgroup: MDWC.DetailedHTMLProps<HTMLTableColElement>;
+      data: MDWC.DetailedHTMLProps<HTMLDataElement>;
+      datalist: MDWC.DetailedHTMLProps<HTMLDataListElement>;
+      dd: MDWC.DetailedHTMLProps<HTMLElement>;
+      del: MDWC.DetailedHTMLProps<HTMLElement>;
+      details: MDWC.DetailedHTMLProps<HTMLElement>;
+      dfn: MDWC.DetailedHTMLProps<HTMLElement>;
+      dialog: MDWC.DetailedHTMLProps<HTMLDialogElement>;
+      div: MDWC.DetailedHTMLProps<HTMLDivElement>;
+      dl: MDWC.DetailedHTMLProps<HTMLDListElement>;
+      dt: MDWC.DetailedHTMLProps<HTMLElement>;
+      em: MDWC.DetailedHTMLProps<HTMLElement>;
+      embed: MDWC.DetailedHTMLProps<HTMLEmbedElement>;
+      fieldset: MDWC.DetailedHTMLProps<HTMLFieldSetElement>;
+      figcaption: MDWC.DetailedHTMLProps<HTMLElement>;
+      figure: MDWC.DetailedHTMLProps<HTMLElement>;
+      footer: MDWC.DetailedHTMLProps<HTMLElement>;
+      form: MDWC.DetailedHTMLProps<HTMLFormElement>;
+      h1: MDWC.DetailedHTMLProps<HTMLHeadingElement>;
+      h2: MDWC.DetailedHTMLProps<HTMLHeadingElement>;
+      h3: MDWC.DetailedHTMLProps<HTMLHeadingElement>;
+      h4: MDWC.DetailedHTMLProps<HTMLHeadingElement>;
+      h5: MDWC.DetailedHTMLProps<HTMLHeadingElement>;
+      h6: MDWC.DetailedHTMLProps<HTMLHeadingElement>;
+      head: MDWC.DetailedHTMLProps<HTMLHeadElement>;
+      header: MDWC.DetailedHTMLProps<HTMLElement>;
+      hgroup: MDWC.DetailedHTMLProps<HTMLElement>;
+      hr: MDWC.DetailedHTMLProps<HTMLHRElement>;
+      html: MDWC.DetailedHTMLProps<HTMLHtmlElement>;
+      i: MDWC.DetailedHTMLProps<HTMLElement>;
+      iframe: MDWC.DetailedHTMLProps<HTMLIFrameElement>;
+      img: MDWC.DetailedHTMLProps<HTMLImageElement>;
+      input: MDWC.DetailedHTMLProps<HTMLInputElement>;
+      ins: MDWC.DetailedHTMLProps<HTMLModElement>;
+      kbd: MDWC.DetailedHTMLProps<HTMLElement>;
+      keygen: MDWC.DetailedHTMLProps<HTMLElement>;
+      label: MDWC.DetailedHTMLProps<HTMLLabelElement>;
+      legend: MDWC.DetailedHTMLProps<HTMLLegendElement>;
+      li: MDWC.DetailedHTMLProps<HTMLLIElement>;
+      link: MDWC.DetailedHTMLProps<HTMLLinkElement>;
+      main: MDWC.DetailedHTMLProps<HTMLElement>;
+      map: MDWC.DetailedHTMLProps<HTMLMapElement>;
+      mark: MDWC.DetailedHTMLProps<HTMLElement>;
+      menu: MDWC.DetailedHTMLProps<HTMLElement>;
+      menuitem: MDWC.DetailedHTMLProps<HTMLElement>;
+      meta: MDWC.DetailedHTMLProps<HTMLMetaElement>;
+      meter: MDWC.DetailedHTMLProps<HTMLElement>;
+      nav: MDWC.DetailedHTMLProps<HTMLElement>;
+      noindex: MDWC.DetailedHTMLProps<HTMLElement>;
+      noscript: MDWC.DetailedHTMLProps<HTMLElement>;
+      object: MDWC.DetailedHTMLProps<HTMLObjectElement>;
+      ol: MDWC.DetailedHTMLProps<HTMLOListElement>;
+      optgroup: MDWC.DetailedHTMLProps<HTMLOptGroupElement>;
+      option: MDWC.DetailedHTMLProps<HTMLOptionElement>;
+      output: MDWC.DetailedHTMLProps<HTMLElement>;
+      p: MDWC.DetailedHTMLProps<HTMLParagraphElement>;
+      param: MDWC.DetailedHTMLProps<HTMLParamElement>;
+      picture: MDWC.DetailedHTMLProps<HTMLElement>;
+      pre: MDWC.DetailedHTMLProps<HTMLPreElement>;
+      progress: MDWC.DetailedHTMLProps<HTMLProgressElement>;
+      q: MDWC.DetailedHTMLProps<HTMLQuoteElement>;
+      rp: MDWC.DetailedHTMLProps<HTMLElement>;
+      rt: MDWC.DetailedHTMLProps<HTMLElement>;
+      ruby: MDWC.DetailedHTMLProps<HTMLElement>;
+      s: MDWC.DetailedHTMLProps<HTMLElement>;
+      samp: MDWC.DetailedHTMLProps<HTMLElement>;
+      slot: MDWC.DetailedHTMLProps<HTMLSlotElement>;
+      script: MDWC.DetailedHTMLProps<HTMLScriptElement>;
+      section: MDWC.DetailedHTMLProps<HTMLElement>;
+      select: MDWC.DetailedHTMLProps<HTMLSelectElement>;
+      small: MDWC.DetailedHTMLProps<HTMLElement>;
+      source: MDWC.DetailedHTMLProps<HTMLSourceElement>;
+      span: MDWC.DetailedHTMLProps<HTMLSpanElement>;
+      strong: MDWC.DetailedHTMLProps<HTMLElement>;
+      style: MDWC.DetailedHTMLProps<HTMLStyleElement>;
+      sub: MDWC.DetailedHTMLProps<HTMLElement>;
+      summary: MDWC.DetailedHTMLProps<HTMLElement>;
+      sup: MDWC.DetailedHTMLProps<HTMLElement>;
+      table: MDWC.DetailedHTMLProps<HTMLTableElement>;
+      template: MDWC.DetailedHTMLProps<HTMLTemplateElement>;
+      tbody: MDWC.DetailedHTMLProps<HTMLTableSectionElement>;
+      td: MDWC.DetailedHTMLProps<HTMLTableDataCellElement>;
+      textarea: MDWC.DetailedHTMLProps<HTMLTextAreaElement>;
+      tfoot: MDWC.DetailedHTMLProps<HTMLTableSectionElement>;
+      th: MDWC.DetailedHTMLProps<HTMLTableHeaderCellElement>;
+      thead: MDWC.DetailedHTMLProps<HTMLTableSectionElement>;
+      time: MDWC.DetailedHTMLProps<HTMLElement>;
+      title: MDWC.DetailedHTMLProps<HTMLTitleElement>;
+      tr: MDWC.DetailedHTMLProps<HTMLTableRowElement>;
+      track: MDWC.DetailedHTMLProps<HTMLTrackElement>;
+      u: MDWC.DetailedHTMLProps<HTMLElement>;
+      ul: MDWC.DetailedHTMLProps<HTMLUListElement>;
+      var: MDWC.DetailedHTMLProps<HTMLElement>;
+      video: MDWC.DetailedHTMLProps<HTMLVideoElement>;
+      wbr: MDWC.DetailedHTMLProps<HTMLElement>;
+      webview: MDWC.DetailedHTMLProps<HTMLWebViewElement>;
+
+      // SVG
+      svg: MDWC.SVGProps<SVGSVGElement>;
+
+      animate: MDWC.SVGProps<SVGAnimateElement>;
+      animateMotion: MDWC.SVGProps<SVGElement>;
+      animateTransform: MDWC.SVGProps<SVGAnimateTransformElement>;
+      circle: MDWC.SVGProps<SVGCircleElement>;
+      clipPath: MDWC.SVGProps<SVGClipPathElement>;
+      defs: MDWC.SVGProps<SVGDefsElement>;
+      desc: MDWC.SVGProps<SVGDescElement>;
+      ellipse: MDWC.SVGProps<SVGEllipseElement>;
+      feBlend: MDWC.SVGProps<SVGFEBlendElement>;
+      feColorMatrix: MDWC.SVGProps<SVGFEColorMatrixElement>;
+      feComponentTransfer: MDWC.SVGProps<SVGFEComponentTransferElement>;
+      feComposite: MDWC.SVGProps<SVGFECompositeElement>;
+      feConvolveMatrix: MDWC.SVGProps<SVGFEConvolveMatrixElement>;
+      feDiffuseLighting: MDWC.SVGProps<SVGFEDiffuseLightingElement>;
+      feDisplacementMap: MDWC.SVGProps<SVGFEDisplacementMapElement>;
+      feDistantLight: MDWC.SVGProps<SVGFEDistantLightElement>;
+      feDropShadow: MDWC.SVGProps<SVGFEDropShadowElement>;
+      feFlood: MDWC.SVGProps<SVGFEFloodElement>;
+      feFuncA: MDWC.SVGProps<SVGFEFuncAElement>;
+      feFuncB: MDWC.SVGProps<SVGFEFuncBElement>;
+      feFuncG: MDWC.SVGProps<SVGFEFuncGElement>;
+      feFuncR: MDWC.SVGProps<SVGFEFuncRElement>;
+      feGaussianBlur: MDWC.SVGProps<SVGFEGaussianBlurElement>;
+      feImage: MDWC.SVGProps<SVGFEImageElement>;
+      feMerge: MDWC.SVGProps<SVGFEMergeElement>;
+      feMergeNode: MDWC.SVGProps<SVGFEMergeNodeElement>;
+      feMorphology: MDWC.SVGProps<SVGFEMorphologyElement>;
+      feOffset: MDWC.SVGProps<SVGFEOffsetElement>;
+      fePointLight: MDWC.SVGProps<SVGFEPointLightElement>;
+      feSpecularLighting: MDWC.SVGProps<SVGFESpecularLightingElement>;
+      feSpotLight: MDWC.SVGProps<SVGFESpotLightElement>;
+      feTile: MDWC.SVGProps<SVGFETileElement>;
+      feTurbulence: MDWC.SVGProps<SVGFETurbulenceElement>;
+      filter: MDWC.SVGProps<SVGFilterElement>;
+      foreignObject: MDWC.SVGProps<SVGForeignObjectElement>;
+      g: MDWC.SVGProps<SVGGElement>;
+      image: MDWC.SVGProps<SVGImageElement>;
+      line: MDWC.SVGProps<SVGLineElement>;
+      linearGradient: MDWC.SVGProps<SVGLinearGradientElement>;
+      marker: MDWC.SVGProps<SVGMarkerElement>;
+      mask: MDWC.SVGProps<SVGMaskElement>;
+      metadata: MDWC.SVGProps<SVGMetadataElement>;
+      mpath: MDWC.SVGProps<SVGElement>;
+      path: MDWC.SVGProps<SVGPathElement>;
+      pattern: MDWC.SVGProps<SVGPatternElement>;
+      polygon: MDWC.SVGProps<SVGPolygonElement>;
+      polyline: MDWC.SVGProps<SVGPolylineElement>;
+      radialGradient: MDWC.SVGProps<SVGRadialGradientElement>;
+      rect: MDWC.SVGProps<SVGRectElement>;
+      stop: MDWC.SVGProps<SVGStopElement>;
+      switch: MDWC.SVGProps<SVGSwitchElement>;
+      symbol: MDWC.SVGProps<SVGSymbolElement>;
+      text: MDWC.SVGProps<SVGTextElement>;
+      textPath: MDWC.SVGProps<SVGTextPathElement>;
+      tspan: MDWC.SVGProps<SVGTSpanElement>;
+      use: MDWC.SVGProps<SVGUseElement>;
+      view: MDWC.SVGProps<SVGViewElement>;
+    }
+  }
+}
