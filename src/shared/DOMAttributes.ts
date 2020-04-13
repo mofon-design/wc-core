@@ -1,4 +1,4 @@
-export const enum DOMAttributeMark {
+export const enum DOMAttributeType {
   /**
    * A simple string attribute.
    * Attributes that aren't in the whitelist are presumed to have this type.
@@ -24,57 +24,61 @@ export const enum DOMAttributeMark {
    * - For any other value, should be present with that value.
    */
   OVERLOADED_BOOLEAN = 3,
-  USE_PROPERTY = 1 << 2,
 }
 
-export const SpecialAttributes: Record<string, DOMAttributeMark> = {
+export interface DOMAttributeInfo {
+  mustUseProperty?: boolean;
+  type: DOMAttributeType;
+}
+
+export const SpecialAttributes: Record<string, DOMAttributeInfo> = {
   // These are "enumerated" HTML attributes that accept "true" and "false".
   // In React, we let users pass `true` and `false` even though technically
   // these aren't boolean attributes (they are coerced to strings).
-  contenteditable: DOMAttributeMark.BOOLEANISH_STRING,
-  draggable: DOMAttributeMark.BOOLEANISH_STRING,
-  spellcheck: DOMAttributeMark.BOOLEANISH_STRING,
-  value: DOMAttributeMark.BOOLEANISH_STRING,
+  contenteditable: { type: DOMAttributeType.BOOLEANISH_STRING },
+  draggable: { type: DOMAttributeType.BOOLEANISH_STRING },
+  spellcheck: { type: DOMAttributeType.BOOLEANISH_STRING },
+  value: { type: DOMAttributeType.BOOLEANISH_STRING },
 
   // These are "enumerated" SVG attributes that accept "true" and "false".
   // In React, we let users pass `true` and `false` even though technically
   // these aren't boolean attributes (they are coerced to strings).
   // Since these are SVG attributes, their attribute names are case-sensitive.
-  autoReverse: DOMAttributeMark.BOOLEANISH_STRING,
-  checked: DOMAttributeMark.BOOLEAN & DOMAttributeMark.USE_PROPERTY,
-  externalResourcesRequired: DOMAttributeMark.BOOLEANISH_STRING,
-  focusable: DOMAttributeMark.BOOLEANISH_STRING,
-  preserveAlpha: DOMAttributeMark.BOOLEANISH_STRING,
+  autoReverse: { type: DOMAttributeType.BOOLEANISH_STRING },
+  checked: { mustUseProperty: true, type: DOMAttributeType.BOOLEAN },
+  externalResourcesRequired: { type: DOMAttributeType.BOOLEANISH_STRING },
+  focusable: { type: DOMAttributeType.BOOLEANISH_STRING },
+  preserveAlpha: { type: DOMAttributeType.BOOLEANISH_STRING },
 
   // These are HTML boolean attributes.
-  allowfullscreen: DOMAttributeMark.BOOLEAN,
-  async: DOMAttributeMark.BOOLEAN,
-  autofocus: DOMAttributeMark.BOOLEAN,
-  autoplay: DOMAttributeMark.BOOLEAN,
-  controls: DOMAttributeMark.BOOLEAN,
-  default: DOMAttributeMark.BOOLEAN,
-  defer: DOMAttributeMark.BOOLEAN,
-  disabled: DOMAttributeMark.BOOLEAN,
-  disablepictureinpicture: DOMAttributeMark.BOOLEAN,
-  formnovalidate: DOMAttributeMark.BOOLEAN,
-  hidden: DOMAttributeMark.BOOLEAN,
-  itemscope: DOMAttributeMark.BOOLEAN, // Microdata
-  loop: DOMAttributeMark.BOOLEAN,
-  multiple: DOMAttributeMark.BOOLEAN & DOMAttributeMark.USE_PROPERTY,
-  muted: DOMAttributeMark.BOOLEAN & DOMAttributeMark.USE_PROPERTY,
-  nomodule: DOMAttributeMark.BOOLEAN,
-  novalidate: DOMAttributeMark.BOOLEAN,
-  open: DOMAttributeMark.BOOLEAN,
-  playsinline: DOMAttributeMark.BOOLEAN,
-  readonly: DOMAttributeMark.BOOLEAN,
-  required: DOMAttributeMark.BOOLEAN,
-  reversed: DOMAttributeMark.BOOLEAN,
-  scoped: DOMAttributeMark.BOOLEAN,
-  seamless: DOMAttributeMark.BOOLEAN,
-  selected: DOMAttributeMark.BOOLEAN & DOMAttributeMark.USE_PROPERTY,
+  allowfullscreen: { type: DOMAttributeType.BOOLEAN },
+  async: { type: DOMAttributeType.BOOLEAN },
+  autofocus: { type: DOMAttributeType.BOOLEAN },
+  autoplay: { type: DOMAttributeType.BOOLEAN },
+  controls: { type: DOMAttributeType.BOOLEAN },
+  default: { type: DOMAttributeType.BOOLEAN },
+  defer: { type: DOMAttributeType.BOOLEAN },
+  disabled: { type: DOMAttributeType.BOOLEAN },
+  disablepictureinpicture: { type: DOMAttributeType.BOOLEAN },
+  formnovalidate: { type: DOMAttributeType.BOOLEAN },
+  hidden: { type: DOMAttributeType.BOOLEAN },
+  itemscope: { type: DOMAttributeType.BOOLEAN }, // Microdata
+  loop: { type: DOMAttributeType.BOOLEAN },
+  multiple: { mustUseProperty: true, type: DOMAttributeType.BOOLEAN },
+  muted: { mustUseProperty: true, type: DOMAttributeType.BOOLEAN },
+  nomodule: { type: DOMAttributeType.BOOLEAN },
+  novalidate: { type: DOMAttributeType.BOOLEAN },
+  open: { type: DOMAttributeType.BOOLEAN },
+  playsinline: { type: DOMAttributeType.BOOLEAN },
+  readonly: { type: DOMAttributeType.BOOLEAN },
+  required: { type: DOMAttributeType.BOOLEAN },
+  reversed: { type: DOMAttributeType.BOOLEAN },
+  scoped: { type: DOMAttributeType.BOOLEAN },
+  seamless: { type: DOMAttributeType.BOOLEAN },
+  selected: { mustUseProperty: true, type: DOMAttributeType.BOOLEAN },
 
   // These are HTML attributes that are "overloaded booleans": they behave like
   // booleans, but can also accept a string value.
-  capture: DOMAttributeMark.OVERLOADED_BOOLEAN,
-  download: DOMAttributeMark.OVERLOADED_BOOLEAN,
+  capture: { type: DOMAttributeType.OVERLOADED_BOOLEAN },
+  download: { type: DOMAttributeType.OVERLOADED_BOOLEAN },
 };
