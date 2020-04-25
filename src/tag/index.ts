@@ -52,7 +52,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
         oldValue: string | null,
         newValue: string | null,
       ): void {
-        if (oldValue === newValue) return;
+        // if (oldValue === newValue) return;
 
         if (Target.prototype.mapAttrsToProps[name] !== undefined) {
           /**

@@ -13,11 +13,15 @@ declare namespace MDWC {
 
   type LegacyRef<T> = string | Ref<T>;
 
-  interface Element {
+  interface MDWCElement {
     attributes: Record<string, string | null>;
-    children?: Element | string;
+    children?: MDWCNode;
     tagName: string;
   }
+
+  type MDWCText = string | number;
+
+  type MDWCNode = MDWCElement | MDWCText | boolean | null | undefined | MDWCNode[];
 
   interface Props<T> {
     key?: Key;
@@ -41,17 +45,16 @@ declare namespace MDWC {
   //   >
   // >;
 
+  type MayNotBeHTMLAttributeKeys =
+    | keyof (WindowEventHandlers & DocumentAndElementEventHandlers & GlobalEventHandlers)
+    | 'children';
+
   type OmitMayNotBeHTMLAttributes<T extends {}> = Partial<
-    Pick<
-      T,
-      Exclude<
-        keyof T,
-        keyof (WindowEventHandlers & DocumentAndElementEventHandlers & GlobalEventHandlers)
-      >
-    >
+    Pick<T, Exclude<keyof T, MayNotBeHTMLAttributeKeys>>
   >;
 
   interface DetailedHTMLProps<T extends {}, U> extends T, ClassAttributes<U> {
+    children?: MDWCNode;
     style?: Partial<CSSStyleDeclaration>;
   }
 
@@ -621,7 +624,7 @@ export as namespace MDWC;
 
 declare global {
   namespace JSX {
-    interface Element extends MDWC.Element {}
+    interface Element extends MDWC.MDWCElement {}
 
     interface ElementChildrenAttribute {
       children: {};
@@ -720,6 +723,7 @@ declare global {
         MDWC.OmitMayNotBeHTMLAttributes<HTMLFormElement>,
         HTMLFormElement
       >;
+      fragment: MDWC.DetailedHTMLProps<{}, {}>;
       h1: MDWC.DetailedHTMLProps<
         MDWC.OmitMayNotBeHTMLAttributes<HTMLHeadingElement>,
         HTMLHeadingElement
