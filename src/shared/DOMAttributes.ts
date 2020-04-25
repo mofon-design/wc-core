@@ -38,7 +38,7 @@ export const SpecialAttributesNameMap: Record<string, string> = {
 
 export const NonStringTypeAttributesInfo: Record<string, DOMAttributeInfo> = {
   // These are "enumerated" HTML attributes that accept "true" and "false".
-  // In React, we let users pass `true` and `false` even though technically
+  // Like React, we let users pass `true` and `false` even though technically
   // these aren't boolean attributes (they are coerced to strings).
   contenteditable: { type: DOMAttributeType.BOOLEANISH_STRING },
   draggable: { type: DOMAttributeType.BOOLEANISH_STRING },
@@ -46,7 +46,7 @@ export const NonStringTypeAttributesInfo: Record<string, DOMAttributeInfo> = {
   value: { type: DOMAttributeType.BOOLEANISH_STRING },
 
   // These are "enumerated" SVG attributes that accept "true" and "false".
-  // In React, we let users pass `true` and `false` even though technically
+  // Like React, we let users pass `true` and `false` even though technically
   // these aren't boolean attributes (they are coerced to strings).
   // Since these are SVG attributes, their attribute names are case-sensitive.
   autoReverse: { type: DOMAttributeType.BOOLEANISH_STRING },
