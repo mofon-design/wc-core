@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-unresolved
+import * as CSS from 'node_modules/csstype/index';
+
 declare namespace MDWC {
   type Key = string | number;
 
@@ -14,8 +17,10 @@ declare namespace MDWC {
   type LegacyRef<T> = string | Ref<T>;
 
   interface MDWCElement {
-    attributes: Record<string, string | null>;
     children?: MDWCNode;
+    key?: Key;
+    props: object;
+    ref?: LegacyRef<unknown>;
     tagName: string;
   }
 
@@ -53,9 +58,21 @@ declare namespace MDWC {
     Pick<T, Exclude<keyof T, MayNotBeHTMLAttributeKeys>>
   >;
 
+  /**
+   * The index signature was removed to enable closed typing for style
+   * using CSSType. You're able to use type assertion or module augmentation
+   * to add properties or an index signature of your own.
+   *
+   * For examples and more information, visit:
+   * https://github.com/frenic/csstype#what-should-i-do-when-i-get-type-errors
+   */
+  interface CSSProperties extends CSS.Properties<string | number> {}
+
+  type CSSPropertiesWithCustoms = CSSProperties & Record<string, unknown>;
+
   interface DetailedHTMLProps<T extends {}, U> extends T, ClassAttributes<U> {
     children?: MDWCNode;
-    style?: Partial<CSSStyleDeclaration>;
+    style?: CSSProperties;
   }
 
   interface SVGProps<T> extends SVGAttributes, ClassAttributes<T> {}

@@ -1,1 +1,1 @@
-export { createElement, h } from './element';
+export { createElement, h } from './createElement';
