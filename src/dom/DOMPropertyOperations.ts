@@ -56,9 +56,9 @@ export function setValueForProperty<T extends HTMLElement>(
  */
 function mustUseProperty<T extends HTMLElement>(
   _element: T,
-  name: string,
+  _name: string,
   attributeInfo: DOMAttributeInfo,
-): name is keyof T & string {
+): _name is keyof T & string {
   return !!attributeInfo.mustUseProperty;
 }
 
