@@ -7,9 +7,12 @@ import { ReservedProperty } from './reservedProperties';
  */
 export function createElement(
   type: string | CoreElement,
-  props: MDWC.Props<unknown> & Record<keyof any, unknown>,
+  props: (MDWC.Props<unknown> & Record<keyof any, unknown>) | null,
   ...rest: MDWC.MDWCNode[]
 ): MDWC.MDWCElement {
+  // eslint-disable-next-line no-param-reassign
+  props = props ?? {};
+
   let children: MDWC.MDWCNode = rest;
   const tagName = typeof type === 'string' ? type : type.tagName;
   const key = props[ReservedProperty.KEY];

@@ -29,7 +29,6 @@ function isNotCustomProperty(
 }
 
 function dangerousStyleValue(value: unknown): string {
-  if (value === null || value === undefined || typeof value === 'boolean' || value === '')
-    return '';
+  if (value === null || value === undefined || typeof value === 'boolean') return '';
   return `${value}`;
 }
