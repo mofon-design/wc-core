@@ -66,7 +66,7 @@ declare namespace MDWC {
    * For examples and more information, visit:
    * https://github.com/frenic/csstype#what-should-i-do-when-i-get-type-errors
    */
-  interface CSSProperties extends CSS.Properties<string | number> {}
+  interface CSSProperties extends CSS.Properties {}
 
   type CSSPropertiesWithCustoms = CSSProperties & Record<string, unknown>;
 

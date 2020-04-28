@@ -1,4 +1,4 @@
-import { ReservedProperties } from './reservedProperties';
+import { ReservedPropertiesMap, ReservedProperty } from './reservedProperties';
 
 function hasOwnProperty<T>(target: T, property: any): property is keyof T {
   return Object.prototype.hasOwnProperty.call(target, property);
@@ -23,7 +23,7 @@ export function diffProperties(lastProps: object, nextProps: object): [keyof any
 
     // TODO bind events
 
-    if (propKey === ReservedProperties.STYLE) {
+    if (propKey === ReservedProperty.STYLE) {
       const lastStyle = lastProps[propKey] as MDWC.CSSPropertiesWithCustoms;
       for (styleName in lastStyle) {
         if (hasOwnProperty(lastStyle, styleName)) {
@@ -31,7 +31,7 @@ export function diffProperties(lastProps: object, nextProps: object): [keyof any
           styleUpdates[styleName] = '';
         }
       }
-    } else {
+    } else if (!hasOwnProperty(ReservedPropertiesMap, propKey)) {
       updatePayload.push([propKey, undefined]);
     }
   }
@@ -51,7 +51,7 @@ export function diffProperties(lastProps: object, nextProps: object): [keyof any
 
     // TODO bind events
 
-    if (propKey === ReservedProperties.STYLE) {
+    if (propKey === ReservedProperty.STYLE) {
       const nextStyle = nextProp as MDWC.CSSPropertiesWithCustoms;
       const lastStyle = lastProp as MDWC.CSSPropertiesWithCustoms | undefined;
       if (lastStyle) {
@@ -76,15 +76,13 @@ export function diffProperties(lastProps: object, nextProps: object): [keyof any
       } else {
         styleUpdates = nextStyle;
       }
-    } else {
-      // For any other property we always add it to the queue and then we
-      // filter it out using the whitelist during the commit.
+    } else if (!hasOwnProperty(ReservedPropertiesMap, propKey)) {
       updatePayload.push([propKey, nextProp]);
     }
   }
 
   if (styleUpdates) {
-    updatePayload.push([ReservedProperties.STYLE, styleUpdates]);
+    updatePayload.push([ReservedProperty.STYLE, styleUpdates]);
   }
 
   return updatePayload;

@@ -1,5 +1,5 @@
 import { CoreElement } from '../types/tag';
-import { ReservedProperties } from './reservedProperties';
+import { ReservedProperty } from './reservedProperties';
 
 /**
  * Create a WDWC element.
@@ -12,17 +12,17 @@ export function createElement(
 ): MDWC.MDWCElement {
   let children: MDWC.MDWCNode = rest;
   const tagName = typeof type === 'string' ? type : type.tagName;
-  const key = props[ReservedProperties.KEY];
-  const ref = props[ReservedProperties.REF];
-  // eslint-disable-next-line no-param-reassign
-  delete props[ReservedProperties.KEY];
-  // eslint-disable-next-line no-param-reassign
-  delete props[ReservedProperties.REF];
+  const key = props[ReservedProperty.KEY];
+  const ref = props[ReservedProperty.REF];
+  // // eslint-disable-next-line no-param-reassign
+  // delete props[ReservedProperty.KEY];
+  // // eslint-disable-next-line no-param-reassign
+  // delete props[ReservedProperty.REF];
 
-  if (!children.length && ReservedProperties.CHILDREN in props) {
-    children = props[ReservedProperties.CHILDREN] as MDWC.MDWCNode;
-    // eslint-disable-next-line no-param-reassign
-    delete props[ReservedProperties.CHILDREN];
+  if (!children.length && ReservedProperty.CHILDREN in props) {
+    children = props[ReservedProperty.CHILDREN] as MDWC.MDWCNode;
+    // // eslint-disable-next-line no-param-reassign
+    // delete props[ReservedProperty.CHILDREN];
   }
 
   return { children, key, props, ref, tagName };
