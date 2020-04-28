@@ -3,7 +3,7 @@ import {
   DOMAttributeType,
   NonStringTypeAttributesInfo,
   SpecialAttributesNameMap,
-} from '../shared/DOMAttributes';
+} from './DOMAttributes';
 
 /**
  * Assign the property to the corresponding attribute of the DOM element.
