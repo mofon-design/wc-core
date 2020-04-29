@@ -1,4 +1,3 @@
-import { CoreElement } from '../types/tag';
 import { ReservedProperty } from './reservedProperties';
 
 /**
@@ -6,7 +5,7 @@ import { ReservedProperty } from './reservedProperties';
  * @returns An ordinary object, which will eventually be mapped to the DOM tree by MDWC.
  */
 export function createElement(
-  type: string | CoreElement,
+  type: MDWC.MDWCElementType,
   props: (MDWC.Props<unknown> & Record<keyof any, unknown>) | null,
   ...rest: MDWC.MDWCNode[]
 ): MDWC.MDWCElement {
@@ -14,7 +13,6 @@ export function createElement(
   props = props ?? {};
 
   let children: MDWC.MDWCNode = rest;
-  const tagName = typeof type === 'string' ? type : type.tagName;
   const key = props[ReservedProperty.KEY];
   const ref = props[ReservedProperty.REF];
   // // eslint-disable-next-line no-param-reassign
@@ -28,7 +26,7 @@ export function createElement(
     // delete props[ReservedProperty.CHILDREN];
   }
 
-  return { children, key, props, ref, tagName };
+  return { children, key, props, ref, type };
 }
 
 export { createElement as h };

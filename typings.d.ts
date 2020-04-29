@@ -1,5 +1,6 @@
-// eslint-disable-next-line import/no-unresolved
-import * as CSS from 'node_modules/csstype/index';
+import * as CSS from './node_modules/csstype/index';
+import { Fragment } from './es/dom/MDWCFragment';
+import { CoreElement } from './es/types/tag';
 
 declare namespace MDWC {
   type Key = string | number;
@@ -14,14 +15,16 @@ declare namespace MDWC {
 
   type Ref<T> = RefCallback<T> | RefObject<T> | null;
 
-  type LegacyRef<T> = string | Ref<T>;
+  // type LegacyRef<T> = string | Ref<T>;
+
+  type MDWCElementType = string | CoreElement | Fragment;
 
   interface MDWCElement {
     children?: MDWCNode;
     key?: Key;
     props: object;
-    ref?: LegacyRef<unknown>;
-    tagName: string;
+    ref?: Ref<unknown>;
+    type: MDWCElementType;
   }
 
   type MDWCText = string | number;
@@ -30,7 +33,7 @@ declare namespace MDWC {
 
   interface Props<T> {
     key?: Key;
-    ref?: LegacyRef<T>;
+    ref?: Ref<T>;
   }
 
   interface Attributes {
@@ -38,7 +41,7 @@ declare namespace MDWC {
   }
 
   interface ClassAttributes<T> extends Attributes {
-    ref?: LegacyRef<T>;
+    ref?: Ref<T>;
   }
 
   // type OmitMayNotBeHTMLAttributes<T extends HTMLElement> = Partial<

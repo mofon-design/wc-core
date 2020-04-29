@@ -4,6 +4,10 @@ export interface Constructor<T> {
   new (...args: any[]): T;
 }
 
+export interface ClassType<T> extends Constructor<T> {
+  prototype: T;
+}
+
 export type PickPropertyKeysByExtends<T, U> = {
   [V in keyof T]: T[V] extends U ? V : never;
 }[keyof T];
