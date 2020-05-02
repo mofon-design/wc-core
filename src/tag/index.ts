@@ -3,6 +3,7 @@ import {
   CoreElementLifecycle,
   CoreElementStage,
   CoreInternalElement,
+  // CoreInternalElementConstructor,
 } from '../types/index';
 import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
 import { SetElementConnectedKey } from './privatePropertiesKey';
@@ -24,6 +25,8 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
      * In case property decorator is not called at least once.
      */
     makeSureCorePropertiesExist(Target.prototype);
+
+    // const WrappedTarget = Target as {} as CoreInternalElementConstructor<T>;
 
     const privateMethods = {
       [SetElementConnectedKey](this: CoreInternalElement<InstanceType<T>>): void {

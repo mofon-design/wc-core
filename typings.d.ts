@@ -743,7 +743,6 @@ declare global {
         MDWC.OmitMayNotBeHTMLAttributes<HTMLFormElement>,
         HTMLFormElement
       >;
-      fragment: MDWC.DetailedHTMLProps<{}, {}>;
       h1: MDWC.DetailedHTMLProps<
         MDWC.OmitMayNotBeHTMLAttributes<HTMLHeadingElement>,
         HTMLHeadingElement

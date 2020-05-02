@@ -1,10 +1,11 @@
 import { AnyFunction } from './any';
 
-export interface Constructor<T> {
-  new (...args: any[]): T;
+export interface Constructor<T, U extends any[] = any[]> {
+  new (...args: U): T;
 }
 
-export interface ClassType<T> extends Constructor<T> {
+export interface ClassType<T, U extends any[] = any[]> {
+  new (...args: U): T;
   prototype: T;
 }
 
