@@ -1,5 +1,5 @@
 import * as CSS from './node_modules/csstype/index';
-import { Fragment } from './src/dom/MDWCFragment';
+import { Fragment } from './src/jsx/MDWCFragment';
 import { CoreElementConstructor } from './src/types/tag';
 
 declare namespace MDWC {
