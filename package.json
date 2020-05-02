@@ -59,6 +59,7 @@
   "files": [
     "es",
     "lib",
+    "src",
     "typings.d.ts"
   ],
   "bugs": {

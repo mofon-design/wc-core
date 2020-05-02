@@ -1,6 +1,6 @@
 import * as CSS from './node_modules/csstype/index';
-import { Fragment } from './es/dom/MDWCFragment';
-import { CoreElement } from './es/types/tag';
+import { Fragment } from './src/dom/MDWCFragment';
+import { CoreElementConstructor } from './src/types/tag';
 
 declare namespace MDWC {
   type Key = string | number;
@@ -17,7 +17,7 @@ declare namespace MDWC {
 
   // type LegacyRef<T> = string | Ref<T>;
 
-  type MDWCElementType = string | CoreElement | Fragment;
+  type MDWCElementType = string | CoreElementConstructor | Fragment;
 
   interface MDWCElement {
     children?: MDWCNode;
