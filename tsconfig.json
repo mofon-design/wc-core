@@ -8,6 +8,7 @@
     "jsx": "react",
     "jsxFactory": "MDWC.h",
     "module": "ESNext",
+    "moduleResolution": "Node",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
@@ -20,5 +21,5 @@
     "strictPropertyInitialization": true,
     "target": "ES2015"
   },
-  "include": ["src", "node_modules/csstype/index.d.ts", "typings.d.ts"]
+  "include": ["src", "typings.d.ts"]
 }

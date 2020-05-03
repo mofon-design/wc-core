@@ -1,4 +1,4 @@
-export * from './jsx/index';
-export { property } from './property/index';
-export { tag } from './tag/index';
-export * from './types/index';
+export * from './jsx';
+export { property } from './property';
+export { tag } from './tag';
+export * from './types';

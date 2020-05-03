@@ -1,4 +1,4 @@
-import { PropertyDecoratorMap } from '../types/index';
+import { PropertyDecoratorMap } from '../types';
 import { getPropertyBooleanDecorator } from './boolean';
 import { getPropertyNumberDecorator } from './number';
 import { getPropertyStringDecorator } from './string';

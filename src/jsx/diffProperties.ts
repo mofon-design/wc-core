@@ -1,3 +1,4 @@
+import { MDWC } from '../types';
 import { ReservedPropertiesMap, ReservedProperty } from './reservedProperties';
 
 function hasOwnProperty<T>(target: T, property: any): property is keyof T {

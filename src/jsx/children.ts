@@ -1,3 +1,5 @@
+import { MDWC } from '../types';
+
 export const Children = {
   toArray(node: MDWC.MDWCNode): (MDWC.MDWCElement | MDWC.MDWCText)[] {
     const children: MDWC.MDWCNode[] = [node];

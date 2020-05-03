@@ -1,3 +1,4 @@
+import { MDWC } from '../types';
 import { ReservedProperty } from './reservedProperties';
 
 /**

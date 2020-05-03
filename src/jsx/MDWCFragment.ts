@@ -1,4 +1,3 @@
-import { ClassType } from '../types/index';
+import { MDWC } from '../types';
 
-export type Fragment = ClassType<DocumentFragment, [{}]>;
-export const Fragment = {} as Fragment;
+export const Fragment = {} as MDWC.Fragment;

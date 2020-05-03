@@ -1,3 +1,5 @@
+import { MDWC } from '../types';
+
 /**
  * Assign styles to HTML elements.
  * Custom styles will take `setPropertyValue()`,

@@ -1,4 +1,4 @@
-import { AnyConstructor, AnyFunction, ArgsType, PickPropertyKeysByExtends } from '../types/index';
+import { AnyConstructor, AnyFunction, ArgsType, PickPropertyKeysByExtends } from '../types';
 import { SuperLifecycleKey } from './privatePropertiesKey';
 
 type RewritedInstance<T, U> = T & { [key in typeof SuperLifecycleKey]?: Partial<U> };
