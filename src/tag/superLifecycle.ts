@@ -85,5 +85,5 @@ export function callSuperLifecycle<
 
 callSuperLifecycle.NOT_EXISTS = {} as symbol;
 
-callSuperLifecycle.returnValueIsExists = <T>(value: T | symbol): value is Exclude<T, symbol> =>
+callSuperLifecycle.returnValueIsExists = <T>(value: T | symbol): value is T =>
   value !== callSuperLifecycle.NOT_EXISTS;
