@@ -10,18 +10,49 @@ declare namespace MDWC {
    * @description
    * Keys used within arrays should be unique among their siblings.
    * However they don’t need to be globally unique.
+   *
+   * @example
+   * ```tsx
+   * <div>
+   *   <ul>
+   *     {['foo', 'bar'].map(value => <li key={value}>{value}</li>)}
+   *   </ul>
+   *   <ul>
+   *     {['foo', 'bar'].map(value => <li key={value}>{value}</li>)}
+   *   </ul>
+   * </div>
+   * ```
    */
   export type Key = string | number;
 
+  /**
+   * An immutable object with a single mutable value, which refers to a DOM element.
+   */
+  export interface MutableRefObject<T> {
+    current: T | null;
+  }
+
+  /**
+   * An immutable object with a single readonly value, which refers to a DOM element.
+   */
   export interface RefObject<T> {
     readonly current: T | null;
   }
 
+  /**
+   * The ref callback function receives the underlying DOM element or custom DOM element
+   * as its first argument.
+   */
   export interface RefCallback<T> {
     (instance: T | null): void;
   }
 
-  export type Ref<T> = RefCallback<T> | RefObject<T> | null;
+  /**
+   * `ref` is a special attribute that can be attached to any component,
+   * It can be an object created by `MDWC.createRef()` function or a callback function.
+   * This allows you to have direct access to the DOM element.
+   */
+  export type Ref<T> = MutableRefObject<T> | RefCallback<T> | RefObject<T> | null;
 
   export type Fragment = ClassType<{ children?: MDWCNode }, [{}]>;
 
