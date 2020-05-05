@@ -405,7 +405,7 @@ declare namespace MDWC {
     method?: string;
     min?: number | string;
     name?: string;
-    style?: Partial<CSSStyleDeclaration>;
+    style?: CSSProperties;
     target?: string;
     type?: string;
     width?: number | string;
