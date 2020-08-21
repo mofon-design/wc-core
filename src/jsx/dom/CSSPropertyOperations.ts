@@ -1,4 +1,4 @@
-import { MDWC } from '../types';
+import { MDWC } from '../../types';
 
 /**
  * Assign styles to HTML elements.
@@ -10,16 +10,19 @@ export function setValueForStyles<T extends HTMLElement>(
   styles: MDWC.CSSPropertiesWithCustoms,
 ) {
   let styleName: string;
-  const style = element.style;
-  for (styleName in styles) {
-    if (!Object.prototype.hasOwnProperty.call(style, styleName)) {
-      continue;
-    }
+  const style = element.style as CSSStyleDeclaration | undefined;
 
-    if (isNotCustomProperty(styleName)) {
-      style[styleName] = dangerousStyleValue(styles[styleName]);
-    } else {
-      style.setProperty(styleName, dangerousStyleValue(styles[styleName]));
+  if (style) {
+    for (styleName in styles) {
+      if (!Object.prototype.hasOwnProperty.call(style, styleName)) {
+        continue;
+      }
+
+      if (isNotCustomProperty(styleName)) {
+        style[styleName] = dangerousStyleValue(styles[styleName]);
+      } else {
+        style.setProperty(styleName, dangerousStyleValue(styles[styleName]));
+      }
     }
   }
 }

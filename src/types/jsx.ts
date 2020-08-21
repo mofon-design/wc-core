@@ -60,7 +60,6 @@ declare namespace MDWC {
 
   export interface MDWCElement {
     children?: MDWCNode;
-    key?: Key;
     props: object;
     ref?: Ref<unknown>;
     type: MDWCElementType;

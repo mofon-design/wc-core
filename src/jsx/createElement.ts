@@ -1,5 +1,5 @@
 import { MDWC } from '../types';
-import { ReservedProperty } from './reservedProperties';
+import { ReservedProperty } from './shared/reservedProperties';
 
 /**
  * Create a WDWC element.
@@ -14,12 +14,12 @@ export function createElement(
   props = props ?? {};
 
   let children: MDWC.MDWCNode = rest;
-  const key = props[ReservedProperty.KEY];
   const ref = props[ReservedProperty.REF];
-  // // eslint-disable-next-line no-param-reassign
-  // delete props[ReservedProperty.KEY];
+  // const style = props[ReservedProperty.STYLE];
   // // eslint-disable-next-line no-param-reassign
   // delete props[ReservedProperty.REF];
+  // // eslint-disable-next-line no-param-reassign
+  // delete props[ReservedProperty.STYLE];
 
   if (!children.length && ReservedProperty.CHILDREN in props) {
     children = props[ReservedProperty.CHILDREN] as MDWC.MDWCNode;
@@ -27,5 +27,5 @@ export function createElement(
     // delete props[ReservedProperty.CHILDREN];
   }
 
-  return { children, key, props, ref, type };
+  return { children, props, ref, type };
 }
