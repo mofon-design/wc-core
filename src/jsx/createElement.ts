@@ -29,5 +29,3 @@ export function createElement(
 
   return { children, key, props, ref, type };
 }
-
-export { createElement as h };
