@@ -129,7 +129,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       });
     }
 
-    window.customElements.define(tagName, Target, options);
+    customElements.define(tagName, Target, options);
 
     return Target;
   };
