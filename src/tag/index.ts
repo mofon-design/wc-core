@@ -6,6 +6,7 @@ import {
   // CoreInternalElementConstructor,
 } from '../types';
 import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
+import { overridePrivateMethods } from './overridePrivateMethods';
 import { SetElementConnectedKey } from './privatePropertiesKey';
 import { callSuperLifecycle, overrideLifecycle } from './superLifecycle';
 
@@ -28,26 +29,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
 
     // const WrappedTarget = Target as {} as CoreInternalElementConstructor<T>;
 
-    const privateMethods = {
-      [SetElementConnectedKey](this: CoreInternalElement<InstanceType<T>>): void {
-        if (this.isConnected) {
-          this.stage |= CoreElementStage.CONNECTED;
-        } else {
-          this.stage &= ~CoreElementStage.CONNECTED;
-        }
-      },
-    };
-
-    const privateMethodKeys = Object.keys(privateMethods) as (keyof typeof privateMethods)[];
-
-    privateMethodKeys.forEach(privateMethodKey => {
-      Object.defineProperty(Target.prototype, privateMethodKey, {
-        configurable: true,
-        enumerable: false,
-        value: privateMethods[privateMethodKey],
-        writable: false,
-      });
-    });
+    overridePrivateMethods(Target);
 
     const lifecycle: ThisType<CoreInternalElement<InstanceType<T>>> & CoreElementLifecycle = {
       attributeChangedCallback(
