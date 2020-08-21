@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { CSSType } from '@mofon-design/csstype';
+import { CSSType } from './csstype/index';
 import { ClassType } from './helper';
 import { CoreElementConstructor } from './tag';
 

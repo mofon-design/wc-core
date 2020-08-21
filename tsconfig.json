@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "declaration": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
+    "importHelpers": false,
     "jsx": "react",
     "jsxFactory": "MDWC.h",
     "module": "ESNext",
