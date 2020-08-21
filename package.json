@@ -1,6 +1,6 @@
 {
   "name": "@mofon-design/wc-core",
-  "version": "0.2.1",
+  "version": "0.3.0-beta.1",
   "description": "Web components core of Mofon Design",
   "license": "MIT",
   "main": "lib/index.js",
@@ -35,10 +35,6 @@
     "prettier": "^1.19.0",
     "typescript": "^3.8.0",
     "yorkie": "^2.0.0"
-  },
-  "dependencies": {
-    "@mofon-design/csstype": "^1.0.0",
-    "tslib": "^1.11.1"
   },
   "sideEffects": [
     "*.css",
