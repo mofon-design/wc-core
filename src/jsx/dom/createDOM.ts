@@ -1,4 +1,4 @@
-import { MDWC } from '../../types';
+import { MDWC } from '../../types/index';
 import { Children } from '../children';
 import { createDOMNodeAndApplyProperties } from './createDOMNodeAndApplyProperties';
 

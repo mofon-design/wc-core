@@ -8,7 +8,7 @@
     "jsx": "react",
     "jsxFactory": "MDWC.h",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Classic",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,

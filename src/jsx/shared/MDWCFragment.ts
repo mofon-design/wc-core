@@ -1,4 +1,4 @@
-import { MDWC } from '../../types';
+import { MDWC } from '../../types/index';
 
 export const Fragment = {} as MDWC.Fragment;
 

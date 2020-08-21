@@ -1,4 +1,4 @@
-import { CoreElementStage, CoreInternalElement } from '../types';
+import { CoreElementStage, CoreInternalElement } from '../types/index';
 
 /**
  * Property decorator always fired before element class decorator, so it is necessary

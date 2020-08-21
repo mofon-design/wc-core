@@ -1,4 +1,4 @@
-import { CoreElementStage, CoreInternalElement, CoreElementConstructor } from '../types';
+import { CoreElementStage, CoreInternalElement, CoreElementConstructor } from '../types/index';
 import { SetElementConnectedKey } from './privatePropertiesKey';
 
 /**

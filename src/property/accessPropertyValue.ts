@@ -14,7 +14,7 @@
 
 /* eslint-disable no-param-reassign */
 import { PropertiesKey } from '../tag/privatePropertiesKey';
-import { CoreInternalElement, NonFunctionPropertyKeys } from '../types';
+import { CoreInternalElement, NonFunctionPropertyKeys } from '../types/index';
 
 export function getPropertyValue<T, U extends NonFunctionPropertyKeys<T>>(
   self: CoreInternalElement<T>,

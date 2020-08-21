@@ -1,4 +1,4 @@
-import { CoreInternalElement, PropertyNumberDecorator } from '../types';
+import { CoreInternalElement, PropertyNumberDecorator } from '../types/index';
 import { getPropertyValue, setPropertyValue } from './accessPropertyValue';
 import { createAttrPropMap } from './createAttrPropMap';
 

@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import * as CSS from 'csstype';
+import { CSSType } from '@mofon-design/csstype';
 import { ClassType } from './helper';
 import { CoreElementConstructor } from './tag';
 
@@ -98,7 +98,7 @@ declare namespace MDWC {
    * For examples and more information, visit:
    * https://github.com/frenic/csstype#what-should-i-do-when-i-get-type-errors
    */
-  export interface CSSProperties extends CSS.Properties {}
+  export interface CSSProperties extends CSSType.Properties {}
 
   export type CSSPropertiesWithCustoms = CSSProperties & Record<string, unknown>;
 

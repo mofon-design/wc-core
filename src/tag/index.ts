@@ -4,7 +4,7 @@ import {
   CoreElementStage,
   CoreInternalElement,
   // CoreInternalElementConstructor,
-} from '../types';
+} from '../types/index';
 import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
 import { overridePrivateMethods } from './overridePrivateMethods';
 import { SetElementConnectedKey } from './privatePropertiesKey';

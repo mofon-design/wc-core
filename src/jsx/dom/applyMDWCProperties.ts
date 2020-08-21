@@ -1,4 +1,4 @@
-import { MDWC } from '../../types';
+import { MDWC } from '../../types/index';
 import { ReservedProperty, ReservedPropertiesMap } from '../shared/reservedProperties';
 import { setValueForStyles } from './CSSPropertyOperations';
 import { setValueForProperty } from './DOMPropertyOperations';
@@ -12,7 +12,7 @@ function hasOwnProperty<T, U extends keyof T>(object: T, key: keyof any): key is
  */
 export function applyMDWCProperties(element: MDWC.MDWCElement, node: HTMLElement): void {
   let propKey: string;
-  const { props } = element;
+  const props = element.props;
 
   for (propKey in props) {
     if (!hasOwnProperty(props, propKey)) {
