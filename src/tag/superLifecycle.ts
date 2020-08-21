@@ -56,7 +56,7 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
       get() {
         return lifecycle[lifecycleKey];
       },
-      set<V extends keyof U>(this: RewritedInstance<T, U>, value: U[V]) {
+      set(this: RewritedInstance<T, U>, value: U[typeof lifecycleKey]) {
         if (!Object.prototype.hasOwnProperty.call(this, SuperLifecycleKey))
           Object.defineProperty(this, SuperLifecycleKey, {
             value: { ...this[SuperLifecycleKey] },
@@ -64,7 +64,7 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
             enumerable: false,
             writable: false,
           });
-        this[SuperLifecycleKey]![lifecycleKey as V] = value;
+        this[SuperLifecycleKey]![lifecycleKey] = value;
       },
     });
   });
