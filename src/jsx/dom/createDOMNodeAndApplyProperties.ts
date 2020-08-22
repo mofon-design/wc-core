@@ -1,4 +1,4 @@
-import { MDWC } from '../../types/index';
+import { MDWC } from '../../types';
 import { isMDWCFragmentType } from '../shared/MDWCFragment';
 import { applyMDWCProperties } from './applyMDWCProperties';
 

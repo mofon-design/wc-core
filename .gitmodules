@@ -1,3 +1,0 @@
-[submodule "src/types/csstype"]
-	path = src/types/csstype
-	url = https://github.com/mofon-design/csstype.git

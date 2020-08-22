@@ -8,11 +8,7 @@
   "types": "es/index.d.ts",
   "typings": "typings.d.ts",
   "scripts": {
-    "build": "npm run build:es && npm run build:lib",
-    "build:es": "rm -rf es/ && tsc --build tsconfig.json",
-    "build:lib": "rm -rf lib/ && tsc --build tsconfig.es5.json",
-    "build:example": "npm run compile:example && rm -rf example/es && node scripts/buildExample.js",
-    "compile:example": "npm run build:es && tsc --build example/tsconfig.json",
+    "build": "gulp",
     "lint": "npm run build:es && npm run lint:script && npm run lint:style",
     "lint-fix": "npm run lint-fix:script && npm run lint-fix:style",
     "lint-fix:script": "npm run lint:script -- --fix",
@@ -27,12 +23,27 @@
     "pre-commit": "lint-staged",
     "commit-msg": "node scripts/verifyCommit.js"
   },
+  "dependencies": {
+    "@babel/runtime": "^7.11.2",
+    "@mofon-design/csstype": "^1.0.0"
+  },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/preset-env": "^7.11.0",
+    "@types/babel__preset-env": "^7.9.0",
+    "@types/gulp": "^4.0.6",
+    "@types/gulp-typescript": "^2.13.0",
+    "@types/merge2": "^1.3.0",
     "@umijs/fabric": "^2.0.3",
     "chalk": "^3.0.0",
-    "csstype": "^2.6.10",
+    "del": "^5.1.0",
+    "gulp": "^4.0.2",
+    "gulp-babel": "^8.0.0",
+    "gulp-typescript": "^6.0.0-alpha.1",
     "lint-staged": "^10.0.8",
+    "merge2": "^1.4.1",
     "prettier": "^1.19.0",
+    "ts-node": "^9.0.0",
     "typescript": "^3.8.0",
     "yorkie": "^2.0.0"
   },

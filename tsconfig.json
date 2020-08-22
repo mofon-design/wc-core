@@ -8,18 +8,24 @@
     "jsx": "react",
     "jsxFactory": "MDWC.h",
     "module": "ESNext",
-    "moduleResolution": "Classic",
+    "moduleResolution": "Node",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "es",
     "pretty": true,
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "ES2015"
+    "target": "ESNext"
   },
-  "include": ["src", "typings.d.ts"]
+  "include": ["src", "typings.d.ts"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS",
+      "resolveJsonModule": true
+    },
+    "transpileOnly": true
+  }
 }

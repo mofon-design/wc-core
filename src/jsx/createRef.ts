@@ -1,4 +1,4 @@
-import { MDWC } from '../types/index';
+import { MDWC } from '../types';
 
 /**
  * Create a `RefObject` that can be passed to the `ref` attribute of the jsx element

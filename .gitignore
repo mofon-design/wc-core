@@ -9,6 +9,7 @@
 
 # production
 /coverage
+/dist
 /es
 /lib
 /example/**/*.js

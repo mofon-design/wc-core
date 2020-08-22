@@ -1,3 +1,4 @@
 example/**/*.js
 es/
 lib/
+gulpfile.ts

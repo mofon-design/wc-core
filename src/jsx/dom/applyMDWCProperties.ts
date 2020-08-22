@@ -1,4 +1,4 @@
-import { MDWC } from '../../types/index';
+import { MDWC } from '../../types';
 import { ReservedProperty, ReservedPropertiesMap } from '../shared/reservedProperties';
 import { setValueForStyles } from './CSSPropertyOperations';
 import { setValueForProperty } from './DOMPropertyOperations';

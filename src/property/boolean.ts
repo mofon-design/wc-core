@@ -1,4 +1,4 @@
-import { CoreElementStage, CoreInternalElement, PropertyBooleanDecorator } from '../types/index';
+import { CoreElementStage, CoreInternalElement, PropertyBooleanDecorator } from '../types';
 import { getPropertyValue, setPropertyValue } from './accessPropertyValue';
 import { createAttrPropMap } from './createAttrPropMap';
 
