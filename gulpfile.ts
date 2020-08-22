@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Options as BabelPresetEnvOptions } from '@babel/preset-env';
 import * as del from 'del';
+import * as fs from 'fs';
 import * as gulp from 'gulp';
 // @ts-ignore
 import * as babel from 'gulp-babel';
@@ -112,4 +113,61 @@ gulp.task(
     'rollup-umd',
     'clean-dist',
   ),
+);
+
+gulp.task('gulp-example-typescript', () => {
+  const tsCompileTask = ts({
+    ...config.compilerOptions,
+    module: 'ESNext',
+    target: 'ES2018',
+    declaration: false,
+    rootDir: getAbsolutePath('example'),
+    outDir: getAbsolutePath('example'),
+  });
+
+  const babelPresetEnvOptions: BabelPresetEnvOptions = {
+    modules: false,
+    targets: {
+      browsers: ['> 1%', 'last 2 versions', 'not ie <= 8'],
+    },
+  };
+
+  const babelCompileTask = babel({
+    comments: false,
+    presets: [['@babel/preset-env', babelPresetEnvOptions]],
+    plugins: [['@babel/plugin-proposal-class-properties', { loose: false }]],
+  });
+
+  return gulp
+    .src('example/**/*.{ts,tsx}')
+    .pipe(tsCompileTask)
+    .js.pipe(babelCompileTask)
+    .pipe(gulp.dest('example'));
+});
+
+gulp.task('build-example-index-page', () => {
+  const HomePageFile = getAbsolutePath('example/index.html');
+  const HomePageHTML = fs.readFileSync(HomePageFile, 'utf8');
+
+  const Examples = fs
+    .readdirSync(__dirname, { withFileTypes: true })
+    .filter(item => item.isDirectory())
+    .map(
+      item => `
+        <li>
+          <a href="${item.name}/index.html">${item.name}</a>
+        </li>`,
+    )
+    .join('');
+
+  fs.writeFileSync(HomePageFile, HomePageHTML.split('<!--INSTER-LIST-->').join(Examples), 'utf8');
+
+  return Promise.resolve();
+});
+
+gulp.task('clean-example', () => del(['example/**/*.js']));
+
+gulp.task(
+  'example',
+  gulp.series('default', 'clean-example', 'build-example-index-page', 'gulp-example-typescript'),
 );

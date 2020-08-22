@@ -2,19 +2,23 @@
   "compilerOptions": {
     "alwaysStrict": true,
     "baseUrl": ".",
+    "declaration": true,
     "experimentalDecorators": true,
-    "importHelpers": true,
+    "importHelpers": false,
+    "jsx": "react",
+    "jsxFactory": "MDWC.h",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "noImplicitAny": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "pretty": true,
+    "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
-    "target": "ES2015"
+    "target": "ESNext"
   }
 }

@@ -9,6 +9,7 @@
   "typings": "typings.d.ts",
   "scripts": {
     "build": "gulp",
+    "build:example": "gulp example",
     "lint": "npm run build:es && npm run lint:script && npm run lint:style",
     "lint-fix": "npm run lint-fix:script && npm run lint-fix:style",
     "lint-fix:script": "npm run lint:script -- --fix",
@@ -65,7 +66,7 @@
       "eslint",
       "prettier --write"
     ],
-    "*.ts?(x)": [
+    "src/*.ts?(x)": [
       "eslint",
       "prettier --parser=typescript --write"
     ]
