@@ -1,12 +1,16 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Options as BabelPresetEnvOptions } from '@babel/preset-env';
-import * as path from 'path';
 import * as del from 'del';
 import * as gulp from 'gulp';
 // @ts-ignore
 import * as babel from 'gulp-babel';
 import * as ts from 'gulp-typescript';
+import * as uglify from 'gulp-uglify';
 import * as merge from 'merge2';
+import * as path from 'path';
+import * as rollup from 'rollup';
+import * as rollupBabel from 'rollup-plugin-babel';
+import * as rollupNodeResolve from 'rollup-plugin-node-resolve';
 import * as config from './tsconfig.json';
 
 function getAbsolutePath(p: string) {
@@ -71,11 +75,41 @@ gulp.task('gulp-babel-lib', () => {
     .pipe(gulp.dest('lib'));
 });
 
+gulp.task('rollup-umd', () => {
+  return rollup
+    .rollup({
+      input: getAbsolutePath('es/index.js'),
+      // @ts-ignore
+      plugins: [rollupBabel(), rollupNodeResolve()],
+    })
+    .then(bundle =>
+      bundle.write({
+        name: 'MDWC',
+        format: 'umd',
+        exports: 'named',
+        file: getAbsolutePath('index.umd.js'),
+      }),
+    )
+    .then(() =>
+      gulp
+        .src('index.umd.js')
+        .pipe(uglify())
+        .pipe(gulp.dest('.')),
+    );
+});
+
 gulp.task('clean-dist', () => del(['dist']));
 
 gulp.task('clean', () => del(['lib', 'es', 'dist']));
 
 gulp.task(
   'default',
-  gulp.series('clean', 'gulp-typescript', 'gulp-babel-es', 'gulp-babel-lib', 'clean-dist'),
+  gulp.series(
+    'clean',
+    'gulp-typescript',
+    'gulp-babel-es',
+    'gulp-babel-lib',
+    'rollup-umd',
+    'clean-dist',
+  ),
 );
