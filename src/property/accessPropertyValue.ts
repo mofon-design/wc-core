@@ -16,17 +16,16 @@
 import { PropertiesKey } from '../tag/privatePropertiesKey';
 import { CoreInternalElement, NonFunctionPropertyKeys } from '../types';
 
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
 export function getPropertyValue<T, U extends NonFunctionPropertyKeys<T>>(
   self: CoreInternalElement<T>,
   key: U,
 ): T[U] | undefined {
-  if (!Object.prototype.hasOwnProperty.call(self, PropertiesKey)) {
-    Object.defineProperty(self, PropertiesKey, {
-      configurable: true,
-      enumerable: false,
-      value: { ...self[PropertiesKey] },
-      writable: true,
-    });
+  makeSurePrivatePropertiesStoreExists(self);
+
+  if (!hasOwnProperty.call(self[PropertiesKey], key)) {
+    return undefined;
   }
 
   return self[PropertiesKey][key];
@@ -37,7 +36,13 @@ export function setPropertyValue<T, U extends NonFunctionPropertyKeys<T>>(
   key: U,
   value: T[U],
 ): void {
-  if (!Object.prototype.hasOwnProperty.call(self, PropertiesKey)) {
+  makeSurePrivatePropertiesStoreExists(self);
+
+  self[PropertiesKey][key] = value;
+}
+
+function makeSurePrivatePropertiesStoreExists<T>(self: CoreInternalElement<T>): void {
+  if (!hasOwnProperty.call(self, PropertiesKey)) {
     Object.defineProperty(self, PropertiesKey, {
       configurable: true,
       enumerable: false,
@@ -45,6 +50,4 @@ export function setPropertyValue<T, U extends NonFunctionPropertyKeys<T>>(
       writable: true,
     });
   }
-
-  self[PropertiesKey][key] = value;
 }
