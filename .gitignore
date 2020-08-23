@@ -12,6 +12,7 @@
 /dist
 /es
 /lib
+/example/index.html
 /example/**/*.js
 !/example/**/.*.js
 /index.*.js

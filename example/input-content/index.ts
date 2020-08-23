@@ -1,4 +1,4 @@
-import { CoreElement, property, tag } from '../../es/index';
+import { CoreElement, property, tag } from '../../src';
 
 @tag('input-content')
 export class InputContent extends HTMLElement implements CoreElement {
