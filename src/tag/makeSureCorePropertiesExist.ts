@@ -9,7 +9,7 @@ export function makeSureCorePropertiesExist<T>(UnsafeProtoType: T): CoreInternal
 
   if (!Object.prototype.hasOwnProperty.call(ProtoType, 'mapAttrsToProps')) {
     Object.defineProperty(ProtoType, 'mapAttrsToProps', {
-      value: Object.assign(Object.create(null), ProtoType.mapAttrsToProps),
+      value: { ...ProtoType.mapAttrsToProps },
       configurable: true,
       enumerable: false,
       writable: false,

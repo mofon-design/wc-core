@@ -10,6 +10,8 @@ import { overridePrivateMethods } from './overridePrivateMethods';
 import { SetElementConnectedKey } from './privatePropertiesKey';
 import { callSuperLifecycle, overrideLifecycle } from './superLifecycle';
 
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
 /**
  * @param tagName
  * Name for the new custom element.
@@ -39,7 +41,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       ): void {
         // if (oldValue === newValue) return;
 
-        if (Target.prototype.mapAttrsToProps[name] !== undefined) {
+        if (hasOwnProperty.call(Target.prototype.mapAttrsToProps, name)) {
           /**
            * Prevent the property setter from loop calls.
            *
@@ -110,7 +112,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
 
     overrideLifecycle(Target, lifecycle);
 
-    if (!Object.prototype.hasOwnProperty.call(Target, 'observedAttributes')) {
+    if (!hasOwnProperty.call(Target, 'observedAttributes')) {
       Object.defineProperty(Target, 'observedAttributes', {
         configurable: true,
         enumerable: true,
@@ -120,7 +122,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       });
     }
 
-    if (!Object.prototype.hasOwnProperty.call(Target, 'tagName') || Target.tagName !== tagName) {
+    if (!hasOwnProperty.call(Target, 'tagName') || Target.tagName !== tagName) {
       Object.defineProperty(Target, 'tagName', {
         configurable: true,
         enumerable: true,
