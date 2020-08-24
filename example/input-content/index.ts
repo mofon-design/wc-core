@@ -1,8 +1,8 @@
-import { CoreElement, property, tag } from '../../src';
+import MDWC from '../../src';
 
-@tag('input-content')
-export class InputContent extends HTMLElement implements CoreElement {
-  @(property('string').fallback('Attribute does not exists'))
+@MDWC.tag('input-content')
+export class InputContent extends HTMLElement implements MDWC.CoreElement {
+  @(MDWC.property('string').fallback('Attribute does not exists'))
   value!: string;
 
   button = document.createElement('button');

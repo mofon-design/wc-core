@@ -1,4 +1,4 @@
-export * from './jsx';
-export { property } from './property';
-export { tag } from './tag';
-export * from './types';
+import * as MDWC from './forwardExport';
+
+export * from './forwardExport';
+export { MDWC as default };

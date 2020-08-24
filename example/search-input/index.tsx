@@ -1,4 +1,4 @@
-import * as MDWC from '../../src';
+import MDWC from '../../src';
 
 @MDWC.tag('search-input')
 export class SearchInput extends HTMLElement implements MDWC.CoreElement {
