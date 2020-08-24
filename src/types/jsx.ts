@@ -54,7 +54,7 @@ declare namespace MDWC {
    */
   export type Ref<T> = MutableRefObject<T> | RefCallback<T> | RefObject<T> | null;
 
-  export type Fragment = ClassType<{ children?: MDWCNode }, [{}]>;
+  export type Fragment = ClassType<{}, [{ children?: MDWCNode, ref?: never }]>;
 
   export type MDWCElementType = string | CoreElementConstructor | Fragment;
 
