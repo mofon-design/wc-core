@@ -60,8 +60,10 @@ declare namespace MDWC {
 
   export interface MDWCElement {
     children?: MDWCNode;
+    key?: Key;
     props: object;
     ref?: Ref<unknown>;
+    style: CSSPropertiesWithCustoms;
     type: MDWCElementType;
   }
 
@@ -100,7 +102,7 @@ declare namespace MDWC {
    */
   export interface CSSProperties extends CSSType.Properties {}
 
-  export type CSSPropertiesWithCustoms = CSSProperties & Record<string, unknown>;
+  export type CSSPropertiesWithCustoms = CSSProperties & Record<string, string>;
 
   // @ts-ignore
   export interface DetailedHTMLProps<T extends {}, U> extends T, ClassAttributes<U> {
