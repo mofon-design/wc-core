@@ -63,7 +63,7 @@ declare namespace MDWC {
     key?: Key;
     props: object;
     ref?: Ref<unknown>;
-    style: CSSPropertiesWithCustoms;
+    style: CSSProperties;
     type: MDWCElementType;
   }
 
@@ -101,8 +101,6 @@ declare namespace MDWC {
    * https://github.com/frenic/csstype#what-should-i-do-when-i-get-type-errors
    */
   export interface CSSProperties extends CSSType.Properties {}
-
-  export type CSSPropertiesWithCustoms = CSSProperties & Record<string, string>;
 
   // @ts-ignore
   export interface DetailedHTMLProps<T extends {}, U> extends T, ClassAttributes<U> {
