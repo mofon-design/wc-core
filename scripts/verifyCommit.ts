@@ -2,7 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 // Invoked on the commit-msg git hook by yorkie.
 
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 import * as fs from 'fs';
 
 const msgPath = process.env.GIT_PARAMS;
