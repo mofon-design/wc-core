@@ -10,11 +10,7 @@ import {
  * For some special properties, the incoming value will be converted first
  * to make it suitable for DOM attributes.
  */
-export function setValueForProperty<T extends HTMLElement>(
-  element: T,
-  name: string,
-  value: unknown,
-) {
+export function setValueForProperty<T extends Element>(element: T, name: string, value: unknown) {
   /* eslint-disable no-param-reassign */
   if (Object.prototype.hasOwnProperty.call(SpecialAttributesNameMap, name)) {
     name = SpecialAttributesNameMap[name];
@@ -54,7 +50,7 @@ export function setValueForProperty<T extends HTMLElement>(
  * Determine whether it must be assigned as a property of the element,
  * and make a type assertion.
  */
-function mustUseProperty<T extends HTMLElement>(
+function mustUseProperty<T extends Element>(
   _element: T,
   _name: string,
   attributeInfo: DOMAttributeInfo,
@@ -65,7 +61,7 @@ function mustUseProperty<T extends HTMLElement>(
 /**
  * Convert unsafe values for assignment to element properties.
  */
-function normalizePropertyValue<T extends HTMLElement, U extends keyof T>(
+function normalizePropertyValue<T extends Element, U extends keyof T>(
   _element: T,
   _name: U,
   value: unknown,
