@@ -1,4 +1,4 @@
-import { MDWC } from '../../types';
+import { MDWC } from '../../../types';
 
 /**
  * Assign styles to HTML elements.
