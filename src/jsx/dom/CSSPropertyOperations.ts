@@ -7,7 +7,7 @@ import { MDWC } from '../../types';
  */
 export function setValueForStyles<T extends Element>(
   element: T,
-  styles: MDWC.CSSProperties & Record<string, unknown>,
+  styles: MDWC.CSSProperties & Record<string, any>,
 ) {
   if (!(element instanceof HTMLElement)) return;
 
