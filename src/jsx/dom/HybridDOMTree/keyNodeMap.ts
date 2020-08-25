@@ -1,3 +1,4 @@
+import { isHybridDOMTreeFragmentNode, isHybridDOMTreeTextNode } from './assert';
 import {
   HybridDOMTreeChildNode,
   HybridDOMTreeChildNodeType,
@@ -5,10 +6,7 @@ import {
   HybridDOMTreeHTMLElementNode,
   HybridDOMTreeNodeType,
   HybridDOMTreeTextNode,
-  isHybridDOMTreeFragmentNode,
-  // isHybridDOMTreeHTMLElementNode,
-  isHybridDOMTreeTextNode,
-} from '../HybridDOMTree';
+} from './types';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 

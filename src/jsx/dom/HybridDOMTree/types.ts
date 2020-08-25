@@ -92,3 +92,47 @@ export type HybridDOMTreeNode =
   | HybridDOMTreeHTMLElementNode
   | HybridDOMTreeRootNode
   | HybridDOMTreeTextNode;
+
+export const enum DiffType {
+  INSERT,
+  MOVE,
+  MOVE_AND_UPDATE,
+  REMOVE,
+  UPDATE,
+}
+
+export interface DiffQueueInsertedItem {
+  node: HybridDOMTreeChildNode;
+  type: DiffType.INSERT;
+}
+
+export interface DiffQueueMovedItem {
+  node: HybridDOMTreeChildNode;
+  type: DiffType.MOVE;
+}
+
+export interface DiffQueueMovedAndUpdatedItem {
+  node: HybridDOMTreeChildNode;
+  type: DiffType.MOVE_AND_UPDATE;
+  /** `[propertyKey, oldValue, newValue]` */
+  updates: [string, unknown, unknown][];
+}
+
+export interface DiffQueueRemovedItem {
+  node: HybridDOMTreeChildNode;
+  type: DiffType.REMOVE;
+}
+
+export interface DiffQueueUpdatedItem {
+  node: HybridDOMTreeChildNode;
+  type: DiffType.UPDATE;
+  /** `[propertyKey, oldValue, newValue]` */
+  updates: [string, unknown, unknown][];
+}
+
+export type DiffQueueItem =
+  | DiffQueueInsertedItem
+  | DiffQueueMovedItem
+  | DiffQueueMovedAndUpdatedItem
+  | DiffQueueRemovedItem
+  | DiffQueueUpdatedItem;
