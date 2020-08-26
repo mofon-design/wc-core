@@ -24,7 +24,7 @@ export function setValueForProperty<T extends Element>(element: T, name: string,
       return;
     }
 
-    if (value !== null) {
+    if (value !== undefined) {
       if (attributeInfo.type === DOMAttributeType.BOOLEAN) {
         value = value ? '' : null;
       } else if (attributeInfo.type === DOMAttributeType.BOOLEANISH_STRING) {
@@ -38,7 +38,7 @@ export function setValueForProperty<T extends Element>(element: T, name: string,
     }
   }
 
-  if (value === null) {
+  if (value === null || value === undefined) {
     element.removeAttribute(name);
   } else {
     element.setAttribute(name, `${value}`);
@@ -67,7 +67,7 @@ function normalizePropertyValue<T extends Element, U extends keyof T>(
   value: unknown,
   attributeInfo: DOMAttributeInfo,
 ): T[U] {
-  if (value === null) {
+  if (value === undefined) {
     return value as never;
   }
 
