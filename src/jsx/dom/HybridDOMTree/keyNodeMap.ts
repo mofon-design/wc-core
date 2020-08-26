@@ -110,6 +110,74 @@ function shiftHybridDOMTreeNodeFromKeyNodeMap(
 
 export { shiftHybridDOMTreeNodeFromKeyNodeMap };
 
+/**
+ * Take out all the remaining nodes in the key-node map.
+ * These nodes have not been shifted, and need to be removed from the browser DOM tree.
+ */
+export function shiftRestNodesOfHybridDOMTreeKeyNodeMap(
+  map: HybridDOMTreeKeyNodeMap,
+): HybridDOMTreeChildNode[] {
+  const restRecords: (HybridDOMTreeChildNode | void)[] = [];
+
+  let index: number;
+  let node: HybridDOMTreeChildNode;
+  let firstCharacteristic: string;
+  let secondCharacteristic: string;
+  let submap: HybridDOMTreeKeyNodeMap[HybridDOMTreeChildNodeType];
+  let subsubmap: HybridDOMTreeKeyNodeMap[HybridDOMTreeChildNodeType][string];
+
+  submap = map[HybridDOMTreeNodeType.FRAGMENT];
+  for (firstCharacteristic in submap) {
+    if (!hasOwnProperty.call(submap, firstCharacteristic)) {
+      continue;
+    }
+
+    for ([node, index] of submap[firstCharacteristic]) {
+      // * ASSERT `hasOwnProperty.call(restRecords, index)`
+      restRecords[index] = node;
+    }
+
+    delete submap[firstCharacteristic];
+  }
+
+  submap = map[HybridDOMTreeNodeType.TEXT];
+  for (firstCharacteristic in submap) {
+    if (!hasOwnProperty.call(submap, firstCharacteristic)) {
+      continue;
+    }
+
+    for ([node, index] of submap[firstCharacteristic]) {
+      // * ASSERT `hasOwnProperty.call(restRecords, index)`
+      restRecords[index] = node;
+    }
+
+    delete submap[firstCharacteristic];
+  }
+
+  submap = map[HybridDOMTreeNodeType.HTML_ELEMENT];
+  for (firstCharacteristic in submap) {
+    if (!hasOwnProperty.call(submap, firstCharacteristic)) {
+      continue;
+    }
+
+    subsubmap = submap[firstCharacteristic];
+    for (secondCharacteristic in subsubmap) {
+      if (!hasOwnProperty.call(subsubmap, secondCharacteristic)) {
+        continue;
+      }
+
+      for ([node, index] of subsubmap[secondCharacteristic]) {
+        // * ASSERT `hasOwnProperty.call(restRecords, index)`
+        restRecords[index] = node;
+      }
+    }
+
+    delete submap[firstCharacteristic];
+  }
+
+  return restRecords.filter((record): record is Exclude<typeof record, void> => !!record);
+}
+
 export interface HybridDOMTreeKeyNodeMap {
   [HybridDOMTreeNodeType.FRAGMENT]: Record<string, [HybridDOMTreeFragmentNode, number][]>;
   [HybridDOMTreeNodeType.HTML_ELEMENT]: Record<

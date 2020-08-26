@@ -8,6 +8,7 @@ import {
   HybridDOMTreeKeyNodeMap,
   createHybridDOMTreeKeyNodeMap,
   shiftHybridDOMTreeNodeFromKeyNodeMap,
+  shiftRestNodesOfHybridDOMTreeKeyNodeMap,
 } from './keyNodeMap';
 import {
   DiffQueueItem,
@@ -44,6 +45,7 @@ export function diffHybridDOMTree(
   let node: HybridDOMTreeChildNode;
   let lastIndex: number | undefined;
   let parent: HybridDOMTreeParentNode;
+  let removedNodes: HybridDOMTreeChildNode[];
   let existsNode: HybridDOMTreeChildNode | undefined;
   let nonEmptyMDWCNode: MDWC.MDWCElement | MDWC.MDWCText;
 
@@ -143,6 +145,12 @@ export function diffHybridDOMTree(
       }
 
       parent.children.push(node);
+    }
+
+    removedNodes = shiftRestNodesOfHybridDOMTreeKeyNodeMap(keyNodeMap);
+
+    for (node of removedNodes) {
+      diffQueue.push({ node, type: DiffType.REMOVE });
     }
   }
 
