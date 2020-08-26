@@ -32,64 +32,60 @@ const HybridDOMTreeChildNodePropertyDescriptors: {
       return childNodes;
     },
   },
-  firstChildNode: {
-    configurable: true,
-    enumerable: true,
-    get() {
-      let child: HybridDOMTreeChildNode;
-      let childNode: Node | null = null;
-
-      if ('children' in this) {
-        for (child of this.children) {
-          if (isHybridDOMTreeFragmentNode(child)) {
-            childNode = child.firstChildNode;
-          } else {
-            childNode = child.instance;
-          }
-
-          if (childNode !== null) {
-            break;
-          }
-        }
-      }
-
-      return childNode;
-    },
-  },
   nextSiblingNode: {
     configurable: true,
     enumerable: true,
     get() {
-      let parent = this.parent;
+      let self: HybridDOMTreeChildNode | null = this;
 
-      while (isHybridDOMTreeFragmentNode(parent)) {
-        parent = parent.parent;
-      }
+      let isBeforeSelf: boolean;
+      let children: readonly HybridDOMTreeChildNode[];
 
-      const children = parent.children;
       let child: HybridDOMTreeChildNode;
       let siblingNode: Node | null = null;
 
-      let isBeforeThis = true;
+      let fragmentChildrenQueue: HybridDOMTreeChildNode[];
+      let fragmentChild: HybridDOMTreeChildNode | undefined;
 
-      for (child of children) {
-        if (child === this) {
-          isBeforeThis = false;
-          continue;
-        } else if (isBeforeThis) {
-          continue;
+      do {
+        isBeforeSelf = true;
+        children = self.parent.children;
+
+        for (child of children) {
+          if (child === self) {
+            isBeforeSelf = false;
+            continue;
+          } else if (isBeforeSelf) {
+            continue;
+          }
+
+          if (isHybridDOMTreeFragmentNode(child)) {
+            fragmentChildrenQueue = Array.prototype.slice.call(child.children, 0);
+
+            // eslint-disable-next-line no-cond-assign
+            while ((fragmentChild = fragmentChildrenQueue.shift())) {
+              if (isHybridDOMTreeFragmentNode(fragmentChild)) {
+                Array.prototype.unshift.apply(fragmentChildrenQueue, fragmentChild.children);
+              } else {
+                siblingNode = fragmentChild.instance;
+                break;
+              }
+            }
+          } else {
+            siblingNode = child.instance;
+          }
+
+          if (siblingNode !== null) {
+            break;
+          }
         }
 
-        if (isHybridDOMTreeFragmentNode(child)) {
-          siblingNode = child.firstChildNode;
+        if (siblingNode === null && isHybridDOMTreeFragmentNode(self.parent)) {
+          self = self.parent;
         } else {
-          siblingNode = child.instance;
+          self = null;
         }
-
-        if (siblingNode !== null) {
-          break;
-        }
-      }
+      } while (self !== null);
 
       return siblingNode;
     },
