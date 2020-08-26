@@ -56,7 +56,6 @@ export function attachHybridDOMTreeFromMDWCNode(
           parent,
           props: element.props,
           ref: element.ref,
-          style: element.style,
           tagName,
         });
       }

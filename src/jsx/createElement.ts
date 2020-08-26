@@ -16,17 +16,14 @@ export function createElement(
   let children: MDWC.MDWCNode = rest;
   const ref = props[ReservedProperty.REF];
   const key = props[ReservedProperty.KEY];
-  const unsafeStyle = props[ReservedProperty.STYLE];
-  const style: {} = typeof unsafeStyle === 'object' ? { ...unsafeStyle } : {};
 
-  delete props[ReservedProperty.REF];
   delete props[ReservedProperty.KEY];
-  delete props[ReservedProperty.STYLE];
 
-  if (!children.length && ReservedProperty.CHILDREN in props) {
+  // * ASSERT `!children.length || !Object.prototype.hasOwnProperty.call(props, ReservedProperty.CHILDREN)`
+  if (!children.length && Object.prototype.hasOwnProperty.call(props, ReservedProperty.CHILDREN)) {
     children = props[ReservedProperty.CHILDREN] as MDWC.MDWCNode;
     delete props[ReservedProperty.CHILDREN];
   }
 
-  return { children, key, props, ref, style, type };
+  return { children, key, props, ref, type };
 }

@@ -41,7 +41,7 @@ export interface HybridDOMTreeFragmentNode extends HybridDOMTreeChildNodeProps {
 
 export interface HybridDOMTreeHTMLElementNode
   extends HybridDOMTreeChildNodeProps,
-    Readonly<Pick<MDWC.MDWCElement, 'props' | 'ref' | 'style'>> {
+    Readonly<Pick<MDWC.MDWCElement, 'props' | 'ref'>> {
   readonly children: HybridDOMTreeChildNode[];
   readonly instance: HTMLElement;
   readonly key: string;

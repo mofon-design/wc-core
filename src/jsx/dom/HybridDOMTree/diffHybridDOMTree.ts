@@ -122,7 +122,6 @@ export function diffHybridDOMTree(
           parent,
           props: nonEmptyMDWCNode.props,
           ref: nonEmptyMDWCNode.ref,
-          style: nonEmptyMDWCNode.style,
           tagName,
         });
       }

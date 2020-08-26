@@ -63,7 +63,6 @@ declare namespace MDWC {
     key?: Key;
     props: object;
     ref?: Ref<unknown>;
-    style: CSSProperties;
     type: MDWCElementType;
   }
 
