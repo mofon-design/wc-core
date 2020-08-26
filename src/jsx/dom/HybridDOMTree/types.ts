@@ -95,43 +95,46 @@ export type HybridDOMTreeNode =
 export const enum DiffType {
   INSERT,
   MOVE,
-  MOVE_AND_UPDATE,
   REMOVE,
   UPDATE,
 }
 
-export interface DiffQueueInsertedItem {
-  node: HybridDOMTreeChildNode;
-  type: DiffType.INSERT;
-}
+/** `[propertyKey, oldValue, newValue]` */
+export type PropertyUpdateQueueItem = readonly [string, unknown, unknown];
 
-export interface DiffQueueMovedItem {
-  node: HybridDOMTreeChildNode;
-  type: DiffType.MOVE;
-}
+export type PropertyUpdateQueue = readonly PropertyUpdateQueueItem[];
 
-export interface DiffQueueMovedAndUpdatedItem {
-  node: HybridDOMTreeChildNode;
-  type: DiffType.MOVE_AND_UPDATE;
+export type DiffQueueInsertedItem = {
+  readonly node: HybridDOMTreeChildNode;
+  readonly type: DiffType.INSERT;
+};
+
+export type DiffQueueMovedItem =
+  | {
+      readonly node: HybridDOMTreeChildNode;
+      readonly type: DiffType.MOVE;
+    }
+  | {
+      readonly node: HybridDOMTreeHTMLElementNode;
+      readonly type: DiffType.MOVE;
+      /** `[propertyKey, oldValue, newValue]` */
+      readonly updates: PropertyUpdateQueue;
+    };
+
+export type DiffQueueRemovedItem = {
+  readonly node: HybridDOMTreeChildNode;
+  readonly type: DiffType.REMOVE;
+};
+
+export type DiffQueueUpdatedItem = {
+  readonly node: HybridDOMTreeHTMLElementNode;
+  readonly type: DiffType.UPDATE;
   /** `[propertyKey, oldValue, newValue]` */
-  updates: [string, unknown, unknown][];
-}
-
-export interface DiffQueueRemovedItem {
-  node: HybridDOMTreeChildNode;
-  type: DiffType.REMOVE;
-}
-
-export interface DiffQueueUpdatedItem {
-  node: HybridDOMTreeChildNode;
-  type: DiffType.UPDATE;
-  /** `[propertyKey, oldValue, newValue]` */
-  updates: [string, unknown, unknown][];
-}
+  readonly updates: PropertyUpdateQueue;
+};
 
 export type DiffQueueItem =
   | DiffQueueInsertedItem
   | DiffQueueMovedItem
-  | DiffQueueMovedAndUpdatedItem
   | DiffQueueRemovedItem
   | DiffQueueUpdatedItem;

@@ -17,6 +17,7 @@ import {
   HybridDOMTreeNodeType,
   HybridDOMTreeParentNode,
   HybridDOMTreeRootNode,
+  PropertyUpdateQueue,
 } from './types';
 
 /**
@@ -26,8 +27,8 @@ import {
 export function diffHybridDOMTree(
   input: MDWC.MDWCNode,
   container: Node,
-  prevTree?: HybridDOMTreeParentNode,
-): [DiffQueueItem[], HybridDOMTreeParentNode] {
+  prevTree?: HybridDOMTreeRootNode,
+): [DiffQueueItem[], HybridDOMTreeRootNode] {
   const diffQueue: DiffQueueItem[] = [];
   const nextTree: HybridDOMTreeRootNode = {
     children: [],
@@ -35,7 +36,11 @@ export function diffHybridDOMTree(
     type: HybridDOMTreeNodeType.ROOT,
   };
   const queue: TraversalQueueItem[] = [
-    { prevTree, nextTree, nonEmptyMDWCNodes: Children.toArray(input) },
+    {
+      prevTree: prevTree || { ...nextTree },
+      nextTree,
+      nonEmptyMDWCNodes: Children.toArray(input),
+    },
   ];
 
   let top: TraversalQueueItem | undefined;
@@ -43,6 +48,7 @@ export function diffHybridDOMTree(
 
   let index: number;
   let node: HybridDOMTreeChildNode;
+  let updates: PropertyUpdateQueue;
   let lastIndex: number | undefined;
   let parent: HybridDOMTreeParentNode;
   let removedNodes: HybridDOMTreeChildNode[];
@@ -56,7 +62,7 @@ export function diffHybridDOMTree(
   // eslint-disable-next-line no-cond-assign
   while ((top = queue.shift())) {
     parent = top.nextTree;
-    keyNodeMap = createHybridDOMTreeKeyNodeMap(top.prevTree ? top.prevTree.children : []);
+    keyNodeMap = createHybridDOMTreeKeyNodeMap(top.prevTree.children);
 
     for (index = 0; index < top.nonEmptyMDWCNodes.length; index += 1) {
       nonEmptyMDWCNode = top.nonEmptyMDWCNodes[index];
@@ -99,6 +105,21 @@ export function diffHybridDOMTree(
           key,
           parent,
         });
+
+        if (existsNode === undefined || lastIndex === undefined) {
+          attachHybridDOMTreeFromMDWCNode(nonEmptyMDWCNode.children, node);
+          diffQueue.push({ node, type: DiffType.INSERT });
+        } else {
+          if (lastIndex < index) {
+            diffQueue.push({ node, type: DiffType.MOVE });
+          }
+
+          queue.push({
+            prevTree: existsNode,
+            nextTree: node,
+            nonEmptyMDWCNodes: Children.toArray(nonEmptyMDWCNode.children),
+          });
+        }
       } else {
         // * ASSERT `element.type.tagName`
         tagName =
@@ -124,23 +145,26 @@ export function diffHybridDOMTree(
           ref: nonEmptyMDWCNode.ref,
           tagName,
         });
-      }
 
-      if (existsNode === undefined || lastIndex === undefined) {
-        attachHybridDOMTreeFromMDWCNode(nonEmptyMDWCNode.children, node);
-        diffQueue.push({ node, type: DiffType.INSERT });
-      } else {
-        // TODO property diff
+        if (existsNode === undefined || lastIndex === undefined) {
+          attachHybridDOMTreeFromMDWCNode(nonEmptyMDWCNode.children, node);
+          diffQueue.push({ node, type: DiffType.INSERT });
+        } else {
+          // TODO property diff
+          updates = [];
 
-        if (lastIndex < index) {
-          diffQueue.push({ node, type: DiffType.MOVE });
+          if (lastIndex < index) {
+            diffQueue.push({ node, type: DiffType.MOVE, updates });
+          } else if (updates.length) {
+            diffQueue.push({ node, type: DiffType.UPDATE, updates });
+          }
+
+          queue.push({
+            prevTree: existsNode,
+            nextTree: node,
+            nonEmptyMDWCNodes: Children.toArray(nonEmptyMDWCNode.children),
+          });
         }
-
-        queue.push({
-          prevTree: existsNode,
-          nextTree: node,
-          nonEmptyMDWCNodes: Children.toArray(nonEmptyMDWCNode.children),
-        });
       }
 
       parent.children.push(node);
@@ -157,7 +181,7 @@ export function diffHybridDOMTree(
 }
 
 interface TraversalQueueItem {
-  readonly prevTree?: HybridDOMTreeParentNode;
+  readonly prevTree: HybridDOMTreeParentNode;
   readonly nextTree: HybridDOMTreeParentNode;
   readonly nonEmptyMDWCNodes: readonly (MDWC.MDWCElement | MDWC.MDWCText)[];
 }
