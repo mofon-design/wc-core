@@ -46,6 +46,7 @@ export function attachHybridDOMTreeFromMDWCNode(
           parent,
         });
       } else {
+        // * ASSERT `element.type.tagName`
         tagName = typeof element.type === 'string' ? element.type : element.type.tagName!;
 
         node = createHybridDOMTreeChildNode(HybridDOMTreeNodeType.HTML_ELEMENT, {

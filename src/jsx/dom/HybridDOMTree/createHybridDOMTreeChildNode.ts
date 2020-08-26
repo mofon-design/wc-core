@@ -96,6 +96,7 @@ const HybridDOMTreeChildNodePropertyDescriptors: {
     get() {
       let parent = this.parent;
 
+      // * ASSERT circular structure (weak set)
       while (isHybridDOMTreeFragmentNode(parent)) {
         parent = parent.parent;
       }

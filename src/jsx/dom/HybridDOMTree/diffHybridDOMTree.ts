@@ -98,6 +98,7 @@ export function diffHybridDOMTree(
           parent,
         });
       } else {
+        // * ASSERT `element.type.tagName`
         tagName =
           typeof nonEmptyMDWCNode.type === 'string'
             ? nonEmptyMDWCNode.type
