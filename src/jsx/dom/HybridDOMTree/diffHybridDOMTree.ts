@@ -3,6 +3,7 @@ import { Children } from '../../children';
 import { isMDWCFragmentType } from '../../shared/MDWCFragment';
 import { attachHybridDOMTreeFromMDWCNode } from './attachHybridDOMTreeFromMDWCNode';
 import { createHybridDOMTreeChildNode } from './createHybridDOMTreeChildNode';
+import { diffProperties } from './diffProperties';
 import { formatMDWCKey } from './formatMDWCKey';
 import {
   HybridDOMTreeKeyNodeMap,
@@ -150,8 +151,7 @@ export function diffHybridDOMTree(
           attachHybridDOMTreeFromMDWCNode(nonEmptyMDWCNode.children, node);
           diffQueue.push({ node, type: DiffType.INSERT });
         } else {
-          // TODO property diff
-          updates = [];
+          updates = diffProperties(existsNode.props, node.props);
 
           if (lastIndex < index) {
             diffQueue.push({ node, type: DiffType.MOVE, updates });
