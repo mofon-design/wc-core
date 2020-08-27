@@ -85,9 +85,9 @@ export function diffHybridDOMTree(
         });
 
         if (existsNode === undefined || lastIndex === undefined) {
-          diffQueue.push({ node, type: DiffType.INSERT });
+          diffQueue.unshift({ node, type: DiffType.INSERT });
         } else if (lastIndex < index) {
-          diffQueue.push({ node, type: DiffType.MOVE });
+          diffQueue.unshift({ node, type: DiffType.MOVE });
         }
 
         parent.children.push(node);
@@ -109,10 +109,10 @@ export function diffHybridDOMTree(
 
         if (existsNode === undefined || lastIndex === undefined) {
           attachHybridDOMTreeFromMDWCNode(nonEmptyMDWCNode.children, node);
-          diffQueue.push({ node, type: DiffType.INSERT });
+          diffQueue.unshift({ node, type: DiffType.INSERT });
         } else {
           if (lastIndex < index) {
-            diffQueue.push({ node, type: DiffType.MOVE });
+            diffQueue.unshift({ node, type: DiffType.MOVE });
           }
 
           queue.push({
@@ -149,14 +149,14 @@ export function diffHybridDOMTree(
 
         if (existsNode === undefined || lastIndex === undefined) {
           attachHybridDOMTreeFromMDWCNode(nonEmptyMDWCNode.children, node);
-          diffQueue.push({ node, type: DiffType.INSERT });
+          diffQueue.unshift({ node, type: DiffType.INSERT });
         } else {
           updates = diffProperties(existsNode.props, node.props);
 
           if (lastIndex < index) {
-            diffQueue.push({ node, type: DiffType.MOVE, updates });
+            diffQueue.unshift({ node, type: DiffType.MOVE, updates });
           } else if (updates.length) {
-            diffQueue.push({ node, type: DiffType.UPDATE, updates });
+            diffQueue.unshift({ node, type: DiffType.UPDATE, updates });
           }
 
           queue.push({
@@ -173,7 +173,7 @@ export function diffHybridDOMTree(
     removedNodes = shiftRestNodesOfHybridDOMTreeKeyNodeMap(keyNodeMap);
 
     for (node of removedNodes) {
-      diffQueue.push({ node, type: DiffType.REMOVE });
+      diffQueue.unshift({ node, type: DiffType.REMOVE });
     }
   }
 
