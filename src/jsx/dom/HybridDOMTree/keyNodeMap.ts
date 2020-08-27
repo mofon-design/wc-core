@@ -97,14 +97,34 @@ function shiftHybridDOMTreeNodeFromKeyNodeMap(
   secondCharacteristic?: string,
 ): [HybridDOMTreeChildNode, number] | undefined {
   if (type === HybridDOMTreeNodeType.FRAGMENT) {
-    return map[type][firstCharacteristic].shift();
+    const submap = map[type];
+    if (!hasOwnProperty.call(submap, firstCharacteristic)) {
+      return undefined;
+    }
+
+    return submap[firstCharacteristic].shift();
   }
 
   if (type === HybridDOMTreeNodeType.TEXT) {
-    return map[type][firstCharacteristic].shift();
+    const submap = map[type];
+    if (!hasOwnProperty.call(submap, firstCharacteristic)) {
+      return undefined;
+    }
+
+    return submap[firstCharacteristic].shift();
   }
 
-  return map[type][firstCharacteristic][secondCharacteristic!].shift();
+  const submap = map[type];
+  if (!hasOwnProperty.call(submap, firstCharacteristic)) {
+    return undefined;
+  }
+
+  const subsubmap = submap[firstCharacteristic];
+  if (!hasOwnProperty.call(subsubmap, secondCharacteristic!)) {
+    return undefined;
+  }
+
+  return subsubmap[secondCharacteristic!].shift();
 }
 
 export { shiftHybridDOMTreeNodeFromKeyNodeMap };
