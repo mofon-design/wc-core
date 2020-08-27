@@ -1,3 +1,5 @@
+import { MDWC } from '../../../types';
+
 /**
  * Enumerate the types of all kinds of nodes in the tree.
  */

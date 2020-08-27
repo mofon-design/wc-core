@@ -1,3 +1,4 @@
+import { MDWC } from '../../../types';
 import { ReservedProperty } from '../../shared/reservedProperties';
 import { setValueForProperty, setValueForStyles } from '../DOMOperations';
 import { applyMDWCRef } from './applyMDWCRef';
