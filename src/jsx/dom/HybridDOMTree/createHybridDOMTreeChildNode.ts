@@ -1,4 +1,4 @@
-import { isHybridDOMTreeFragmentNode } from './assert';
+import { isHybridDOMTreeFragmentNode } from './asserts';
 import {
   HybridDOMTreeChildNode,
   HybridDOMTreeChildNodeDescribedPropKeys,
