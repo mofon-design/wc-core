@@ -19,10 +19,10 @@ export type HybridDOMTreeChildNodeType = Exclude<HybridDOMTreeNodeType, HybridDO
  * except `parent`.
  */
 export interface HybridDOMTreeChildNodeProps {
-  readonly childNodes: Node[];
-  readonly nextSiblingNode: Node | null;
+  readonly childInstances: Node[];
+  readonly nextSiblingInstance: Node | null;
   readonly parent: HybridDOMTreeParentNode;
-  readonly parentNode: Node;
+  readonly parentInstance: Node;
 }
 
 /**
