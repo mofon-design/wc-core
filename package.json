@@ -65,7 +65,6 @@
       "prettier --write"
     ],
     "*.js?(x)": [
-      "eslint",
       "prettier --write"
     ],
     "src/*.ts?(x)": [
