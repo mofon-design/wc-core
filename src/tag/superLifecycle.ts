@@ -30,6 +30,9 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
     });
   }
 
+  const superLifecycles = Target.prototype[SuperLifecycleKey];
+  let superLifecycleDescriptor: PropertyDescriptor | undefined;
+
   lifecycleKeys.forEach(lifecycleKey => {
     /**
      * @example
@@ -39,8 +42,10 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
      *   }
      * }
      */
-    // eslint-disable-next-line no-param-reassign
-    Target.prototype[SuperLifecycleKey][lifecycleKey] = Target.prototype[lifecycleKey];
+    superLifecycleDescriptor = Object.getOwnPropertyDescriptor(Target.prototype, lifecycleKey);
+    if (superLifecycleDescriptor) {
+      Object.defineProperty(superLifecycles, lifecycleKey, superLifecycleDescriptor);
+    }
 
     /**
      * @example
