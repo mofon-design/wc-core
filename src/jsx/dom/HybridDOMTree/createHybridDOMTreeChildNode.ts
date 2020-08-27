@@ -1,10 +1,10 @@
-import { isHybridDOMTreeFragmentNode } from './asserts';
 import {
   HybridDOMTreeChildNode,
   HybridDOMTreeChildNodeDescribedPropKeys,
   HybridDOMTreeChildNodeProps,
   HybridDOMTreeChildNodeType,
   HybridDOMTreeChildNodeTypeMap,
+  HybridDOMTreeNodeType,
 } from './types';
 
 const HybridDOMTreeChildNodePropertyDescriptors: {
@@ -27,7 +27,7 @@ const HybridDOMTreeChildNodePropertyDescriptors: {
 
       // eslint-disable-next-line no-cond-assign
       while ((child = children.shift())) {
-        if (isHybridDOMTreeFragmentNode(child)) {
+        if (child.type === HybridDOMTreeNodeType.FRAGMENT) {
           Array.prototype.unshift.apply(children, child.children);
         } else {
           childInstances.push(child.instance);
@@ -64,12 +64,12 @@ const HybridDOMTreeChildNodePropertyDescriptors: {
             continue;
           }
 
-          if (isHybridDOMTreeFragmentNode(child)) {
+          if (child.type === HybridDOMTreeNodeType.FRAGMENT) {
             fragmentChildrenQueue = Array.prototype.slice.call(child.children, 0);
 
             // eslint-disable-next-line no-cond-assign
             while ((fragmentChild = fragmentChildrenQueue.shift())) {
-              if (isHybridDOMTreeFragmentNode(fragmentChild)) {
+              if (fragmentChild.type === HybridDOMTreeNodeType.FRAGMENT) {
                 Array.prototype.unshift.apply(fragmentChildrenQueue, fragmentChild.children);
               } else {
                 siblingInstance = fragmentChild.instance;
@@ -85,7 +85,7 @@ const HybridDOMTreeChildNodePropertyDescriptors: {
           }
         }
 
-        if (siblingInstance === null && isHybridDOMTreeFragmentNode(self.parent)) {
+        if (siblingInstance === null && self.parent.type === HybridDOMTreeNodeType.FRAGMENT) {
           self = self.parent;
         } else {
           self = null;
@@ -102,7 +102,7 @@ const HybridDOMTreeChildNodePropertyDescriptors: {
       let parent = this.parent;
 
       // * ASSERT circular structure (weak set)
-      while (isHybridDOMTreeFragmentNode(parent)) {
+      while (parent.type === HybridDOMTreeNodeType.FRAGMENT) {
         parent = parent.parent;
       }
 

@@ -1,4 +1,3 @@
-import { isHybridDOMTreeFragmentNode, isHybridDOMTreeTextNode } from './asserts';
 import {
   HybridDOMTreeChildNode,
   HybridDOMTreeChildNodeType,
@@ -36,7 +35,7 @@ export function createHybridDOMTreeKeyNodeMap(
   for (index = 0; index < nodes.length; index += 1) {
     node = nodes[index];
 
-    if (isHybridDOMTreeTextNode(node)) {
+    if (node.type === HybridDOMTreeNodeType.TEXT) {
       submap = rootMap[node.type];
 
       if (!hasOwnProperty.call(submap, node.textContent)) {
@@ -44,7 +43,7 @@ export function createHybridDOMTreeKeyNodeMap(
       } else {
         submap[node.textContent].push([node, index]);
       }
-    } else if (isHybridDOMTreeFragmentNode(node)) {
+    } else if (node.type === HybridDOMTreeNodeType.FRAGMENT) {
       submap = rootMap[node.type];
 
       if (!hasOwnProperty.call(submap, node.key)) {
