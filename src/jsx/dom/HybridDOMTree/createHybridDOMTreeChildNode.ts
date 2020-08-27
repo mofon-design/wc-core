@@ -16,16 +16,21 @@ const HybridDOMTreeChildNodePropertyDescriptors: {
     configurable: true,
     enumerable: true,
     get() {
-      let child: HybridDOMTreeChildNode;
-      const childNodes: Node[] = [];
+      if (!('children' in this)) {
+        return [];
+      }
 
-      if ('children' in this) {
-        for (child of this.children) {
-          if (isHybridDOMTreeFragmentNode(child)) {
-            Array.prototype.push.apply(childNodes, child.childNodes);
-          } else {
-            childNodes.push(child.instance);
-          }
+      const childNodes: Node[] = [];
+      const children: HybridDOMTreeChildNode[] = Array.prototype.slice.call(this.children, 0);
+
+      let child: HybridDOMTreeChildNode | undefined;
+
+      // eslint-disable-next-line no-cond-assign
+      while ((child = children.shift())) {
+        if (isHybridDOMTreeFragmentNode(child)) {
+          Array.prototype.unshift.apply(children, child.children);
+        } else {
+          childNodes.push(child.instance);
         }
       }
 
