@@ -10,7 +10,11 @@ import {
  * For some special properties, the incoming value will be converted first
  * to make it suitable for DOM attributes.
  */
-export function setValueForProperty<T extends Element>(element: T, name: string, value: unknown) {
+export function setValueForProperty<T extends Element>(
+  element: T,
+  name: string,
+  value: unknown,
+): void {
   /* eslint-disable no-param-reassign */
   if (Object.prototype.hasOwnProperty.call(SpecialAttributesNameMap, name)) {
     name = SpecialAttributesNameMap[name];

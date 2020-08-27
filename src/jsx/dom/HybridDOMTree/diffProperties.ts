@@ -11,7 +11,7 @@ function hasOwnProperty<T>(target: T, property: keyof any): property is keyof T 
 export function diffProperties<T>(lastProps: T, nextProps: T): PropertyUpdateQueue {
   const updateQueue: PropertyUpdateQueueItem[] = [];
 
-  let propKey: keyof any;
+  let propKey: string;
   let styleName: string;
   let lastStyle: object;
   let nextStyle: object;

@@ -12,7 +12,7 @@ import { HybridDOMTreeChildNode, HybridDOMTreeNodeType, HybridDOMTreeParentNode 
 export function attachHybridDOMTreeFromMDWCNode(
   children: MDWC.MDWCNode,
   parent: HybridDOMTreeParentNode,
-) {
+): void {
   const queue: TraversalQueueItem[] = [[Children.toArray(children), parent]];
 
   let tagName: string;
