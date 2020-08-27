@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { MDWC } from '../types';
 import { ReservedProperty } from './shared/reservedProperties';
 
@@ -10,22 +11,19 @@ export function createElement(
   props: (MDWC.Props<unknown> & Record<keyof any, unknown>) | null,
   ...rest: MDWC.MDWCNode[]
 ): MDWC.MDWCElement {
-  // eslint-disable-next-line no-param-reassign
-  props = props ?? {};
+  props = { ...props };
 
   let children: MDWC.MDWCNode = rest;
   const ref = props[ReservedProperty.REF];
-  // const style = props[ReservedProperty.STYLE];
-  // // eslint-disable-next-line no-param-reassign
-  // delete props[ReservedProperty.REF];
-  // // eslint-disable-next-line no-param-reassign
-  // delete props[ReservedProperty.STYLE];
+  const key = props[ReservedProperty.KEY];
 
-  if (!children.length && ReservedProperty.CHILDREN in props) {
+  delete props[ReservedProperty.KEY];
+
+  // * ASSERT `!children.length || !Object.prototype.hasOwnProperty.call(props, ReservedProperty.CHILDREN)`
+  if (!children.length && Object.prototype.hasOwnProperty.call(props, ReservedProperty.CHILDREN)) {
     children = props[ReservedProperty.CHILDREN] as MDWC.MDWCNode;
-    // // eslint-disable-next-line no-param-reassign
-    // delete props[ReservedProperty.CHILDREN];
+    delete props[ReservedProperty.CHILDREN];
   }
 
-  return { children, props, ref, type };
+  return { children, key, props, ref, type };
 }

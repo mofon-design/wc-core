@@ -1,27 +1,34 @@
 import MDWC from '../../src';
+import { HybridDOMTreeRootNode } from '../../src/jsx/dom';
 
 @MDWC.tag('search-input')
 export class SearchInput extends HTMLElement implements MDWC.CoreElement {
   @MDWC.property('string')
   value!: string;
 
+  hybridDOMTree?: HybridDOMTreeRootNode;
+
   button = MDWC.createRef<HTMLButtonElement>();
 
   input = MDWC.createRef<HTMLInputElement>();
 
-  paragraph = MDWC.createRef<HTMLParagraphElement>();
-
   attributeChangedCallback() {
     console.log('attribute changed, this.value =', this.value);
+    this.forceUpdate();
   }
 
   initialize() {
-    // child must be rendered after ref created
-    this.appendChild(this.renderDOM());
+    this.forceUpdate();
     this.input.current?.addEventListener('input', this.onInput);
     this.button.current?.addEventListener('click', this.onClickButton);
 
     console.log('initialized, refs:', this.input, this.button);
+  }
+
+  forceUpdate() {
+    const [diffQueue, hybridDOMTree] = MDWC.diffHybridDOMTree(this.render(), this, this.hybridDOMTree);
+    this.hybridDOMTree = hybridDOMTree;
+    MDWC.applyHybridDOMTreeDiff(diffQueue);
   }
 
   onInput = () => {
@@ -35,22 +42,15 @@ export class SearchInput extends HTMLElement implements MDWC.CoreElement {
     alert(`Search '${this.value}'`);
   };
 
-  propertyChangedCallback() {
-    if (this.paragraph.current) {
-      this.paragraph.current.innerText = this.value;
-    }
-  }
-
-  // TODO Add `render` to the MDWC lifecycle
-  renderDOM() {
-    return MDWC.createDOM(
+  render() {
+    return (
       <MDWC.Fragment>
         <input ref={this.input} />
         <button ref={this.button} type="button">
           Search
         </button>
-        <p ref={this.paragraph}>{this.value}</p>
-      </MDWC.Fragment>,
+        <p>{this.value}</p>
+      </MDWC.Fragment>
     );
   }
 }

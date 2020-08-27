@@ -10,7 +10,11 @@ import {
  * For some special properties, the incoming value will be converted first
  * to make it suitable for DOM attributes.
  */
-export function setValueForProperty<T extends Element>(element: T, name: string, value: unknown) {
+export function setValueForProperty<T extends Element>(
+  element: T,
+  name: string,
+  value: unknown,
+): void {
   /* eslint-disable no-param-reassign */
   if (Object.prototype.hasOwnProperty.call(SpecialAttributesNameMap, name)) {
     name = SpecialAttributesNameMap[name];
@@ -24,7 +28,7 @@ export function setValueForProperty<T extends Element>(element: T, name: string,
       return;
     }
 
-    if (value !== null) {
+    if (value !== undefined) {
       if (attributeInfo.type === DOMAttributeType.BOOLEAN) {
         value = value ? '' : null;
       } else if (attributeInfo.type === DOMAttributeType.BOOLEANISH_STRING) {
@@ -38,7 +42,7 @@ export function setValueForProperty<T extends Element>(element: T, name: string,
     }
   }
 
-  if (value === null) {
+  if (value === null || value === undefined) {
     element.removeAttribute(name);
   } else {
     element.setAttribute(name, `${value}`);
@@ -67,7 +71,7 @@ function normalizePropertyValue<T extends Element, U extends keyof T>(
   value: unknown,
   attributeInfo: DOMAttributeInfo,
 ): T[U] {
-  if (value === null) {
+  if (value === undefined) {
     return value as never;
   }
 

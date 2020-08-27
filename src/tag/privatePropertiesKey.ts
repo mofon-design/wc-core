@@ -1,11 +1,9 @@
-export const PropertiesKey = Math.random()
+const randomKey = Math.random()
   .toString(36)
-  .slice(2) as '__properties';
+  .slice(2);
 
-export const SuperLifecycleKey = Math.random()
-  .toString(36)
-  .slice(2) as '__superLifecycle';
+export const PropertiesKey = `__properties$${randomKey}` as '__properties';
 
-export const SetElementConnectedKey = Math.random()
-  .toString(36)
-  .slice(2) as '__setElementConnected';
+export const SuperLifecycleKey = `__superLifecycle$${randomKey}` as '__superLifecycle';
+
+export const SetElementConnectedKey = `__setElementConnected$${randomKey}` as '__setElementConnected';

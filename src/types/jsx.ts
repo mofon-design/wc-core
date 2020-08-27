@@ -54,12 +54,13 @@ declare namespace MDWC {
    */
   export type Ref<T> = MutableRefObject<T> | RefCallback<T> | RefObject<T> | null;
 
-  export type Fragment = ClassType<{ children?: MDWCNode }, [{}]>;
+  export type Fragment = ClassType<{}, [{ children?: MDWCNode; ref?: never }]>;
 
   export type MDWCElementType = string | CoreElementConstructor | Fragment;
 
   export interface MDWCElement {
     children?: MDWCNode;
+    key?: Key;
     props: object;
     ref?: Ref<unknown>;
     type: MDWCElementType;
@@ -99,8 +100,6 @@ declare namespace MDWC {
    * https://github.com/frenic/csstype#what-should-i-do-when-i-get-type-errors
    */
   export interface CSSProperties extends CSSType.Properties {}
-
-  export type CSSPropertiesWithCustoms = CSSProperties & Record<string, unknown>;
 
   // @ts-ignore
   export interface DetailedHTMLProps<T extends {}, U> extends T, ClassAttributes<U> {
