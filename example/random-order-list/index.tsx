@@ -20,6 +20,7 @@ export class RandomOrderList extends HTMLUListElement implements MDWC.CoreElemen
       this.hybridDOMTree,
     );
     this.hybridDOMTree = hybridDOMTree;
+    console.log(diffQueue, hybridDOMTree);
     MDWC.applyHybridDOMTreeDiff(diffQueue);
   }
 
