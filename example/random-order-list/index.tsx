@@ -35,7 +35,6 @@ export class RandomOrderList extends HTMLUListElement implements MDWC.CoreElemen
   initialize() {
     this.forceUpdate();
     this.style.width = '54ex';
-    this.style.marginBottom = '100vh';
     this.addEventListener('click', (event) => event.stopPropagation(), { capture: true });
   }
 
