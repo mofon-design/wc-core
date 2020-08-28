@@ -56,9 +56,9 @@ export function diffHybridDOMTree(
 
   let index: number;
   let lastIndex: number | undefined;
-  let insertedCount: number;
-  let matchedNodeRecord: [next: HybridDOMTreeChildNode, nextIndex: number] | undefined;
-  let matchedNodeRecords: ([next: HybridDOMTreeChildNode, nextIndex: number] | undefined)[];
+  let nextIndex: number | undefined;
+  let mapPrevIndexOfMatchedNodesToNextIndex: number[];
+  let matchedNodes: (HybridDOMTreeChildNode | undefined)[];
 
   let key: string;
   let tagName: string;
@@ -66,9 +66,10 @@ export function diffHybridDOMTree(
 
   // eslint-disable-next-line no-cond-assign
   while ((top = queue.shift())) {
-    insertedCount = 0;
+    matchedNodes = [];
+    mapPrevIndexOfMatchedNodesToNextIndex = [];
+
     parent = top.nextTree;
-    matchedNodeRecords = [];
     keyNodeMap = createHybridDOMTreeKeyNodeMap(top.prevTree.children);
 
     for (index = 0; index < top.nonEmptyMDWCNodes.length; index += 1) {
@@ -91,10 +92,9 @@ export function diffHybridDOMTree(
         });
 
         if (existsNode === undefined || lastIndex === undefined) {
-          insertedCount += 1;
           diffQueue.unshift({ node, type: DiffType.INSERT });
         } else {
-          matchedNodeRecords[lastIndex] = [node, index - insertedCount];
+          mapPrevIndexOfMatchedNodesToNextIndex[lastIndex] = matchedNodes.push(node) - 1;
         }
 
         parent.children.push(node);
@@ -115,11 +115,10 @@ export function diffHybridDOMTree(
         });
 
         if (existsNode === undefined || lastIndex === undefined) {
-          insertedCount += 1;
           attachHybridDOMTreeFromMDWCNode(nonEmptyMDWCNode.children, node);
           diffQueue.unshift({ node, type: DiffType.INSERT });
         } else {
-          matchedNodeRecords[lastIndex] = [node, index - insertedCount];
+          mapPrevIndexOfMatchedNodesToNextIndex[lastIndex] = matchedNodes.push(node) - 1;
           queue.push({
             prevTree: existsNode,
             nextTree: node,
@@ -153,12 +152,11 @@ export function diffHybridDOMTree(
         });
 
         if (existsNode === undefined || lastIndex === undefined) {
-          insertedCount += 1;
           attachHybridDOMTreeFromMDWCNode(nonEmptyMDWCNode.children, node);
           diffQueue.unshift({ node, type: DiffType.INSERT });
         } else {
           updates = diffProperties(existsNode.props, node.props);
-          matchedNodeRecords[lastIndex] = [node, index - insertedCount];
+          mapPrevIndexOfMatchedNodesToNextIndex[lastIndex] = matchedNodes.push(node) - 1;
 
           if (updates.length) {
             diffQueue.unshift({ node, type: DiffType.UPDATE, updates });
@@ -176,13 +174,20 @@ export function diffHybridDOMTree(
     }
 
     lastIndex = 0;
-    for (matchedNodeRecord of matchedNodeRecords) {
-      if (matchedNodeRecord) {
-        if (matchedNodeRecord[1] !== lastIndex) {
-          diffQueue.unshift({ node: matchedNodeRecord[0], type: DiffType.MOVE });
+    for (nextIndex of mapPrevIndexOfMatchedNodesToNextIndex) {
+      if (nextIndex !== undefined) {
+        if (nextIndex === lastIndex) {
+          // * ASSERT `nextIndex < matchedNodes.length`
+          matchedNodes[nextIndex] = undefined;
         }
 
         lastIndex += 1;
+      }
+    }
+
+    for (existsNode of matchedNodes) {
+      if (existsNode) {
+        diffQueue.unshift({ node: existsNode, type: DiffType.MOVE });
       }
     }
 
