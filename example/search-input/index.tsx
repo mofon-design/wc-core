@@ -26,7 +26,11 @@ export class SearchInput extends HTMLElement implements MDWC.CoreElement {
   }
 
   forceUpdate() {
-    const [diffQueue, hybridDOMTree] = MDWC.diffHybridDOMTree(this.render(), this, this.hybridDOMTree);
+    const [diffQueue, hybridDOMTree] = MDWC.diffHybridDOMTree(
+      this.render(),
+      this,
+      this.hybridDOMTree,
+    );
     this.hybridDOMTree = hybridDOMTree;
     MDWC.applyHybridDOMTreeDiff(diffQueue);
   }

@@ -43,7 +43,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
     });
   };
 
-  decorator.fallback = value => {
+  decorator.fallback = (value) => {
     decorator.fallbackValue = value;
     return decorator;
   };

@@ -44,7 +44,7 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
     });
   };
 
-  decorator.fallback = value => {
+  decorator.fallback = (value) => {
     decorator.fallbackValue = value;
     return decorator;
   };

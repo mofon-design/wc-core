@@ -1,6 +1,4 @@
-const randomKey = Math.random()
-  .toString(36)
-  .slice(2);
+const randomKey = Math.random().toString(36).slice(2);
 
 export const PropertiesKey = `__properties$${randomKey}` as '__properties';
 

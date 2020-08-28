@@ -101,8 +101,11 @@ export const enum DiffType {
   UPDATE,
 }
 
-/** `[propertyKey, oldValue, newValue]` */
-export type PropertyUpdateQueueItem = readonly [string, unknown, unknown];
+export type PropertyUpdateQueueItem = readonly [
+  propertyKey: string,
+  oldValue: unknown,
+  newValue: unknown,
+];
 
 export type PropertyUpdateQueue = readonly PropertyUpdateQueueItem[];
 
@@ -119,7 +122,6 @@ export type DiffQueueMovedItem =
   | {
       readonly node: HybridDOMTreeHTMLElementNode;
       readonly type: DiffType.MOVE;
-      /** `[propertyKey, oldValue, newValue]` */
       readonly updates: PropertyUpdateQueue;
     };
 
@@ -131,7 +133,6 @@ export type DiffQueueRemovedItem = {
 export type DiffQueueUpdatedItem = {
   readonly node: HybridDOMTreeHTMLElementNode;
   readonly type: DiffType.UPDATE;
-  /** `[propertyKey, oldValue, newValue]` */
   readonly updates: PropertyUpdateQueue;
 };
 

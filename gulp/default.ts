@@ -47,10 +47,7 @@ gulp.task('gulp-babel-es', () => {
     plugins: [['@babel/plugin-proposal-class-properties', { loose: false }]],
   });
 
-  return gulp
-    .src('dist/ts/**', { base: 'dist/ts' })
-    .pipe(compileTask)
-    .pipe(gulp.dest('es'));
+  return gulp.src('dist/ts/**', { base: 'dist/ts' }).pipe(compileTask).pipe(gulp.dest('es'));
 });
 
 gulp.task('gulp-babel-lib', () => {
@@ -68,10 +65,7 @@ gulp.task('gulp-babel-lib', () => {
     plugins: [['@babel/plugin-proposal-class-properties', { loose: false }]],
   });
 
-  return gulp
-    .src('dist/ts/**', { base: 'dist/ts' })
-    .pipe(compileTask)
-    .pipe(gulp.dest('lib'));
+  return gulp.src('dist/ts/**', { base: 'dist/ts' }).pipe(compileTask).pipe(gulp.dest('lib'));
 });
 
 gulp.task('rollup-umd', async () => {
@@ -87,10 +81,7 @@ gulp.task('rollup-umd', async () => {
     file: getAbsolutePath('index.umd.js'),
   });
 
-  return gulp
-    .src('index.umd.js')
-    .pipe(uglify())
-    .pipe(gulp.dest('.'));
+  return gulp.src('index.umd.js').pipe(uglify()).pipe(gulp.dest('.'));
 });
 
 gulp.task('clean-dist', () => del(['dist']));

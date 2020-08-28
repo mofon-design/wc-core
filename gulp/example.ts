@@ -59,18 +59,15 @@ gulp.task('gulp-example-umd', async () => {
     file: getAbsolutePath('example/index.umd.js'),
   });
 
-  return gulp
-    .src('example/index.umd.js')
-    .pipe(uglify())
-    .pipe(gulp.dest('example'));
+  return gulp.src('example/index.umd.js').pipe(uglify()).pipe(gulp.dest('example'));
 });
 
 gulp.task('build-example-index-page', () => {
   const list = fs
     .readdirSync(getAbsolutePath('example'), { withFileTypes: true })
-    .filter(item => item.isDirectory())
+    .filter((item) => item.isDirectory())
     .map(
-      item => `
+      (item) => `
         <li>
           <a href="${item.name}/index.html">${item.name}</a>
         </li>`,

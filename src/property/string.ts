@@ -43,7 +43,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
     });
   };
 
-  decorator.fallback = value => {
+  decorator.fallback = (value) => {
     decorator.fallbackValue = value;
     return decorator;
   };

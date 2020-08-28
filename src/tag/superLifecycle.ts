@@ -33,7 +33,7 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
   const superLifecycles = Target.prototype[SuperLifecycleKey];
   let superLifecycleDescriptor: PropertyDescriptor | undefined;
 
-  lifecycleKeys.forEach(lifecycleKey => {
+  lifecycleKeys.forEach((lifecycleKey) => {
     /**
      * @example
      * class ChildClass extends ParentClass {
