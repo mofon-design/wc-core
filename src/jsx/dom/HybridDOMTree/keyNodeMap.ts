@@ -135,8 +135,8 @@ export { shiftHybridDOMTreeNodeFromKeyNodeMap };
  */
 export function shiftRestNodesOfHybridDOMTreeKeyNodeMap(
   map: HybridDOMTreeKeyNodeMap,
-): HybridDOMTreeChildNode[] {
-  const restRecords: (HybridDOMTreeChildNode | void)[] = [];
+): (HybridDOMTreeChildNode | undefined)[] {
+  const restRecords: (HybridDOMTreeChildNode | undefined)[] = [];
 
   let index: number;
   let node: HybridDOMTreeChildNode;
@@ -194,7 +194,7 @@ export function shiftRestNodesOfHybridDOMTreeKeyNodeMap(
     delete submap[firstCharacteristic];
   }
 
-  return restRecords.filter((record): record is Exclude<typeof record, void> => !!record);
+  return restRecords;
 }
 
 export interface HybridDOMTreeKeyNodeMap {

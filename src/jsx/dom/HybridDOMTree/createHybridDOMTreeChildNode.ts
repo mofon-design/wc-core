@@ -92,8 +92,6 @@ const HybridDOMTreeChildNodePropertyDescriptors: {
         }
       } while (self !== null);
 
-      console.log(this, siblingInstance);
-
       return siblingInstance;
     },
   },
