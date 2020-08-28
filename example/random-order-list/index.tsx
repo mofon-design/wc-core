@@ -4,29 +4,39 @@ import { HybridDOMTreeRootNode } from '../../src/jsx/dom';
 @MDWC.tag('random-order-list', { extends: 'ul' })
 export class RandomOrderList extends HTMLUListElement implements MDWC.CoreElement {
   items = [
-    'Click To Reorder',
-    'Random Order List',
-    'Mofon Design',
-    'Web Components',
-    'JSX',
+    'Change the content of the input',
+    'Click anywhere else on the page',
+    'The inputs will be reordered',
+    'But the focused input will still exist',
+    'That is, when reordering, the inputs are not recreated',
+    'Because MDWC recognizes elements by the property `key`',
   ] as const;
 
   hybridDOMTree?: HybridDOMTreeRootNode;
 
-  forceUpdate() {
+  connectedCallback() {
+    document.body.addEventListener('click', this.forceUpdate);
+  }
+
+  disconnectedCallback() {
+    document.body.removeEventListener('click', this.forceUpdate);
+  }
+
+  forceUpdate = () => {
     const [diffQueue, hybridDOMTree] = MDWC.diffHybridDOMTree(
       this.render(),
       this,
       this.hybridDOMTree,
     );
     this.hybridDOMTree = hybridDOMTree;
-    console.log(diffQueue, hybridDOMTree);
     MDWC.applyHybridDOMTreeDiff(diffQueue);
-  }
+  };
 
   initialize() {
     this.forceUpdate();
-    this.addEventListener('click', this.forceUpdate);
+    this.style.width = '54ex';
+    this.style.marginBottom = '100vh';
+    this.addEventListener('click', (event) => event.stopPropagation(), { capture: true });
   }
 
   render() {
@@ -38,18 +48,9 @@ export class RandomOrderList extends HTMLUListElement implements MDWC.CoreElemen
 
     console.log(`reordered: ${reordered.join(', ')}`);
 
-    return reordered.map((item, index) => (
-      <li
-        key={item}
-        style={{
-          height: '32px',
-          lineHeight: '32px',
-          position: 'absolute',
-          top: `${index * 32}px`,
-          transition: 'all ease-in-out 0.32s 0s',
-        }}
-      >
-        {item}
+    return reordered.map((item) => (
+      <li key={item}>
+        <input style={{ width: '54ex' }} value={item} />
       </li>
     ));
   }
