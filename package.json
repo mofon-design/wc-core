@@ -1,6 +1,6 @@
 {
   "name": "@mofon-design/wc-core",
-  "version": "0.4.0-beta.0",
+  "version": "0.4.0-beta.1",
   "description": "Web components core of Mofon Design",
   "license": "MIT",
   "main": "lib/index.js",
