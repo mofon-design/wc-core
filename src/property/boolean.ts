@@ -63,7 +63,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
  * ```
  */
 function convertAnyToBoolean(
-  value: any,
+  value: unknown,
   decorator: PropertyBooleanDecorator,
   stage: CoreElementStage,
 ): boolean | undefined {

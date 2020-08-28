@@ -63,7 +63,10 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
  * @description
  * `null` and `''` will be treated as `undefined`, and return fallback value.
  */
-function convertAnyToNumber(value: any, decorator: PropertyNumberDecorator): number | undefined {
+function convertAnyToNumber(
+  value: unknown,
+  decorator: PropertyNumberDecorator,
+): number | undefined {
   /**
    * - Number('') === 0
    * - Number(null) === 0

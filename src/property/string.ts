@@ -56,7 +56,10 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
   return decorator;
 }
 
-function convertAnyToString(value: any, decorator: PropertyStringDecorator): string | undefined {
+function convertAnyToString(
+  value: unknown,
+  decorator: PropertyStringDecorator,
+): string | undefined {
   if (value === null || value === undefined) {
     return decorator.fallbackValue;
   }
