@@ -157,10 +157,6 @@ export function applyHybridDOMTreeDiff(queue: DiffQueueItem[]): void {
           node.parentInstance.insertBefore(node.instance, node.nextSiblingInstance);
         }
 
-        if ('updates' in payload && payload.updates.length) {
-          applyPropertyUpdateQueue(payload.updates, payload.node);
-        }
-
         break;
       default:
         break;

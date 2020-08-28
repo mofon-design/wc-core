@@ -114,16 +114,10 @@ export type DiffQueueInsertedItem = {
   readonly type: DiffType.INSERT;
 };
 
-export type DiffQueueMovedItem =
-  | {
-      readonly node: HybridDOMTreeChildNode;
-      readonly type: DiffType.MOVE;
-    }
-  | {
-      readonly node: HybridDOMTreeHTMLElementNode;
-      readonly type: DiffType.MOVE;
-      readonly updates: PropertyUpdateQueue;
-    };
+export type DiffQueueMovedItem = {
+  readonly node: HybridDOMTreeChildNode;
+  readonly type: DiffType.MOVE;
+};
 
 export type DiffQueueRemovedItem = {
   readonly node: HybridDOMTreeChildNode;
