@@ -2,6 +2,8 @@
 
 Web components core of Mofon Design.
 
+[![NPM version](https://img.shields.io/npm/v/@mofon-design/wc-core.svg?style=flat)](https://www.npmjs.com/package/@mofon-design/wc-core) [![Install size](https://packagephobia.com/badge?p=@mofon-design/wc-core)](https://packagephobia.com/result?p=@mofon-design/wc-core)
+
 ## Examples
 
 See [example](https://github.com/imhele/mofon-design-wc-core/tree/master/example) directory.
