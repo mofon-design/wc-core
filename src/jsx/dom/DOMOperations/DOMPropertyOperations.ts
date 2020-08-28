@@ -1,7 +1,7 @@
 import {
-  DOMAttributeInfo,
-  DOMAttributeType,
-  NonStringTypeAttributesInfo,
+  // DOMAttributeInfo,
+  // DOMAttributeType,
+  // NonStringTypeAttributesInfo,
   SpecialAttributesNameMap,
 } from './DOMAttributes';
 
@@ -20,27 +20,27 @@ export function setValueForProperty<T extends Element>(
     name = SpecialAttributesNameMap[name];
   }
 
-  if (Object.prototype.hasOwnProperty.call(NonStringTypeAttributesInfo, name)) {
-    const attributeInfo = NonStringTypeAttributesInfo[name];
+  // if (Object.prototype.hasOwnProperty.call(NonStringTypeAttributesInfo, name)) {
+  //   const attributeInfo = NonStringTypeAttributesInfo[name];
 
-    if (mustUseProperty(element, name, attributeInfo)) {
-      element[name] = normalizePropertyValue(element, name, value, attributeInfo);
-      return;
-    }
+  //   if (mustUseProperty(element, name, attributeInfo)) {
+  //     element[name] = normalizePropertyValue(element, name, value, attributeInfo);
+  //     return;
+  //   }
 
-    if (value !== undefined) {
-      if (attributeInfo.type === DOMAttributeType.BOOLEAN) {
-        value = value ? '' : null;
-      } else if (attributeInfo.type === DOMAttributeType.BOOLEANISH_STRING) {
-        value = value ? 'true' : 'false';
-      } else if (attributeInfo.type === DOMAttributeType.OVERLOADED_BOOLEAN) {
-        if (typeof value === 'boolean') value = value ? '' : null;
-        else value = `${value}`;
-      } else {
-        value = `${value}`;
-      }
-    }
-  }
+  //   if (value !== undefined) {
+  //     if (attributeInfo.type === DOMAttributeType.BOOLEAN) {
+  //       value = value ? '' : null;
+  //     } else if (attributeInfo.type === DOMAttributeType.BOOLEANISH_STRING) {
+  //       value = value ? 'true' : 'false';
+  //     } else if (attributeInfo.type === DOMAttributeType.OVERLOADED_BOOLEAN) {
+  //       if (typeof value === 'boolean') value = value ? '' : null;
+  //       else value = `${value}`;
+  //     } else {
+  //       value = `${value}`;
+  //     }
+  //   }
+  // }
 
   if (value === null || value === undefined) {
     element.removeAttribute(name);
@@ -54,34 +54,34 @@ export function setValueForProperty<T extends Element>(
  * Determine whether it must be assigned as a property of the element,
  * and make a type assertion.
  */
-function mustUseProperty<T extends Element>(
-  _element: T,
-  _name: string,
-  attributeInfo: DOMAttributeInfo,
-): _name is keyof T & string {
-  return !!attributeInfo.mustUseProperty;
-}
+// function mustUseProperty<T extends Element>(
+//   _element: T,
+//   _name: string,
+//   attributeInfo: DOMAttributeInfo,
+// ): _name is keyof T & string {
+//   return !!attributeInfo.mustUseProperty;
+// }
 
 /**
  * Convert unsafe values for assignment to element properties.
  */
-function normalizePropertyValue<T extends Element, U extends keyof T>(
-  _element: T,
-  _name: U,
-  value: unknown,
-  attributeInfo: DOMAttributeInfo,
-): T[U] {
-  if (value === undefined) {
-    return value as never;
-  }
+// function normalizePropertyValue<T extends Element, U extends keyof T>(
+//   _element: T,
+//   _name: U,
+//   value: unknown,
+//   attributeInfo: DOMAttributeInfo,
+// ): T[U] {
+//   if (value === undefined) {
+//     return value as never;
+//   }
 
-  if (attributeInfo.type === DOMAttributeType.BOOLEAN) {
-    return !!value as never;
-  }
+//   if (attributeInfo.type === DOMAttributeType.BOOLEAN) {
+//     return !!value as never;
+//   }
 
-  if (attributeInfo.type === DOMAttributeType.BOOLEANISH_STRING) {
-    return (value ? 'true' : 'false') as never;
-  }
+//   if (attributeInfo.type === DOMAttributeType.BOOLEANISH_STRING) {
+//     return (value ? 'true' : 'false') as never;
+//   }
 
-  return value as never;
-}
+//   return value as never;
+// }
