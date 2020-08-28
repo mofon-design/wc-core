@@ -86,7 +86,7 @@ export function diffHybridDOMTree(
 
         if (existsNode === undefined || lastIndex === undefined) {
           diffQueue.unshift({ node, type: DiffType.INSERT });
-        } else if (lastIndex < index) {
+        } else if (lastIndex > index) {
           diffQueue.unshift({ node, type: DiffType.MOVE });
         }
 
@@ -111,7 +111,7 @@ export function diffHybridDOMTree(
           attachHybridDOMTreeFromMDWCNode(nonEmptyMDWCNode.children, node);
           diffQueue.unshift({ node, type: DiffType.INSERT });
         } else {
-          if (lastIndex < index) {
+          if (lastIndex > index) {
             diffQueue.unshift({ node, type: DiffType.MOVE });
           }
 
@@ -153,7 +153,7 @@ export function diffHybridDOMTree(
         } else {
           updates = diffProperties(existsNode.props, node.props);
 
-          if (lastIndex < index) {
+          if (lastIndex > index) {
             diffQueue.unshift({ node, type: DiffType.MOVE, updates });
           } else if (updates.length) {
             diffQueue.unshift({ node, type: DiffType.UPDATE, updates });
