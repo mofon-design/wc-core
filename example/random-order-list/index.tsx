@@ -10,19 +10,19 @@ export class RandomOrderList extends HTMLUListElement implements MDWC.CoreElemen
     'But the focused input will still exist',
     'That is, when reordering, the inputs are not recreated',
     'Because MDWC recognizes elements by the property `key`',
-  ] as const;
+  ];
 
   hybridDOMTree?: HybridDOMTreeRootNode;
 
   connectedCallback() {
-    document.body.addEventListener('click', this.forceUpdate);
+    document.body.addEventListener('click', this.onReorder);
   }
 
   disconnectedCallback() {
-    document.body.removeEventListener('click', this.forceUpdate);
+    document.body.removeEventListener('click', this.onReorder);
   }
 
-  forceUpdate = () => {
+  forceUpdate() {
     const [diffQueue, hybridDOMTree] = MDWC.diffHybridDOMTree(
       this.render(),
       this,
@@ -30,7 +30,7 @@ export class RandomOrderList extends HTMLUListElement implements MDWC.CoreElemen
     );
     this.hybridDOMTree = hybridDOMTree;
     MDWC.applyHybridDOMTreeDiff(diffQueue);
-  };
+  }
 
   initialize() {
     this.forceUpdate();
@@ -38,7 +38,7 @@ export class RandomOrderList extends HTMLUListElement implements MDWC.CoreElemen
     this.addEventListener('click', (event) => event.stopPropagation(), { capture: true });
   }
 
-  render() {
+  onReorder = () => {
     const reordered: string[] = [];
 
     for (const item of this.items) {
@@ -47,7 +47,12 @@ export class RandomOrderList extends HTMLUListElement implements MDWC.CoreElemen
 
     console.log(`reordered: ${reordered.join(', ')}`);
 
-    return reordered.map((item) => (
+    this.items = reordered;
+    this.forceUpdate();
+  };
+
+  render() {
+    return this.items.map((item) => (
       <li key={item}>
         <input style={{ width: '54ex' }} value={item} />
       </li>
