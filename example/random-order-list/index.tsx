@@ -4,10 +4,10 @@ import { HybridDOMTreeRootNode } from '../../src/jsx/dom';
 @MDWC.tag('random-order-list', { extends: 'ul' })
 export class RandomOrderList extends HTMLUListElement implements MDWC.CoreElement {
   items = [
-    'Change the content of the input',
+    'Modify the contents of any input',
     'Click anywhere else on the page',
     'The inputs will be reordered',
-    'But the focused input will still exist',
+    'But the modified input will still exist',
     'That is, when reordering, the inputs are not recreated',
     'Because MDWC recognizes elements by the property `key`',
   ];
