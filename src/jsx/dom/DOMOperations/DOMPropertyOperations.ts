@@ -35,9 +35,9 @@ export function setValueForProperty<T extends Element>(
   //       value = value ? 'true' : 'false';
   //     } else if (attributeInfo.type === DOMAttributeType.OVERLOADED_BOOLEAN) {
   //       if (typeof value === 'boolean') value = value ? '' : null;
-  //       else value = `${value}`;
+  //       else value = String(value);
   //     } else {
-  //       value = `${value}`;
+  //       value = String(value);
   //     }
   //   }
   // }
@@ -45,7 +45,7 @@ export function setValueForProperty<T extends Element>(
   if (value === null || value === undefined) {
     element.removeAttribute(name);
   } else {
-    element.setAttribute(name, `${value}`);
+    element.setAttribute(name, String(value));
   }
   /* eslint-enable no-param-reassign */
 }

@@ -76,7 +76,7 @@ export function diffHybridDOMTree(
       nonEmptyMDWCNode = top.nonEmptyMDWCNodes[index];
 
       if (typeof nonEmptyMDWCNode !== 'object') {
-        textContent = `${nonEmptyMDWCNode}`;
+        textContent = String(nonEmptyMDWCNode);
         [existsNode, lastIndex] =
           shiftHybridDOMTreeNodeFromKeyNodeMap(
             keyNodeMap,

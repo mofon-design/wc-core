@@ -29,7 +29,7 @@ export function attachHybridDOMTreeFromMDWCNode(
 
     for (element of elements) {
       if (typeof element !== 'object') {
-        textContent = `${element}`;
+        textContent = String(element);
         node = createHybridDOMTreeChildNode(HybridDOMTreeNodeType.TEXT, {
           instance: document.createTextNode(textContent),
           parent,

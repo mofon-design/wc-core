@@ -25,7 +25,7 @@ export const Children = {
           flattened.push(child);
           break;
         default:
-          flattened.push(`${child}`);
+          flattened.push(String(child));
           break;
       }
     }
