@@ -3,6 +3,8 @@ import { SuperLifecycleKey } from './privatePropertiesKey';
 
 type RewritedInstance<T, U> = T & { [key in typeof SuperLifecycleKey]?: Partial<U> };
 
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
 /**
  * After being wrapped by a class decorator, the lifecycle callbacks will be defined to
  * the prototype as an accessor to avoid overriding after the instance is constructed.
@@ -19,9 +21,7 @@ type RewritedInstance<T, U> = T & { [key in typeof SuperLifecycleKey]?: Partial<
  * ```
  */
 export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecycle: U) {
-  const lifecycleKeys = Object.keys(lifecycle) as (keyof U)[];
-
-  if (!Object.prototype.hasOwnProperty.call(Target.prototype, SuperLifecycleKey)) {
+  if (!hasOwnProperty.call(Target.prototype, SuperLifecycleKey)) {
     Object.defineProperty(Target.prototype, SuperLifecycleKey, {
       value: { ...Target.prototype[SuperLifecycleKey] },
       configurable: true,
@@ -33,7 +33,11 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
   const superLifecycles = Target.prototype[SuperLifecycleKey];
   let superLifecycleDescriptor: PropertyDescriptor | undefined;
 
-  lifecycleKeys.forEach((lifecycleKey) => {
+  for (const lifecycleKey in lifecycle) {
+    if (!hasOwnProperty.call(lifecycle, lifecycleKey)) {
+      continue;
+    }
+
     /**
      * @example
      * class ChildClass extends ParentClass {
@@ -62,7 +66,7 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
         return lifecycle[lifecycleKey];
       },
       set(this: RewritedInstance<T, U>, value: U[typeof lifecycleKey]) {
-        if (!Object.prototype.hasOwnProperty.call(this, SuperLifecycleKey))
+        if (!hasOwnProperty.call(this, SuperLifecycleKey))
           Object.defineProperty(this, SuperLifecycleKey, {
             value: { ...this[SuperLifecycleKey] },
             configurable: true,
@@ -72,7 +76,7 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
         this[SuperLifecycleKey]![lifecycleKey] = value;
       },
     });
-  });
+  }
 }
 
 export function callSuperLifecycle<
