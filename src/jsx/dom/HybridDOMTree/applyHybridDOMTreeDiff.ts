@@ -88,7 +88,7 @@ export function applyHybridDOMTreeDiff(queue: DiffQueueItem[]): void {
         }
 
         refUpdatesQueueFragment = [];
-        childrenQueue = Array.prototype.slice.call(node.children, 0);
+        childrenQueue = node.children.slice(0);
 
         if (node.type === HybridDOMTreeNodeType.FRAGMENT) {
           childInstances = node.childInstances;
@@ -164,6 +164,6 @@ export function applyHybridDOMTreeDiff(queue: DiffQueueItem[]): void {
   }
 
   for (refUpdate of refUpdatesQueue) {
-    applyMDWCRef.apply(applyMDWCRef, refUpdate);
+    applyMDWCRef(refUpdate[0], refUpdate[1]);
   }
 }

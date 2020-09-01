@@ -21,7 +21,7 @@ const HybridDOMTreeChildNodePropertyDescriptors: {
       }
 
       const childInstances: Node[] = [];
-      const children: HybridDOMTreeChildNode[] = Array.prototype.slice.call(this.children, 0);
+      const children: HybridDOMTreeChildNode[] = this.children.slice(0);
 
       let child: HybridDOMTreeChildNode | undefined;
 
@@ -65,7 +65,7 @@ const HybridDOMTreeChildNodePropertyDescriptors: {
           }
 
           if (child.type === HybridDOMTreeNodeType.FRAGMENT) {
-            fragmentChildrenQueue = Array.prototype.slice.call(child.children, 0);
+            fragmentChildrenQueue = child.children.slice(0);
 
             // eslint-disable-next-line no-cond-assign
             while ((fragmentChild = fragmentChildrenQueue.shift())) {
