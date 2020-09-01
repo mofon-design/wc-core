@@ -164,6 +164,6 @@ export function applyHybridDOMTreeDiff(queue: DiffQueueItem[]): void {
   }
 
   for (refUpdate of refUpdatesQueue) {
-    applyMDWCRef(...refUpdate);
+    applyMDWCRef.apply(applyMDWCRef, refUpdate);
   }
 }
