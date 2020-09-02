@@ -1,4 +1,4 @@
-import * as MDWC from './forwardExport';
+import * as DefaultExport from './export';
 
-export * from './forwardExport';
-export { MDWC as default };
+export * from './export';
+export { DefaultExport as default };

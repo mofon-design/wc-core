@@ -70,7 +70,7 @@ gulp.task('gulp-babel-lib', () => {
 
 gulp.task('rollup-umd', async () => {
   const bundle = await rollup.rollup({
-    input: getAbsolutePath('es/index.js'),
+    input: getAbsolutePath('es/export.js'),
     plugins: [rollupBabel(), rollupNodeResolve()],
   });
 

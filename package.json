@@ -1,23 +1,20 @@
 {
   "name": "@mofon-design/wc-core",
-  "version": "0.4.0-beta.1",
+  "version": "0.5.0-beta.0",
   "description": "Web components core of Mofon Design",
   "license": "MIT",
   "main": "lib/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
-  "typings": "typings.d.ts",
   "scripts": {
     "build": "gulp",
     "build:example": "gulp example",
     "clean": "gulp clean",
     "clean:example": "gulp clean-example",
-    "lint": "gulp gulp-typescript && gulp clean && npm run lint:script && npm run lint:style",
-    "lint-fix": "npm run lint-fix:script && npm run lint-fix:style",
+    "lint": "gulp gulp-typescript && gulp clean && npm run lint:script",
+    "lint-fix": "npm run lint-fix:script",
     "lint-fix:script": "npm run lint:script -- --fix",
-    "lint-fix:style": "npm run lint:style -- --fix",
-    "lint:script": "eslint . --ext '.js,.jsx,.ts,.tsx'",
-    "lint:style": "stylelint 'src/**/*.less' --syntax less",
+    "lint:script": "eslint 'src/' --ext '.js,.jsx,.ts,.tsx'",
     "prettier": "prettier 'src/**/*' -c --write",
     "prepublish": "npm run build"
   },
@@ -26,8 +23,7 @@
     "commit-msg": "ts-node scripts/verifyCommit.ts"
   },
   "dependencies": {
-    "@babel/runtime": "^7.11.2",
-    "@mofon-design/csstype": "^1.0.0"
+    "@babel/runtime": "^7.11.2"
   },
   "devDependencies": {
     "@babel/core": "^7.11.4",
