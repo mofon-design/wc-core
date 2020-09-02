@@ -21,10 +21,9 @@ export function createAttrPropMap<T>(
 
   const propertyKey = unknownPropertyKey as NonFunctionPropertyKeys<T>;
 
+  // * ASSERT `typeof customAttribute === 'string'`
   const attributeName =
-    typeof customAttribute === 'string'
-      ? customAttribute
-      : (typeof customAttribute).concat('-', String(customAttribute));
+    typeof customAttribute === 'string' ? customAttribute : String(customAttribute);
 
   /** map HTML attribute name to class property key */
   ProtoType.mapAttrsToProps[attributeName] = propertyKey;
