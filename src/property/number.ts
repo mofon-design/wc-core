@@ -1,9 +1,16 @@
-import { CoreInternalElement, PropertyNumberDecorator } from '../types';
+import {
+  CoreInternalElement,
+  InternalPropertyNumberDecorator,
+  PropertyNumberDecorator,
+} from '../types';
 import { getPropertyValue, setPropertyValue } from './accessPropertyValue';
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyNumberDecorator(customAttribute?: string): PropertyNumberDecorator {
-  const decorator: PropertyNumberDecorator = (ProtoType, unknownPropertyKey) => {
+  const decorator: InternalPropertyNumberDecorator = <T>(
+    ProtoType: T,
+    unknownPropertyKey: keyof T,
+  ) => {
     const [propertyKey, attributeName] = createAttrPropMap(
       ProtoType,
       unknownPropertyKey,
@@ -15,12 +22,11 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
       enumerable: true,
       configurable: true,
       get(this: CoreInternalElement<typeof ProtoType>) {
-        // return convertAnyToNumber(this.getAttribute(attributeName), decorator);
+        // return decorator.formatter.call(this, this.getAttribute(attributeName));
         return getPropertyValue(this, propertyKey);
       },
       set(this: CoreInternalElement<typeof ProtoType>, numberLike: unknown) {
-        // make sure value is not `NaN`
-        const newValue = convertAnyToNumber(numberLike, decorator);
+        const newValue = decorator.formatter.call(this, numberLike);
         const oldValue = (getPropertyValue(this, propertyKey) as unknown) as number | undefined;
 
         if (newValue === oldValue) return;
@@ -39,6 +45,7 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
           }
         }
 
+        decorator.listener?.call(this, oldValue, newValue);
         this.propertyChangedCallback?.call(this, propertyKey, oldValue, newValue);
       },
     });
@@ -49,9 +56,23 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
     return decorator;
   };
 
+  decorator.format = (formatter) => {
+    decorator.formatter = formatter;
+    return decorator;
+  };
+
+  decorator.listen = (listener) => {
+    decorator.listener = listener;
+    return decorator;
+  };
+
   decorator.only = (...value) => {
     decorator.oneOf = (decorator.oneOf || []).concat(value);
     return decorator;
+  };
+
+  decorator.formatter = function defaultFormatter(this: CoreInternalElement<unknown>, value) {
+    return convertAnyToNumber.call(this, value, decorator);
   };
 
   return decorator;
@@ -64,8 +85,9 @@ export function getPropertyNumberDecorator(customAttribute?: string): PropertyNu
  * `null` and `''` will be treated as `undefined`, and return fallback value.
  */
 function convertAnyToNumber(
+  this: CoreInternalElement<unknown>,
   value: unknown,
-  decorator: PropertyNumberDecorator,
+  decorator: InternalPropertyNumberDecorator,
 ): number | undefined {
   /**
    * - Number('') === 0

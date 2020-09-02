@@ -1,9 +1,16 @@
-import { CoreInternalElement, PropertyStringDecorator } from '../types';
+import {
+  CoreInternalElement,
+  InternalPropertyStringDecorator,
+  PropertyStringDecorator,
+} from '../types';
 import { getPropertyValue, setPropertyValue } from './accessPropertyValue';
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyStringDecorator(customAttribute?: string): PropertyStringDecorator {
-  const decorator: PropertyStringDecorator = (ProtoType, unknownPropertyKey) => {
+  const decorator: InternalPropertyStringDecorator = <T>(
+    ProtoType: T,
+    unknownPropertyKey: keyof T,
+  ) => {
     const [propertyKey, attributeName] = createAttrPropMap(
       ProtoType,
       unknownPropertyKey,
@@ -15,11 +22,11 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
       enumerable: true,
       configurable: true,
       get(this: CoreInternalElement<typeof ProtoType>) {
-        // return convertAnyToString(this.getAttribute(attributeName), decorator);
+        // return decorator.formatter.call(this, this.getAttribute(attributeName));
         return getPropertyValue(this, propertyKey);
       },
       set(this: CoreInternalElement<typeof ProtoType>, stringLike: unknown) {
-        const newValue = convertAnyToString(stringLike, decorator);
+        const newValue = decorator.formatter.call(this, stringLike);
         const oldValue = (getPropertyValue(this, propertyKey) as unknown) as string | undefined;
 
         if (newValue === oldValue) return;
@@ -38,6 +45,7 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
           }
         }
 
+        decorator.listener?.call(this, oldValue, newValue);
         this.propertyChangedCallback?.call(this, propertyKey, oldValue, newValue);
       },
     });
@@ -48,17 +56,32 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
     return decorator;
   };
 
+  decorator.format = (formatter) => {
+    decorator.formatter = formatter;
+    return decorator;
+  };
+
+  decorator.listen = (listener) => {
+    decorator.listener = listener;
+    return decorator;
+  };
+
   decorator.only = (...value) => {
     decorator.oneOf = (decorator.oneOf || []).concat(value);
     return decorator;
+  };
+
+  decorator.formatter = function defaultFormatter(this: CoreInternalElement<unknown>, value) {
+    return convertAnyToString.call(this, value, decorator);
   };
 
   return decorator;
 }
 
 function convertAnyToString(
+  this: CoreInternalElement<unknown>,
   value: unknown,
-  decorator: PropertyStringDecorator,
+  decorator: InternalPropertyStringDecorator,
 ): string | undefined {
   if (value === null || value === undefined) {
     return decorator.fallbackValue;

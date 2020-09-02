@@ -1,9 +1,17 @@
-import { CoreElementStage, CoreInternalElement, PropertyBooleanDecorator } from '../types';
+import {
+  CoreElementStage,
+  CoreInternalElement,
+  InternalPropertyBooleanDecorator,
+  PropertyBooleanDecorator,
+} from '../types';
 import { getPropertyValue, setPropertyValue } from './accessPropertyValue';
 import { createAttrPropMap } from './createAttrPropMap';
 
 export function getPropertyBooleanDecorator(customAttribute?: string): PropertyBooleanDecorator {
-  const decorator: PropertyBooleanDecorator = (ProtoType, unknownPropertyKey) => {
+  const decorator: InternalPropertyBooleanDecorator = <T>(
+    ProtoType: T,
+    unknownPropertyKey: keyof T,
+  ) => {
     const [propertyKey, attributeName] = createAttrPropMap(
       ProtoType,
       unknownPropertyKey,
@@ -15,11 +23,11 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
       enumerable: true,
       configurable: true,
       get(this: CoreInternalElement<typeof ProtoType>) {
-        // return convertAnyToBoolean(this.getAttribute(attributeName), decorator);
+        // return decorator.formatter.call(this, this.getAttribute(attributeName));
         return getPropertyValue(this, propertyKey);
       },
       set(this: CoreInternalElement<typeof ProtoType>, booleanLike: unknown) {
-        const newValue = convertAnyToBoolean(booleanLike, decorator, this.stage);
+        const newValue = decorator.formatter.call(this, booleanLike);
         const oldValue = (getPropertyValue(this, propertyKey) as unknown) as boolean | undefined;
 
         if (newValue === oldValue) return;
@@ -38,6 +46,7 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
           }
         }
 
+        decorator.listener?.call(this, oldValue, newValue);
         this.propertyChangedCallback?.call(this, propertyKey, oldValue, newValue);
       },
     });
@@ -46,6 +55,20 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
   decorator.fallback = (value) => {
     decorator.fallbackValue = value;
     return decorator;
+  };
+
+  decorator.format = (formatter) => {
+    decorator.formatter = formatter;
+    return decorator;
+  };
+
+  decorator.listen = (listener) => {
+    decorator.listener = listener;
+    return decorator;
+  };
+
+  decorator.formatter = function defaultFormatter(this: CoreInternalElement<unknown>, value) {
+    return convertAnyToBoolean.call(this, value, decorator);
   };
 
   return decorator;
@@ -63,15 +86,15 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
  * ```
  */
 function convertAnyToBoolean(
+  this: CoreInternalElement<unknown>,
   value: unknown,
-  decorator: PropertyBooleanDecorator,
-  stage: CoreElementStage,
+  decorator: InternalPropertyBooleanDecorator,
 ): boolean | undefined {
   if (value === undefined) {
     return decorator.fallbackValue;
   }
 
-  if (typeof value === 'string' && stage & CoreElementStage.SYNC_ATTRIBUTE) {
+  if (typeof value === 'string' && this.stage & CoreElementStage.SYNC_ATTRIBUTE) {
     return true;
   }
 
