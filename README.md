@@ -1,4 +1,4 @@
-# mofon-design-wc-core
+# Mofon Design WC Core
 
 Web components core of Mofon Design.
 
@@ -6,7 +6,7 @@ Web components core of Mofon Design.
 
 ## Examples
 
-See [example](https://github.com/imhele/mofon-design-wc-core/tree/master/example) directory.
+See [example](https://github.com/mofon-design/wc-core/tree/master/example) directory.
 
 Or [visit preview site](https://wc-core.netlify.com/).
 

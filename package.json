@@ -12,7 +12,7 @@
     "build:example": "gulp example",
     "clean": "gulp clean",
     "clean:example": "gulp clean-example",
-    "lint": "npm run build:es && npm run lint:script && npm run lint:style",
+    "lint": "gulp gulp-typescript && gulp clean && npm run lint:script && npm run lint:style",
     "lint-fix": "npm run lint-fix:script && npm run lint-fix:style",
     "lint-fix:script": "npm run lint:script -- --fix",
     "lint-fix:style": "npm run lint:style -- --fix",
