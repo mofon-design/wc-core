@@ -1,4 +1,6 @@
+import { StageKey } from '../tag/privatePropertiesKey';
 import {
+  CoreElementStage,
   CoreInternalElement,
   InternalPropertyStringDecorator,
   PropertyStringDecorator,
@@ -37,7 +39,10 @@ export function getPropertyStringDecorator(customAttribute?: string): PropertySt
          * to ensure the consistency between them.
          */
 
-        if (this.shouldSyncPropertyToAttribute(propertyKey, oldValue, newValue, attributeName)) {
+        if (
+          !(this[StageKey] & CoreElementStage.SYNC_ATTRIBUTE) &&
+          this[StageKey] & CoreElementStage.INITIALIZED
+        ) {
           if (newValue !== undefined) {
             this.setAttribute(attributeName, newValue);
           } else {

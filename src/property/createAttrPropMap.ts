@@ -1,4 +1,5 @@
 import { makeSureCorePropertiesExist } from '../tag/makeSureCorePropertiesExist';
+import { MapAttrsToPropsKey } from '../tag/privatePropertiesKey';
 import { NonFunctionPropertyKeys, PropertyDecoratorMap } from '../types';
 import { setPropertyValue } from './accessPropertyValue';
 
@@ -26,7 +27,7 @@ export function createAttrPropMap<T>(
     typeof customAttribute === 'string' ? customAttribute : String(customAttribute);
 
   /** map HTML attribute name to class property key */
-  ProtoType.mapAttrsToProps[attributeName] = propertyKey;
+  ProtoType[MapAttrsToPropsKey][attributeName] = propertyKey;
 
   /** use `fallbackValue` as initial property */
   setPropertyValue(ProtoType, propertyKey, decorator.fallbackValue as any);

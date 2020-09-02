@@ -1,5 +1,5 @@
 import { CoreElementStage, CoreInternalElement, CoreElementConstructor } from '../types';
-import { SetElementConnectedKey } from './privatePropertiesKey';
+import { SetElementConnectedKey, StageKey } from './privatePropertiesKey';
 
 /**
  * Add private methods used internally for component class prototypes.
@@ -13,9 +13,9 @@ export function overridePrivateMethods<T extends string, U extends CoreElementCo
       {
         setElementConnected(this: CoreInternalElement<InstanceType<U>>): void {
           if (this.isConnected) {
-            this.stage |= CoreElementStage.CONNECTED;
+            this[StageKey] |= CoreElementStage.CONNECTED;
           } else {
-            this.stage &= ~CoreElementStage.CONNECTED;
+            this[StageKey] &= ~CoreElementStage.CONNECTED;
           }
         },
       }.setElementConnected,

@@ -70,22 +70,6 @@ export interface CoreElementLifecycle extends CustomElementLifecycle {
     oldValue: unknown | undefined,
     newValue: unknown | undefined,
   ): void;
-  /**
-   * Invoked each time one of the custom element's properties is changed.
-   * Should return a boolean value indicating whether the new value needs to be
-   * synchronized to the HTML attribute.
-   *
-   * @default
-   * ```ts
-   * (this.stage & CoreElementStage.INITIALIZED) && !(this.stage & CoreElementStage.SYNC_ATTRIBUTE)
-   * ```
-   */
-  shouldSyncPropertyToAttribute?(
-    property: keyof any,
-    oldValue: unknown | undefined,
-    newValue: unknown | undefined,
-    attribute: string,
-  ): boolean;
 }
 
 export interface CoreElement extends CustomElement, CoreElementLifecycle {}
@@ -101,16 +85,11 @@ export interface CoreInternalElement<T> extends CoreElement {
   /**
    * Map HTML attribute names to element property keys.
    *
-   * @description
+   * @protected
    * `mapAttrsToProps` is a **static constant** attach to the `CoreInternalElement.prototype`,
    * and SHOULD NOT be used as a property of any instance.
    */
-  readonly mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
-  shouldSyncPropertyToAttribute: Exclude<CoreElement['shouldSyncPropertyToAttribute'], undefined>;
-  /**
-   * Indicate the state of the current element.
-   */
-  stage: CoreElementStage;
+  __mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
   /**
    * The actual storage location of the element property value for the element property accessor.
    *
@@ -127,6 +106,11 @@ export interface CoreInternalElement<T> extends CoreElement {
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
    */
   __setElementConnected(): void;
+  /**
+   * @protected
+   * Indicate the state of the current element.
+   */
+  __stage: CoreElementStage;
   /**
    * @protected
    * The life cycle function has been tamper-proofed, and `superLifecycle` is used to store

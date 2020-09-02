@@ -1,3 +1,4 @@
+import { StageKey } from '../tag/privatePropertiesKey';
 import {
   CoreElementStage,
   CoreInternalElement,
@@ -38,7 +39,10 @@ export function getPropertyBooleanDecorator(customAttribute?: string): PropertyB
          * to ensure the consistency between them.
          */
 
-        if (this.shouldSyncPropertyToAttribute(propertyKey, oldValue, newValue, attributeName)) {
+        if (
+          !(this[StageKey] & CoreElementStage.SYNC_ATTRIBUTE) &&
+          this[StageKey] & CoreElementStage.INITIALIZED
+        ) {
           if (newValue) {
             this.setAttribute(attributeName, '');
           } else {
@@ -94,7 +98,7 @@ function convertAnyToBoolean(
     return decorator.fallbackValue;
   }
 
-  if (typeof value === 'string' && this.stage & CoreElementStage.SYNC_ATTRIBUTE) {
+  if (typeof value === 'string' && this[StageKey] & CoreElementStage.SYNC_ATTRIBUTE) {
     return true;
   }
 

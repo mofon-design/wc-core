@@ -1,4 +1,5 @@
 import { CoreElementStage, CoreInternalElement } from '../types';
+import { MapAttrsToPropsKey, StageKey } from './privatePropertiesKey';
 
 /**
  * Property decorator always fired before element class decorator, so it is necessary
@@ -7,17 +8,17 @@ import { CoreElementStage, CoreInternalElement } from '../types';
 export function makeSureCorePropertiesExist<T>(UnsafeProtoType: T): CoreInternalElement<T> & T {
   const ProtoType = UnsafeProtoType as CoreInternalElement<T> & T;
 
-  if (!Object.prototype.hasOwnProperty.call(ProtoType, 'mapAttrsToProps')) {
-    Object.defineProperty(ProtoType, 'mapAttrsToProps', {
-      value: { ...ProtoType.mapAttrsToProps },
+  if (!Object.prototype.hasOwnProperty.call(ProtoType, MapAttrsToPropsKey)) {
+    Object.defineProperty(ProtoType, MapAttrsToPropsKey, {
+      value: { ...ProtoType[MapAttrsToPropsKey] },
       configurable: true,
       enumerable: false,
       writable: false,
     });
   }
 
-  if (!('stage' in ProtoType)) {
-    Object.defineProperty(ProtoType, 'stage', {
+  if (!(StageKey in ProtoType)) {
+    Object.defineProperty(ProtoType, StageKey, {
       value: CoreElementStage.NULL,
       configurable: true,
       enumerable: false,

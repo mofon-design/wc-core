@@ -7,7 +7,7 @@ import {
 } from '../types';
 import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
 import { overridePrivateMethods } from './overridePrivateMethods';
-import { SetElementConnectedKey } from './privatePropertiesKey';
+import { MapAttrsToPropsKey, SetElementConnectedKey, StageKey } from './privatePropertiesKey';
 import { callSuperLifecycle, overrideLifecycle } from './superLifecycle';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -41,7 +41,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       ): void {
         // if (oldValue === newValue) return;
 
-        if (hasOwnProperty.call(Target.prototype.mapAttrsToProps, name)) {
+        if (hasOwnProperty.call(Target.prototype[MapAttrsToPropsKey], name)) {
           /**
            * Prevent the property setter from loop calls.
            *
@@ -52,17 +52,17 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
            * @deprecated
            * ```ts
            * set property(value: string | null) {
-           *   this.stage |= CoreElementStage.SYNC_ATTRIBUTE;
+           *   this[StageKey] |= CoreElementStage.SYNC_ATTRIBUTE;
            *   if (value === null) this.removeAttribute('example');
            *   else this.setAttribute('example', value);
-           *   this.stage &= ~CoreElementStage.SYNC_ATTRIBUTE;
+           *   this[StageKey] &= ~CoreElementStage.SYNC_ATTRIBUTE;
            * }
            * ```
            */
 
-          this.stage |= CoreElementStage.SYNC_ATTRIBUTE;
-          (this as any)[Target.prototype.mapAttrsToProps[name]] = newValue;
-          this.stage &= ~CoreElementStage.SYNC_ATTRIBUTE;
+          this[StageKey] |= CoreElementStage.SYNC_ATTRIBUTE;
+          (this as any)[Target.prototype[MapAttrsToPropsKey][name]] = newValue;
+          this[StageKey] &= ~CoreElementStage.SYNC_ATTRIBUTE;
         }
 
         callSuperLifecycle(this, 'attributeChangedCallback', name, oldValue, newValue);
@@ -71,8 +71,8 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       connectedCallback(): void {
         this[SetElementConnectedKey]();
 
-        if (!(this.stage & CoreElementStage.INITIALIZED)) {
-          this.stage |= CoreElementStage.INITIALIZED;
+        if (!(this[StageKey] & CoreElementStage.INITIALIZED)) {
+          this[StageKey] |= CoreElementStage.INITIALIZED;
           this.initialize?.call(this);
         }
 
@@ -83,31 +83,6 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
         this[SetElementConnectedKey]();
         callSuperLifecycle(this, 'disconnectedCallback');
       },
-
-      shouldSyncPropertyToAttribute(
-        property: keyof any,
-        oldValue: unknown | undefined,
-        newValue: unknown | undefined,
-        attribute: string,
-      ): boolean {
-        const superResult = callSuperLifecycle(
-          this,
-          'shouldSyncPropertyToAttribute',
-          property,
-          oldValue,
-          newValue,
-          attribute,
-        );
-
-        if (callSuperLifecycle.returnValueIsExists(superResult)) {
-          return superResult;
-        }
-
-        return !!(
-          !(this.stage & CoreElementStage.SYNC_ATTRIBUTE) &&
-          this.stage & CoreElementStage.INITIALIZED
-        );
-      },
     };
 
     overrideLifecycle(Target, lifecycle);
@@ -117,7 +92,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
         configurable: true,
         enumerable: true,
         get() {
-          return Object.keys(Target.prototype.mapAttrsToProps);
+          return Object.keys(Target.prototype[MapAttrsToPropsKey]);
         },
       });
     }
