@@ -2,7 +2,7 @@
 
 Web components core of Mofon Design.
 
-[![NPM version](https://img.shields.io/npm/v/@mofon-design/wc-core.svg?style=flat)](https://www.npmjs.com/package/@mofon-design/wc-core) [![Install size](https://packagephobia.com/badge?p=@mofon-design/wc-core)](https://packagephobia.com/result?p=@mofon-design/wc-core)
+[![NPM version](https://img.shields.io/npm/v/@mofon-design/wc-core.svg?style=flat)](https://www.npmjs.com/package/@mofon-design/wc-core) [![Install size](https://packagephobia.com/badge?p=@mofon-design/wc-core)](https://packagephobia.com/result?p=@mofon-design/wc-core) [![Netlify Status](https://api.netlify.com/api/v1/badges/9b26eba9-d88f-41f7-b838-9a5da66e473a/deploy-status)](https://app.netlify.com/sites/wc-core/deploys)
 
 ## Examples
 
@@ -44,71 +44,6 @@ class InputContent extends HTMLElement implements CoreElement {
     this.paragraph.innerText = this.value;
 
     console.log('property changed, this.value =', this.value);
-  }
-}
-```
-
-### With JSX
-
-```tsx
-import MDWC from '@mofon-design/wc-core';
-import { HybridDOMTreeRootNode } from '@mofon-design/wc-core/src/jsx/dom';
-
-@MDWC.tag('search-input')
-export class SearchInput extends HTMLElement implements MDWC.CoreElement {
-  @MDWC.property('string')
-  value!: string;
-
-  hybridDOMTree?: HybridDOMTreeRootNode;
-
-  button = MDWC.createRef<HTMLButtonElement>();
-
-  input = MDWC.createRef<HTMLInputElement>();
-
-  attributeChangedCallback() {
-    console.log('attribute changed, this.value =', this.value);
-    this.forceUpdate();
-  }
-
-  initialize() {
-    this.forceUpdate();
-    this.input.current?.addEventListener('input', this.onInput);
-    this.button.current?.addEventListener('click', this.onClickButton);
-
-    console.log('initialized, refs:', this.input, this.button);
-  }
-
-  forceUpdate() {
-    const [diffQueue, hybridDOMTree] = MDWC.diffHybridDOMTree(
-      this.render(),
-      this,
-      this.hybridDOMTree,
-    );
-    this.hybridDOMTree = hybridDOMTree;
-    MDWC.applyHybridDOMTreeDiff(diffQueue);
-  }
-
-  onInput = () => {
-    if (this.input.current) {
-      this.value = this.input.current.value;
-    }
-  };
-
-  onClickButton = () => {
-    // eslint-disable-next-line no-alert
-    alert(`Search '${this.value}'`);
-  };
-
-  render() {
-    return (
-      <MDWC.Fragment>
-        <input ref={this.input} />
-        <button ref={this.button} type="button">
-          Search
-        </button>
-        <p>{this.value}</p>
-      </MDWC.Fragment>
-    );
   }
 }
 ```

@@ -46,7 +46,7 @@ gulp.task('gulp-example-typescript', () => {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('gulp-example-umd', async () => {
+gulp.task('rollup-example-umd', async () => {
   const bundle = await rollup.rollup({
     input: getAbsolutePath('dist/example/index.js'),
     plugins: [rollupBabel(), rollupNodeResolve()],
@@ -90,7 +90,7 @@ gulp.task(
     'clean-example',
     'build-example-index-page',
     'gulp-example-typescript',
-    'gulp-example-umd',
+    'rollup-example-umd',
     'clean-dist',
   ),
 );
