@@ -1,8 +1,10 @@
-import MDWC from '../../src';
+import { CoreElement, property, tag } from '../../src';
 
-@MDWC.tag('input-content')
-export class InputContent extends HTMLElement implements MDWC.CoreElement {
-  @(MDWC.property('string').fallback('Attribute does not exists'))
+@tag('input-content')
+export class InputContent extends HTMLElement implements CoreElement {
+  @(property('string')
+    .fallback('Attribute does not exists')
+    .listen(InputContent.prototype.onValueChange))
   value!: string;
 
   button = document.createElement('button');
@@ -18,11 +20,7 @@ export class InputContent extends HTMLElement implements MDWC.CoreElement {
     this.input.addEventListener('input', this.onInput);
     this.button.addEventListener('click', this.onClickButton);
 
-    console.log('constructed, this.value =', this.value);
-  }
-
-  attributeChangedCallback() {
-    console.log('attribute changed, this.value =', this.value);
+    console.log(`constructed, \`this.value\` = \`${this.value}\``);
   }
 
   initialize() {
@@ -30,7 +28,7 @@ export class InputContent extends HTMLElement implements MDWC.CoreElement {
     this.appendChild(this.button);
     this.appendChild(this.paragraph);
 
-    console.log('initialized, this.value =', this.value);
+    console.log(`initialized, \`this.value\` = \`${this.value}\``);
   }
 
   onInput = () => {
@@ -41,9 +39,9 @@ export class InputContent extends HTMLElement implements MDWC.CoreElement {
     this.value = null!;
   };
 
-  propertyChangedCallback() {
-    this.paragraph.innerText = this.value;
+  onValueChange(oldValue: string, newValue: string) {
+    this.paragraph.innerText = newValue;
 
-    console.log('property changed, this.value =', this.value);
+    console.log(`property \`value\` changed from \`${oldValue}\` to \`${newValue}\``);
   }
 }

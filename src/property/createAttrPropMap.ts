@@ -16,15 +16,14 @@ export function createAttrPropMap<T>(
   unknownPropertyKey: string | number | symbol,
   customAttribute: string | number | symbol = unknownPropertyKey,
   decorator: PropertyDecoratorMap[keyof PropertyDecoratorMap],
-) {
+): readonly [propertyKey: NonFunctionPropertyKeys<T>, attributeName: string] {
   const ProtoType = makeSureCorePropertiesExist<T>(UnsafeProtoType);
 
   const propertyKey = unknownPropertyKey as NonFunctionPropertyKeys<T>;
 
+  // * ASSERT `typeof customAttribute === 'string'`
   const attributeName =
-    typeof customAttribute === 'string'
-      ? customAttribute
-      : (typeof customAttribute).concat('-', String(customAttribute));
+    typeof customAttribute === 'string' ? customAttribute : String(customAttribute);
 
   /** map HTML attribute name to class property key */
   ProtoType.mapAttrsToProps[attributeName] = propertyKey;
@@ -32,5 +31,5 @@ export function createAttrPropMap<T>(
   /** use `fallbackValue` as initial property */
   setPropertyValue(ProtoType, propertyKey, decorator.fallbackValue as any);
 
-  return [propertyKey, attributeName] as const;
+  return [propertyKey, attributeName];
 }

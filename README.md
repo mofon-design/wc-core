@@ -25,7 +25,9 @@ class InputContent extends HTMLElement implements CoreElement {
   value!: string;
 
   button = document.createElement('button');
+
   input = document.createElement('input');
+
   paragraph = document.createElement('p');
 
   constructor() {

@@ -40,11 +40,11 @@ export interface CustomElementClass<T extends string = string> {
   /**
    * A static accessor that specifies which attributes should be noted for changes.
    */
-  observedAttributes?: string[];
+  readonly observedAttributes?: string[];
   /**
    * Name for the new custom element. Note that custom element names must contain a hyphen.
    */
-  tagName?: T;
+  readonly tagName?: T;
 }
 
 /**
@@ -101,11 +101,11 @@ export interface CoreInternalElement<T> extends CoreElement {
   /**
    * Map HTML attribute names to element property keys.
    *
-   * @deprecated
+   * @description
    * `mapAttrsToProps` is a **static constant** attach to the `CoreInternalElement.prototype`,
    * and SHOULD NOT be used as a property of any instance.
    */
-  mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
+  readonly mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
   shouldSyncPropertyToAttribute: Exclude<CoreElement['shouldSyncPropertyToAttribute'], undefined>;
   /**
    * Indicate the state of the current element.
@@ -114,13 +114,13 @@ export interface CoreInternalElement<T> extends CoreElement {
   /**
    * The actual storage location of the element property value for the element property accessor.
    *
-   * @deprecated
+   * @protected
    * DO NOT access `__properties` directly or modify the value, otherwise it will cause the problem
    * of inconsistency between HTML attributes and element properties.
    */
   __properties: Partial<Pick<T, NonFunctionPropertyKeys<T>>>;
   /**
-   * @deprecated
+   * @protected
    * Determine whether the element has been connected to the document according to
    * `Node.isConnected`, and update the current stage.
    *
@@ -128,7 +128,7 @@ export interface CoreInternalElement<T> extends CoreElement {
    */
   __setElementConnected(): void;
   /**
-   * @deprecated
+   * @protected
    * The life cycle function has been tamper-proofed, and `superLifecycle` is used to store
    * the original life cycle function of the wrapped class.
    */
