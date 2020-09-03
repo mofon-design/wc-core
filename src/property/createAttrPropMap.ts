@@ -1,7 +1,6 @@
 import { makeSureCorePropertiesExist } from '../tag/makeSureCorePropertiesExist';
 import { MapAttrsToPropsKey } from '../tag/privatePropertiesKey';
-import { NonFunctionPropertyKeys, PropertyDecoratorMap } from '../types';
-import { setPropertyValue } from './accessPropertyValue';
+import { CoreInternalElement } from '../types';
 
 /**
  * Initialize the mapping of HTML attribute names to class property keys for custom elements,
@@ -12,25 +11,21 @@ import { setPropertyValue } from './accessPropertyValue';
  * When the type of `attribute` is not string, such as number or symbol, the value will be
  * converted to `${typeof attribute}-${String(propertyName)}`.
  */
-export function createAttrPropMap<T>(
-  UnsafeProtoType: T,
-  unknownPropertyKey: string | number | symbol,
-  customAttribute: string | number | symbol = unknownPropertyKey,
-  decorator: PropertyDecoratorMap[keyof PropertyDecoratorMap],
-): readonly [propertyKey: NonFunctionPropertyKeys<T>, attributeName: string] {
-  const ProtoType = makeSureCorePropertiesExist<T>(UnsafeProtoType);
-
-  const propertyKey = unknownPropertyKey as NonFunctionPropertyKeys<T>;
+export function createAttrPropMap<T extends CoreInternalElement>(
+  ProtoType: T,
+  propertyKey: keyof any,
+  customAttribute: keyof any = propertyKey,
+): readonly [propertyKey: keyof any, attributeName: string] {
+  makeSureCorePropertiesExist(ProtoType);
 
   // * ASSERT `typeof customAttribute === 'string'`
   const attributeName =
     typeof customAttribute === 'string' ? customAttribute : String(customAttribute);
 
   /** map HTML attribute name to class property key */
+  // * ASSERT `!Object.prototype.hasOwnProperty.call(ProtoType[MapAttrsToPropsKey], attributeName)`
+  // eslint-disable-next-line no-param-reassign
   ProtoType[MapAttrsToPropsKey][attributeName] = propertyKey;
-
-  /** use `fallbackValue` as initial property */
-  setPropertyValue(ProtoType, propertyKey, decorator.fallbackValue as any);
 
   return [propertyKey, attributeName];
 }

@@ -33,7 +33,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
 
     overridePrivateMethods(Target);
 
-    const lifecycle: ThisType<CoreInternalElement<InstanceType<T>>> & CoreElementLifecycle = {
+    const lifecycle: ThisType<CoreInternalElement> & CoreElementLifecycle = {
       attributeChangedCallback(
         name: string,
         oldValue: string | null,

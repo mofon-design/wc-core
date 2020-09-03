@@ -5,9 +5,7 @@ import { MapAttrsToPropsKey, StageKey } from './privatePropertiesKey';
  * Property decorator always fired before element class decorator, so it is necessary
  * to check whether the necessary properties have been initialized.
  */
-export function makeSureCorePropertiesExist<T>(UnsafeProtoType: T): CoreInternalElement<T> & T {
-  const ProtoType = UnsafeProtoType as CoreInternalElement<T> & T;
-
+export function makeSureCorePropertiesExist<T extends CoreInternalElement>(ProtoType: T): void {
   if (!Object.prototype.hasOwnProperty.call(ProtoType, MapAttrsToPropsKey)) {
     Object.defineProperty(ProtoType, MapAttrsToPropsKey, {
       value: { ...ProtoType[MapAttrsToPropsKey] },
@@ -25,6 +23,4 @@ export function makeSureCorePropertiesExist<T>(UnsafeProtoType: T): CoreInternal
       writable: true,
     });
   }
-
-  return ProtoType;
 }
