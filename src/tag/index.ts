@@ -101,7 +101,8 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       });
     }
 
-    if (!hasOwnProperty.call(Target, 'tagName') || Target.tagName !== tagName) {
+    // * ASSERT `!hasOwnProperty.call(Target, 'tagName')`
+    if (!hasOwnProperty.call(Target, 'tagName')) {
       Object.defineProperty(Target, 'tagName', {
         configurable: true,
         enumerable: true,

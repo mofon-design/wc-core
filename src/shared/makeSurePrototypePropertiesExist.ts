@@ -2,6 +2,10 @@ import { CoreElementStage, CoreInternalElement } from '../types';
 import { MapAttrsToPropsKey, StageKey } from './privatePropertiesKey';
 
 /**
+ * Make sure that the necessary properties of the prototype already exist.
+ * The initial property values of the instance also need to be defined on the prototype.
+ *
+ * @description
  * Property decorator always fired before element class decorator, so it is necessary
  * to check whether the necessary properties have been initialized.
  */

@@ -5,6 +5,9 @@ import { CoreElementStage, CoreInternalElement, CoreElementConstructor } from '.
  * Add private methods used internally for component class prototypes.
  */
 export function overridePrivateMethods(Target: CoreElementConstructor): void {
+  /**
+   * Name the function for locating when an error occurs.
+   */
   const privateMethods = [
     [
       SetElementConnectedKey,

@@ -51,14 +51,6 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
       Object.defineProperty(superLifecycles, lifecycleKey, superLifecycleDescriptor);
     }
 
-    /**
-     * @example
-     * class ChildClass extends ParentClass {
-     *   anyLifecycle = () => {
-     *     console.log('lifecycle has been rewrited.');
-     *   }
-     * }
-     */
     Object.defineProperty(Target.prototype, lifecycleKey, {
       configurable: true,
       enumerable: false,
@@ -66,13 +58,23 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
         return lifecycle[lifecycleKey];
       },
       set(this: RewritedInstance<T, U>, value: U[typeof lifecycleKey]) {
-        if (!hasOwnProperty.call(this, SuperLifecycleKey))
+        /**
+         * @example
+         * class ChildClass extends ParentClass {
+         *   anyLifecycle = () => {
+         *     console.log('lifecycle has been rewrited.');
+         *   }
+         * }
+         */
+        if (!hasOwnProperty.call(this, SuperLifecycleKey)) {
           Object.defineProperty(this, SuperLifecycleKey, {
             value: { ...this[SuperLifecycleKey] },
             configurable: true,
             enumerable: false,
             writable: false,
           });
+        }
+
         this[SuperLifecycleKey]![lifecycleKey] = value;
       },
     });
