@@ -1,5 +1,5 @@
+import { SetElementConnectedKey, StageKey } from '../shared/privatePropertiesKey';
 import { CoreElementStage, CoreInternalElement, CoreElementConstructor } from '../types';
-import { SetElementConnectedKey, StageKey } from './privatePropertiesKey';
 
 /**
  * Add private methods used internally for component class prototypes.

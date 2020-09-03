@@ -1,5 +1,5 @@
-import { makeSureCorePropertiesExist } from '../tag/makeSureCorePropertiesExist';
-import { MapAttrsToPropsKey } from '../tag/privatePropertiesKey';
+import { makeSurePrototypePropertiesExist } from '../shared/makeSurePrototypePropertiesExist';
+import { MapAttrsToPropsKey } from '../shared/privatePropertiesKey';
 import { CoreInternalElement } from '../types';
 
 /**
@@ -16,7 +16,7 @@ export function createAttrPropMap<T extends CoreInternalElement>(
   propertyKey: keyof any,
   customAttribute: keyof any = propertyKey,
 ): readonly [propertyKey: keyof any, attributeName: string] {
-  makeSureCorePropertiesExist(ProtoType);
+  makeSurePrototypePropertiesExist(ProtoType);
 
   // * ASSERT `typeof customAttribute === 'string'`
   const attributeName =

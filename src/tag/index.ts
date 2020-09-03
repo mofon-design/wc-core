@@ -1,3 +1,9 @@
+import { makeSurePrototypePropertiesExist } from '../shared/makeSurePrototypePropertiesExist';
+import {
+  MapAttrsToPropsKey,
+  SetElementConnectedKey,
+  StageKey,
+} from '../shared/privatePropertiesKey';
 import {
   CoreElementConstructor,
   CoreElementLifecycle,
@@ -5,9 +11,7 @@ import {
   CoreInternalElement,
   // CoreInternalElementConstructor,
 } from '../types';
-import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
 import { overridePrivateMethods } from './overridePrivateMethods';
-import { MapAttrsToPropsKey, SetElementConnectedKey, StageKey } from './privatePropertiesKey';
 import { callSuperLifecycle, overrideLifecycle } from './superLifecycle';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -27,7 +31,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
     /**
      * In case property decorator is not called at least once.
      */
-    makeSureCorePropertiesExist(Target.prototype);
+    makeSurePrototypePropertiesExist(Target.prototype);
 
     // const WrappedTarget = Target as {} as CoreInternalElementConstructor<T>;
 
