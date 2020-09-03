@@ -20,12 +20,15 @@ export function overridePrivateMethods(Target: CoreElementConstructor): void {
     ],
   ] as const;
 
-  privateMethods.forEach(([privateMethodKey, privateMethod]) => {
-    Object.defineProperty(Target.prototype, privateMethodKey, {
+  let key: typeof privateMethods extends Readonly<Readonly<[infer K, any]>[]> ? K : never;
+  let method: typeof privateMethods extends Readonly<Readonly<[any, infer V]>[]> ? V : never;
+
+  for ([key, method] of privateMethods) {
+    Object.defineProperty(Target.prototype, key, {
       configurable: true,
       enumerable: false,
-      value: privateMethod,
+      value: method,
       writable: false,
     });
-  });
+  }
 }
