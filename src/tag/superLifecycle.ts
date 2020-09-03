@@ -1,9 +1,11 @@
 import { SuperLifecycleKey } from '../shared/privatePropertiesKey';
-import { AnyConstructor, AnyFunction, ArgsType, PickPropertyKeysByExtends } from '../types';
-
-type RewritedInstance<T, U> = T & { [key in typeof SuperLifecycleKey]?: Partial<U> };
+import { AnyFunction, ArgsType, CoreElementLifecycle, CoreInternalElement } from '../types';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
+
+function isKeyof<T>(object: T, key: keyof any): key is keyof T {
+  return hasOwnProperty.call(object, key);
+}
 
 /**
  * After being wrapped by a class decorator, the lifecycle callbacks will be defined to
@@ -20,21 +22,33 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * tag('my-element')(MyElement);
  * ```
  */
-export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecycle: U) {
-  if (!hasOwnProperty.call(Target.prototype, SuperLifecycleKey)) {
-    Object.defineProperty(Target.prototype, SuperLifecycleKey, {
-      value: { ...Target.prototype[SuperLifecycleKey] },
+export function overrideLifecycle(
+  Prototype: Partial<CoreInternalElement>,
+  lifecycle: Partial<CoreElementLifecycle>,
+) {
+  let superLifecycles: Partial<CoreElementLifecycle>;
+  let superLifecycleDescriptor: PropertyDescriptor | undefined;
+
+  if (hasOwnProperty.call(Prototype, SuperLifecycleKey)) {
+    superLifecycles = Prototype[SuperLifecycleKey]!;
+  } else {
+    /**
+     * * ASSERT `!(SuperLifecycleKey in Prototype)`
+     *
+     * @description
+     * The current class should not inherit from a parent class that has been wrapped
+     * by the `@tag()` decorator, otherwise, a loop call may be raised.
+     */
+    Object.defineProperty(Prototype, SuperLifecycleKey, {
+      value: superLifecycles = {},
       configurable: true,
       enumerable: false,
       writable: false,
     });
   }
 
-  const superLifecycles = Target.prototype[SuperLifecycleKey];
-  let superLifecycleDescriptor: PropertyDescriptor | undefined;
-
   for (const lifecycleKey in lifecycle) {
-    if (!hasOwnProperty.call(lifecycle, lifecycleKey)) {
+    if (!isKeyof(lifecycle, lifecycleKey)) {
       continue;
     }
 
@@ -46,18 +60,18 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
      *   }
      * }
      */
-    superLifecycleDescriptor = Object.getOwnPropertyDescriptor(Target.prototype, lifecycleKey);
+    superLifecycleDescriptor = Object.getOwnPropertyDescriptor(Prototype, lifecycleKey);
     if (superLifecycleDescriptor) {
       Object.defineProperty(superLifecycles, lifecycleKey, superLifecycleDescriptor);
     }
 
-    Object.defineProperty(Target.prototype, lifecycleKey, {
+    Object.defineProperty(Prototype, lifecycleKey, {
       configurable: true,
       enumerable: false,
       get() {
         return lifecycle[lifecycleKey];
       },
-      set(this: RewritedInstance<T, U>, value: U[typeof lifecycleKey]) {
+      set(this: CoreInternalElement, value: AnyFunction) {
         /**
          * @example
          * class ChildClass extends ParentClass {
@@ -75,23 +89,28 @@ export function overrideLifecycle<T extends AnyConstructor, U>(Target: T, lifecy
           });
         }
 
-        this[SuperLifecycleKey]![lifecycleKey] = value;
+        this[SuperLifecycleKey][lifecycleKey] = value;
       },
     });
   }
 }
 
-export function callSuperLifecycle<
-  T,
-  U extends PickPropertyKeysByExtends<T, AnyFunction | undefined>
->(thisType: T, lifecycleKey: U, ...args: ArgsType<T[U]>): ReturnType<T[U]> | symbol {
-  const superLifecycle = (thisType as RewritedInstance<T, T>)[SuperLifecycleKey];
+export function callSuperLifecycle<T extends keyof CoreElementLifecycle>(
+  self: CoreInternalElement,
+  lifecycleKey: T,
+  args: ArgsType<Required<CoreElementLifecycle>[T]>,
+): ReturnType<Required<CoreElementLifecycle>[T]> | symbol {
+  const superLifecycle = self[SuperLifecycleKey];
 
-  if (!superLifecycle || !superLifecycle[lifecycleKey]) {
+  if (
+    !superLifecycle ||
+    !hasOwnProperty.call(superLifecycle, lifecycleKey) ||
+    !superLifecycle[lifecycleKey]
+  ) {
     return callSuperLifecycle.NOT_EXISTS;
   }
 
-  return (superLifecycle[lifecycleKey] as AnyFunction).apply(thisType, args);
+  return (superLifecycle[lifecycleKey] as AnyFunction).apply(self, args);
 }
 
 callSuperLifecycle.NOT_EXISTS = {} as symbol;

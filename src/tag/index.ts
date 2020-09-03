@@ -5,11 +5,12 @@ import {
   StageKey,
 } from '../shared/privatePropertiesKey';
 import {
+  ClassType,
+  CoreElement,
   CoreElementConstructor,
   CoreElementLifecycle,
   CoreElementStage,
   CoreInternalElement,
-  // CoreInternalElementConstructor,
 } from '../types';
 import { overridePrivateMethods } from './overridePrivateMethods';
 import { callSuperLifecycle, overrideLifecycle } from './superLifecycle';
@@ -27,15 +28,12 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  *              Used to create a customized built-in element.
  */
 export function tag<U extends string>(tagName: U, options?: ElementDefinitionOptions) {
-  return <T extends CoreElementConstructor<U>>(Target: T): T => {
-    /**
-     * In case property decorator is not called at least once.
-     */
-    makeSurePrototypePropertiesExist(Target.prototype);
+  return <T extends CoreElementConstructor<U>>(ClassObject: T): T => {
+    const WrappedClass = (ClassObject as ClassType<CoreElement>) as ClassType<CoreInternalElement>;
 
-    // const WrappedTarget = Target as {} as CoreInternalElementConstructor<T>;
+    makeSurePrototypePropertiesExist(WrappedClass.prototype);
 
-    overridePrivateMethods(Target);
+    overridePrivateMethods(WrappedClass.prototype);
 
     const lifecycle: ThisType<CoreInternalElement> & CoreElementLifecycle = {
       attributeChangedCallback(
@@ -45,7 +43,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       ): void {
         // if (oldValue === newValue) return;
 
-        if (hasOwnProperty.call(Target.prototype[MapAttrsToPropsKey], name)) {
+        if (hasOwnProperty.call(WrappedClass.prototype[MapAttrsToPropsKey], name)) {
           /**
            * Prevent the property setter from loop calls.
            *
@@ -65,11 +63,11 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
            */
 
           this[StageKey] |= CoreElementStage.SYNC_ATTRIBUTE;
-          (this as any)[Target.prototype[MapAttrsToPropsKey][name]] = newValue;
+          (this as any)[WrappedClass.prototype[MapAttrsToPropsKey][name]] = newValue;
           this[StageKey] &= ~CoreElementStage.SYNC_ATTRIBUTE;
         }
 
-        callSuperLifecycle(this, 'attributeChangedCallback', name, oldValue, newValue);
+        callSuperLifecycle(this, 'attributeChangedCallback', [name, oldValue, newValue]);
       },
 
       connectedCallback(): void {
@@ -80,30 +78,30 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
           this.initialize?.call(this);
         }
 
-        callSuperLifecycle(this, 'connectedCallback');
+        callSuperLifecycle(this, 'connectedCallback', []);
       },
 
       disconnectedCallback(): void {
         this[SetElementConnectedKey]();
-        callSuperLifecycle(this, 'disconnectedCallback');
+        callSuperLifecycle(this, 'disconnectedCallback', []);
       },
     };
 
-    overrideLifecycle(Target, lifecycle);
+    overrideLifecycle(WrappedClass.prototype, lifecycle);
 
-    if (!hasOwnProperty.call(Target, 'observedAttributes')) {
-      Object.defineProperty(Target, 'observedAttributes', {
+    if (!hasOwnProperty.call(WrappedClass, 'observedAttributes')) {
+      Object.defineProperty(WrappedClass, 'observedAttributes', {
         configurable: true,
         enumerable: true,
         get() {
-          return Object.keys(Target.prototype[MapAttrsToPropsKey]);
+          return Object.keys(WrappedClass.prototype[MapAttrsToPropsKey]);
         },
       });
     }
 
-    // * ASSERT `!hasOwnProperty.call(Target, 'tagName')`
-    if (!hasOwnProperty.call(Target, 'tagName')) {
-      Object.defineProperty(Target, 'tagName', {
+    // * ASSERT `!hasOwnProperty.call(ClassObject, 'tagName')`
+    if (!hasOwnProperty.call(WrappedClass, 'tagName')) {
+      Object.defineProperty(WrappedClass, 'tagName', {
         configurable: true,
         enumerable: true,
         value: tagName,
@@ -111,8 +109,8 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       });
     }
 
-    customElements.define(tagName, Target, options);
+    customElements.define(tagName, WrappedClass, options);
 
-    return Target;
+    return (WrappedClass as ClassType<CoreElement>) as T;
   };
 }

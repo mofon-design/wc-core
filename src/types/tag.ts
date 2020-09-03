@@ -1,4 +1,3 @@
-import { AnyFunction } from './any';
 import { Constructor } from './helper';
 
 /**
@@ -116,7 +115,7 @@ export interface CoreInternalElement extends CoreElement {
    * The life cycle function has been tamper-proofed, and `superLifecycle` is used to store
    * the original life cycle function of the wrapped class.
    */
-  __superLifecycle: Record<string, AnyFunction>;
+  __superLifecycle: Partial<CoreElementLifecycle>;
 }
 
 export interface CoreInternalElementConstructor

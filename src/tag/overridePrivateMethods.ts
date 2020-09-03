@@ -1,10 +1,10 @@
 import { SetElementConnectedKey, StageKey } from '../shared/privatePropertiesKey';
-import { CoreElementStage, CoreInternalElement, CoreElementConstructor } from '../types';
+import { CoreElementStage, CoreInternalElement } from '../types';
 
 /**
  * Add private methods used internally for component class prototypes.
  */
-export function overridePrivateMethods(Target: CoreElementConstructor): void {
+export function overridePrivateMethods(Prototype: Partial<CoreInternalElement>): void {
   /**
    * Name the function for locating when an error occurs.
    */
@@ -27,7 +27,7 @@ export function overridePrivateMethods(Target: CoreElementConstructor): void {
   let method: typeof privateMethods extends Readonly<Readonly<[any, infer V]>[]> ? V : never;
 
   for ([key, method] of privateMethods) {
-    Object.defineProperty(Target.prototype, key, {
+    Object.defineProperty(Prototype, key, {
       configurable: true,
       enumerable: false,
       value: method,
