@@ -1,31 +1,33 @@
 import { makeSurePrototypePropertiesExist } from '../shared/makeSurePrototypePropertiesExist';
 import { MapAttrsToPropsKey } from '../shared/privatePropertiesKey';
-import { CoreInternalElement } from '../types';
+import { CoreElement, CoreInternalElement } from '../types';
 
 /**
- * Initialize the mapping of HTML attribute names to class property keys for custom elements,
- * and assign `fallbackValue` to `CoreInternalElement.prototype.properties[propertyKey]` as
- * initial value of property.
+ * Initialize the mapping of HTML attribute names to class property keys for custom elements.
  *
  * @param customAttribute HTML attribute name, the default value is `propertyName`.
  * When the type of `attribute` is not string, such as number or symbol, the value will be
- * converted to `${typeof attribute}-${String(propertyName)}`.
+ * converted to `String(propertyName)`.
+ *
+ * @returns Normalized attribute name.
  */
-export function createAttrPropMap<T extends CoreInternalElement>(
-  ProtoType: T,
+export function createAttrPropMap(
+  UnsafePrototype: CoreElement,
   propertyKey: keyof any,
   customAttribute: keyof any = propertyKey,
-): readonly [propertyKey: keyof any, attributeName: string] {
-  makeSurePrototypePropertiesExist(ProtoType);
+): string {
+  makeSurePrototypePropertiesExist(UnsafePrototype);
+
+  const Prototype = UnsafePrototype as CoreInternalElement;
 
   // * ASSERT `typeof customAttribute === 'string'`
   const attributeName =
     typeof customAttribute === 'string' ? customAttribute : String(customAttribute);
 
   /** map HTML attribute name to class property key */
-  // * ASSERT `!Object.prototype.hasOwnProperty.call(ProtoType[MapAttrsToPropsKey], attributeName)`
+  // * ASSERT `!Object.prototype.hasOwnProperty.call(Prototype[MapAttrsToPropsKey], attributeName)`
   // eslint-disable-next-line no-param-reassign
-  ProtoType[MapAttrsToPropsKey][attributeName] = propertyKey;
+  Prototype[MapAttrsToPropsKey][attributeName] = propertyKey;
 
-  return [propertyKey, attributeName];
+  return attributeName;
 }

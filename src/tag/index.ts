@@ -94,6 +94,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
         configurable: true,
         enumerable: true,
         get() {
+          // return Object.keys(this[MapAttrsToPropsKey]);
           return Object.keys(WrappedClass.prototype[MapAttrsToPropsKey]);
         },
       });
