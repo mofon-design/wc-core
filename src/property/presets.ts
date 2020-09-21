@@ -13,6 +13,7 @@ export function attributeValueDefaultFormatter(value: unknown): string | null {
  * <my-element>False</my-element>
  * <my-element bool-attribute>True</my-element>
  * <my-element bool-attribute="">True</my-element>
+ * ```
  */
 export function booleanAttributeValueDefaultFormatter(value: boolean | undefined): string | null {
   return value ? '' : null;

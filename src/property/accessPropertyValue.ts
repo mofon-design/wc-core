@@ -3,6 +3,9 @@ import { CoreElement, CoreInternalElement } from '../types';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
+/**
+ * Get the property value from protected store.
+ */
 export function getPropertyValue<T extends CoreElement, U extends keyof any>(
   self: T & CoreInternalElement,
   key: U,
@@ -27,6 +30,9 @@ export function getPropertyValue<T extends CoreElement, U extends keyof any>(
   }
 }
 
+/**
+ * Assign the property value into protected store.
+ */
 export function setPropertyValue<T extends CoreElement, U extends keyof any>(
   self: T & CoreInternalElement,
   key: U,

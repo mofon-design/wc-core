@@ -25,7 +25,11 @@ export function getPropertyDecoratorCreator(customAttribute?: string) {
         enumerable,
         configurable: true,
         get(this: T & CoreInternalElement) {
-          // return decorator.formatter.call(this, this.getAttribute(attributeName));
+          // return toPropertyValue.call(
+          //   this,
+          //   this.getAttribute(attributeName),
+          //   getPropertyValue(this, propertyKey),
+          // );
           return getPropertyValue(this, propertyKey);
         },
         set(this: T & CoreInternalElement, input: unknown) {
