@@ -17,8 +17,15 @@ export class CheckBox extends HTMLElement implements CoreElement {
   }
 
   initialize() {
-    this.checked = this.defaultChecked;
+    if (!this.checked) {
+      this.checked = this.defaultChecked;
+    }
+
     this.div.style.background = this.checked ? 'grey' : '';
+    this.div.addEventListener('click', () => {
+      this.checked = !this.checked;
+    });
+
     this.appendChild(this.div);
 
     console.log(`initialized, \`this.checked\` = \`${this.checked}\``);
