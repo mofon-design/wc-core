@@ -69,7 +69,7 @@ gulp.task('build-example-index-page', () => {
     .map(
       (item) => `
         <li>
-          <a href="${item.name}/index.html">${item.name}</a>
+          <a href="${item.name}/">${item.name}</a>
         </li>`,
     );
 
