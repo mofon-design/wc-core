@@ -37,7 +37,7 @@ export class InputContent extends HTMLElement implements CoreElement {
     this.value = null!;
   };
 
-  onValueChange(oldValue: string, newValue: string) {
+  onValueChange(oldValue: string | undefined, newValue: string = '') {
     this.paragraph.innerText = newValue;
 
     console.log(`property \`value\` changed from \`${oldValue}\` to \`${newValue}\``);
