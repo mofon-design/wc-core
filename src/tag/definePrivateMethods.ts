@@ -2,9 +2,9 @@ import { SetElementConnectedKey, StageKey } from '../shared/privatePropertiesKey
 import { CoreElementStage, CoreInternalElement } from '../types';
 
 /**
- * Add private methods used internally for component class prototypes.
+ * Define private methods used internally for component class prototypes.
  */
-export function overridePrivateMethods(Prototype: Partial<CoreInternalElement>): void {
+export function definePrivateMethods(Prototype: Partial<CoreInternalElement>): void {
   /**
    * Name the function for locating when an error occurs.
    */

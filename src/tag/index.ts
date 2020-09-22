@@ -12,8 +12,8 @@ import {
   CoreElementStage,
   CoreInternalElement,
 } from '../types';
-import { overridePrivateMethods } from './overridePrivateMethods';
-import { callSuperLifecycle, overrideLifecycle } from './superLifecycle';
+import { callSuperLifecycle, overrideLifecycle } from './defineLifecycle';
+import { definePrivateMethods } from './definePrivateMethods';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -33,7 +33,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
 
     makeSurePrototypePropertiesExist(WrappedClass.prototype);
 
-    overridePrivateMethods(WrappedClass.prototype);
+    definePrivateMethods(WrappedClass.prototype);
 
     const lifecycle: ThisType<CoreInternalElement> & CoreElementLifecycle = {
       attributeChangedCallback(
