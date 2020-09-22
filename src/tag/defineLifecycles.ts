@@ -1,4 +1,4 @@
-import { SuperLifecycleKey } from '../shared/privatePropertyKeys';
+import { LifecyclesKey } from '../shared/privatePropertyKeys';
 import { AnyFunction, CoreElementLifecycle, CoreInternalElement } from '../types';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -9,7 +9,7 @@ function isKeyof<T>(object: T, key: keyof any): key is keyof T {
 
 /**
  * After being wrapped by the class decorator `tag`, the lifecycle callbacks will be
- * transferred to the property `__superLifecycle` in prototype as an accessor
+ * transferred to the property `__lifecycles` in prototype as an accessor
  * to avoid overriding after the instance is constructed.
  *
  * @example
@@ -30,12 +30,12 @@ export function defineLifecycles(
   let collectedLifecycles: Partial<CoreElementLifecycle>;
   let lifecycleDescriptor: PropertyDescriptor | undefined;
 
-  if (hasOwnProperty.call(Prototype, SuperLifecycleKey)) {
-    collectedLifecycles = Prototype[SuperLifecycleKey]!;
+  if (hasOwnProperty.call(Prototype, LifecyclesKey)) {
+    collectedLifecycles = Prototype[LifecyclesKey]!;
   } else {
     collectedLifecycles = {};
 
-    Object.defineProperty(Prototype, SuperLifecycleKey, {
+    Object.defineProperty(Prototype, LifecyclesKey, {
       value: collectedLifecycles,
       configurable: true,
       enumerable: false,
@@ -92,16 +92,16 @@ export function defineLifecycles(
        * }
        */
       set(this: CoreInternalElement, value: AnyFunction) {
-        if (!hasOwnProperty.call(this, SuperLifecycleKey)) {
-          Object.defineProperty(this, SuperLifecycleKey, {
-            value: { ...this[SuperLifecycleKey] },
+        if (!hasOwnProperty.call(this, LifecyclesKey)) {
+          Object.defineProperty(this, LifecyclesKey, {
+            value: { ...this[LifecyclesKey] },
             configurable: true,
             enumerable: false,
             writable: false,
           });
         }
 
-        this[SuperLifecycleKey][lifecycleKey] = value;
+        this[LifecyclesKey][lifecycleKey] = value;
       },
     });
   }

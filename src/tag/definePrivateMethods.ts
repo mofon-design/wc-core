@@ -1,4 +1,10 @@
-import { SetElementConnectedKey, StageKey } from '../shared/privatePropertyKeys';
+/* eslint-disable no-underscore-dangle */
+import {
+  GetSuperLifecyclesKey,
+  LifecyclesKey,
+  SetElementConnectedKey,
+  StageKey,
+} from '../shared/privatePropertyKeys';
 import { CoreElementStage, CoreInternalElement } from '../types';
 
 /**
@@ -8,30 +14,31 @@ export function definePrivateMethods(Prototype: Partial<CoreInternalElement>): v
   /**
    * Name the function for locating when an error occurs.
    */
-  const privateMethods = [
-    [
-      SetElementConnectedKey,
-      {
-        setElementConnected(this: CoreInternalElement): void {
-          if (this.isConnected) {
-            this[StageKey] |= CoreElementStage.CONNECTED;
-          } else {
-            this[StageKey] &= ~CoreElementStage.CONNECTED;
-          }
-        },
-      }.setElementConnected,
-    ],
-  ] as const;
+  const privateMethods: ThisType<CoreInternalElement> &
+    Pick<CoreInternalElement, '__getSuperLifecycles' | '__setElementConnected'> = {
+    __getSuperLifecycles() {
+      return { ...super[LifecyclesKey] };
+    },
+    __setElementConnected() {
+      if (this.isConnected) {
+        this[StageKey] |= CoreElementStage.CONNECTED;
+      } else {
+        this[StageKey] &= ~CoreElementStage.CONNECTED;
+      }
+    },
+  };
 
-  let key: typeof privateMethods extends Readonly<Readonly<[infer K, any]>[]> ? K : never;
-  let method: typeof privateMethods extends Readonly<Readonly<[any, infer V]>[]> ? V : never;
+  Object.defineProperty(Prototype, GetSuperLifecyclesKey, {
+    configurable: true,
+    enumerable: false,
+    value: privateMethods.__getSuperLifecycles,
+    writable: false,
+  });
 
-  for ([key, method] of privateMethods) {
-    Object.defineProperty(Prototype, key, {
-      configurable: true,
-      enumerable: false,
-      value: method,
-      writable: false,
-    });
-  }
+  Object.defineProperty(Prototype, SetElementConnectedKey, {
+    configurable: true,
+    enumerable: false,
+    value: privateMethods.__setElementConnected,
+    writable: false,
+  });
 }
