@@ -12,7 +12,7 @@ export class CheckBox extends HTMLElement implements CoreElement {
 
   constructor() {
     super();
-    this.div.style.cssText = 'width: 32px; height: 32px; border: 1px solid grey;';
+    this.div.style.cssText = 'width: 16px; height: 16px; border: 1px solid grey;';
     console.log(`constructed, \`this.checked\` = \`${this.checked}\``);
   }
 
