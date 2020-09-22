@@ -1,14 +1,21 @@
+import { makeSurePrototypePropertiesExist } from '../shared/makeSurePrototypePropertiesExist';
 import {
+  MapAttrsToPropsKey,
+  SetElementConnectedKey,
+  StageKey,
+} from '../shared/privatePropertyKeys';
+import {
+  ClassType,
+  CoreElement,
   CoreElementConstructor,
   CoreElementLifecycle,
   CoreElementStage,
   CoreInternalElement,
-  // CoreInternalElementConstructor,
 } from '../types';
-import { makeSureCorePropertiesExist } from './makeSureCorePropertiesExist';
-import { overridePrivateMethods } from './overridePrivateMethods';
-import { MapAttrsToPropsKey, SetElementConnectedKey, StageKey } from './privatePropertiesKey';
-import { callSuperLifecycle, overrideLifecycle } from './superLifecycle';
+import { defineLifecycles } from './defineLifecycles';
+import { definePrivateMethods } from './definePrivateMethods';
+import { fireCollectedLifecycle } from './fireCollectedLifecycle';
+import { getParentClassLifecycles } from './getParentClassLifecycles';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -23,17 +30,23 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  *              Used to create a customized built-in element.
  */
 export function tag<U extends string>(tagName: U, options?: ElementDefinitionOptions) {
-  return <T extends CoreElementConstructor<U>>(Target: T): T => {
+  return <T extends CoreElementConstructor<U>>(ClassObject: T): T => {
+    const WrappedClass = (ClassObject as ClassType<CoreElement>) as ClassType<CoreInternalElement>;
+
+    makeSurePrototypePropertiesExist(WrappedClass.prototype);
+
+    definePrivateMethods(WrappedClass.prototype);
+
     /**
-     * In case property decorator is not called at least once.
+     * The purpose of defining some empty lifecycles is to transfer the current lifecycles
+     * into `__lifecycles` so that child classes can use `tag.getSuperLifecycles`
+     * to get the lifecycles of current class.
      */
-    makeSureCorePropertiesExist(Target.prototype);
+    const lifecycle: ThisType<CoreInternalElement> & Required<CoreElementLifecycle> = {
+      adoptedCallback(): void {
+        fireCollectedLifecycle(this, 'adoptedCallback', []);
+      },
 
-    // const WrappedTarget = Target as {} as CoreInternalElementConstructor<T>;
-
-    overridePrivateMethods(Target);
-
-    const lifecycle: ThisType<CoreInternalElement<InstanceType<T>>> & CoreElementLifecycle = {
       attributeChangedCallback(
         name: string,
         oldValue: string | null,
@@ -41,7 +54,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       ): void {
         // if (oldValue === newValue) return;
 
-        if (hasOwnProperty.call(Target.prototype[MapAttrsToPropsKey], name)) {
+        if (hasOwnProperty.call(WrappedClass.prototype[MapAttrsToPropsKey], name)) {
           /**
            * Prevent the property setter from loop calls.
            *
@@ -61,11 +74,11 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
            */
 
           this[StageKey] |= CoreElementStage.SYNC_ATTRIBUTE;
-          (this as any)[Target.prototype[MapAttrsToPropsKey][name]] = newValue;
+          (this as any)[WrappedClass.prototype[MapAttrsToPropsKey][name]] = newValue;
           this[StageKey] &= ~CoreElementStage.SYNC_ATTRIBUTE;
         }
 
-        callSuperLifecycle(this, 'attributeChangedCallback', name, oldValue, newValue);
+        fireCollectedLifecycle(this, 'attributeChangedCallback', [name, oldValue, newValue]);
       },
 
       connectedCallback(): void {
@@ -76,29 +89,39 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
           this.initialize?.call(this);
         }
 
-        callSuperLifecycle(this, 'connectedCallback');
+        fireCollectedLifecycle(this, 'connectedCallback', []);
       },
 
       disconnectedCallback(): void {
         this[SetElementConnectedKey]();
-        callSuperLifecycle(this, 'disconnectedCallback');
+        fireCollectedLifecycle(this, 'disconnectedCallback', []);
+      },
+
+      initialize(): void {
+        fireCollectedLifecycle(this, 'initialize', []);
+      },
+
+      propertyChangedCallback(property, oldValue, newValue): void {
+        fireCollectedLifecycle(this, 'propertyChangedCallback', [property, oldValue, newValue]);
       },
     };
 
-    overrideLifecycle(Target, lifecycle);
+    defineLifecycles(WrappedClass.prototype, lifecycle);
 
-    if (!hasOwnProperty.call(Target, 'observedAttributes')) {
-      Object.defineProperty(Target, 'observedAttributes', {
+    if (!hasOwnProperty.call(WrappedClass, 'observedAttributes')) {
+      Object.defineProperty(WrappedClass, 'observedAttributes', {
         configurable: true,
         enumerable: true,
-        get() {
-          return Object.keys(Target.prototype[MapAttrsToPropsKey]);
+        get(): string[] {
+          // return Object.getOwnPropertyNames(this[MapAttrsToPropsKey]);
+          return Object.getOwnPropertyNames(WrappedClass.prototype[MapAttrsToPropsKey]);
         },
       });
     }
 
-    if (!hasOwnProperty.call(Target, 'tagName') || Target.tagName !== tagName) {
-      Object.defineProperty(Target, 'tagName', {
+    // * ASSERT `!hasOwnProperty.call(ClassObject, 'tagName')`
+    if (!hasOwnProperty.call(WrappedClass, 'tagName')) {
+      Object.defineProperty(WrappedClass, 'tagName', {
         configurable: true,
         enumerable: true,
         value: tagName,
@@ -106,8 +129,10 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       });
     }
 
-    customElements.define(tagName, Target, options);
+    customElements.define(tagName, WrappedClass, options);
 
-    return Target;
+    return (WrappedClass as ClassType<CoreElement>) as T;
   };
 }
+
+tag.getParentClassLifecycles = getParentClassLifecycles;

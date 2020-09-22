@@ -1,5 +1,4 @@
-import { AnyFunction } from './any';
-import { Constructor, NonFunctionPropertyKeys } from './helper';
+import { Constructor } from './helper';
 
 /**
  * HTML custom element native life cycle methods.
@@ -81,7 +80,13 @@ export interface CoreElementConstructor<T extends string = string>
 /**
  * Custom element class decorated by `@tag(tagName)` class decorator.
  */
-export interface CoreInternalElement<T> extends CoreElement {
+export interface CoreInternalElement extends CoreElement {
+  /**
+   * @protected
+   * The lifecycles have been tamper-proofed, and `__lifecycles` is used to store
+   * the original lifecycles of the wrapped class.
+   */
+  __lifecycles: Partial<CoreElementLifecycle>;
   /**
    * Map HTML attribute names to element property keys.
    *
@@ -89,7 +94,7 @@ export interface CoreInternalElement<T> extends CoreElement {
    * `mapAttrsToProps` is a **static constant** attach to the `CoreInternalElement.prototype`,
    * and SHOULD NOT be used as a property of any instance.
    */
-  __mapAttrsToProps: Record<string, NonFunctionPropertyKeys<T>>;
+  __mapAttrsToProps: Record<string, keyof any>;
   /**
    * The actual storage location of the element property value for the element property accessor.
    *
@@ -97,7 +102,7 @@ export interface CoreInternalElement<T> extends CoreElement {
    * DO NOT access `__properties` directly or modify the value, otherwise it will cause the problem
    * of inconsistency between HTML attributes and element properties.
    */
-  __properties: Partial<Pick<T, NonFunctionPropertyKeys<T>>>;
+  __properties: Record<keyof any, unknown>;
   /**
    * @protected
    * Determine whether the element has been connected to the document according to
@@ -111,17 +116,11 @@ export interface CoreInternalElement<T> extends CoreElement {
    * Indicate the state of the current element.
    */
   __stage: CoreElementStage;
-  /**
-   * @protected
-   * The life cycle function has been tamper-proofed, and `superLifecycle` is used to store
-   * the original life cycle function of the wrapped class.
-   */
-  __superLifecycle: Record<string, AnyFunction>;
 }
 
-export interface CoreInternalElementConstructor<T>
+export interface CoreInternalElementConstructor
   extends CustomElementClass,
-    Constructor<CoreInternalElement<T>> {}
+    Constructor<CoreInternalElement> {}
 
 export const enum CoreElementStage {
   /**
