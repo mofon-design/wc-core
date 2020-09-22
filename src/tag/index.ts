@@ -135,4 +135,4 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
   };
 }
 
-tag.getSuperLifecycles = getParentClassLifecycles;
+tag.getParentClassLifecycles = getParentClassLifecycles;

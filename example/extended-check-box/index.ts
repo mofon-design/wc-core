@@ -10,7 +10,7 @@ export class ExtendedCheckBox extends CheckBox {
 
   // eslint-disable-next-line class-methods-use-this
   initialize() {
-    tag.getSuperLifecycles(CheckBox).initialize?.();
+    tag.getParentClassLifecycles(CheckBox).initialize?.call(this);
 
     console.log('this is child class.');
   }
