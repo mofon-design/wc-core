@@ -12,7 +12,7 @@ import {
   CoreElementStage,
   CoreInternalElement,
 } from '../types';
-import { callSuperLifecycle, overrideLifecycle } from './defineLifecycle';
+import { defineLifecycle, fireCollectedLifecycle, getSuperLifecycle } from './defineLifecycle';
 import { definePrivateMethods } from './definePrivateMethods';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -35,7 +35,11 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
 
     definePrivateMethods(WrappedClass.prototype);
 
-    const lifecycle: ThisType<CoreInternalElement> & CoreElementLifecycle = {
+    const lifecycle: ThisType<CoreInternalElement> & Required<CoreElementLifecycle> = {
+      adoptedCallback(): void {
+        fireCollectedLifecycle(this, 'adoptedCallback', []);
+      },
+
       attributeChangedCallback(
         name: string,
         oldValue: string | null,
@@ -67,7 +71,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
           this[StageKey] &= ~CoreElementStage.SYNC_ATTRIBUTE;
         }
 
-        callSuperLifecycle(this, 'attributeChangedCallback', [name, oldValue, newValue]);
+        fireCollectedLifecycle(this, 'attributeChangedCallback', [name, oldValue, newValue]);
       },
 
       connectedCallback(): void {
@@ -78,16 +82,24 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
           this.initialize?.call(this);
         }
 
-        callSuperLifecycle(this, 'connectedCallback', []);
+        fireCollectedLifecycle(this, 'connectedCallback', []);
       },
 
       disconnectedCallback(): void {
         this[SetElementConnectedKey]();
-        callSuperLifecycle(this, 'disconnectedCallback', []);
+        fireCollectedLifecycle(this, 'disconnectedCallback', []);
+      },
+
+      initialize(): void {
+        fireCollectedLifecycle(this, 'initialize', []);
+      },
+
+      propertyChangedCallback(property, oldValue, newValue): void {
+        fireCollectedLifecycle(this, 'propertyChangedCallback', [property, oldValue, newValue]);
       },
     };
 
-    overrideLifecycle(WrappedClass.prototype, lifecycle);
+    defineLifecycle(WrappedClass.prototype, lifecycle);
 
     if (!hasOwnProperty.call(WrappedClass, 'observedAttributes')) {
       Object.defineProperty(WrappedClass, 'observedAttributes', {
@@ -115,3 +127,5 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
     return (WrappedClass as ClassType<CoreElement>) as T;
   };
 }
+
+tag.getSuperLifecycle = getSuperLifecycle;

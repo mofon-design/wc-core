@@ -1,5 +1,11 @@
 import { SuperLifecycleKey } from '../shared/privatePropertiesKey';
-import { AnyFunction, ArgsType, CoreElementLifecycle, CoreInternalElement } from '../types';
+import {
+  AnyFunction,
+  ArgsType,
+  CoreElement,
+  CoreElementLifecycle,
+  CoreInternalElement,
+} from '../types';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -8,8 +14,9 @@ function isKeyof<T>(object: T, key: keyof any): key is keyof T {
 }
 
 /**
- * After being wrapped by a class decorator, the lifecycle callbacks will be defined to
- * the prototype as an accessor to avoid overriding after the instance is constructed.
+ * After being wrapped by the class decorator `tag`, the lifecycle callbacks will be
+ * transferred to the property `__superLifecycle` in prototype as an accessor
+ * to avoid overriding after the instance is constructed.
  *
  * @example
  * ```ts
@@ -22,64 +29,75 @@ function isKeyof<T>(object: T, key: keyof any): key is keyof T {
  * tag('my-element')(MyElement);
  * ```
  */
-export function overrideLifecycle(
+export function defineLifecycle(
   Prototype: Partial<CoreInternalElement>,
-  lifecycle: Partial<CoreElementLifecycle>,
+  incomingLifecycles: Required<CoreElementLifecycle>,
 ) {
-  let superLifecycles: Partial<CoreElementLifecycle>;
-  let superLifecycleDescriptor: PropertyDescriptor | undefined;
+  let collectedLifecycles: Partial<CoreElementLifecycle>;
+  let lifecycleDescriptor: PropertyDescriptor | undefined;
 
   if (hasOwnProperty.call(Prototype, SuperLifecycleKey)) {
-    superLifecycles = Prototype[SuperLifecycleKey]!;
+    collectedLifecycles = Prototype[SuperLifecycleKey]!;
   } else {
-    /**
-     * * ASSERT `!(SuperLifecycleKey in Prototype)`
-     *
-     * @description
-     * The current class should not inherit from a parent class that has been wrapped
-     * by the `@tag()` decorator, otherwise, a loop call may be raised.
-     */
+    collectedLifecycles = {};
+
     Object.defineProperty(Prototype, SuperLifecycleKey, {
-      value: superLifecycles = {},
+      value: collectedLifecycles,
       configurable: true,
       enumerable: false,
       writable: false,
     });
   }
 
-  for (const lifecycleKey in lifecycle) {
-    if (!isKeyof(lifecycle, lifecycleKey)) {
+  for (const lifecycleKey in incomingLifecycles) {
+    if (!isKeyof(incomingLifecycles, lifecycleKey)) {
       continue;
     }
 
     /**
      * @example
-     * class ChildClass extends ParentClass {
+     * class MyElement extends HTMLElement {
      *   anyLifecycle() {
-     *     console.log('lifecycle has been rewrited.');
+     *     ...
      *   }
      * }
      */
-    superLifecycleDescriptor = Object.getOwnPropertyDescriptor(Prototype, lifecycleKey);
-    if (superLifecycleDescriptor) {
-      Object.defineProperty(superLifecycles, lifecycleKey, superLifecycleDescriptor);
+    lifecycleDescriptor = Object.getOwnPropertyDescriptor(Prototype, lifecycleKey);
+    if (lifecycleDescriptor) {
+      // * ASSERT `lifecycleDescriptor.configurable !== false`;
+      Object.defineProperty(collectedLifecycles, lifecycleKey, lifecycleDescriptor);
     }
 
     Object.defineProperty(Prototype, lifecycleKey, {
       configurable: true,
       enumerable: false,
       get() {
-        return lifecycle[lifecycleKey];
+        return incomingLifecycles[lifecycleKey];
       },
+      /**
+       * @param this prototype or instance
+       *
+       * @example prototype
+       * @tag('my-element')
+       * class MyElement extends HTMLElement {
+       *   anyLifecycle() {
+       *     ...
+       *   }
+       * }
+       *
+       * MyElement.prototype.anyLifecycle = function anyLifecycle() {
+       *   ...
+       * };
+       *
+       * @example instance
+       * @tag('my-element')
+       * class MyElement extends HTMLElement {
+       *   anyLifecycle = () => {
+       *     ...
+       *   }
+       * }
+       */
       set(this: CoreInternalElement, value: AnyFunction) {
-        /**
-         * @example
-         * class ChildClass extends ParentClass {
-         *   anyLifecycle = () => {
-         *     console.log('lifecycle has been rewrited.');
-         *   }
-         * }
-         */
         if (!hasOwnProperty.call(this, SuperLifecycleKey)) {
           Object.defineProperty(this, SuperLifecycleKey, {
             value: { ...this[SuperLifecycleKey] },
@@ -95,25 +113,27 @@ export function overrideLifecycle(
   }
 }
 
-export function callSuperLifecycle<T extends keyof CoreElementLifecycle>(
+declare const NOT_EXISTS: unique symbol;
+
+export function fireCollectedLifecycle<T extends keyof CoreElementLifecycle>(
   self: CoreInternalElement,
   lifecycleKey: T,
   args: ArgsType<Required<CoreElementLifecycle>[T]>,
-): ReturnType<Required<CoreElementLifecycle>[T]> | symbol {
-  const superLifecycle = self[SuperLifecycleKey];
+): ReturnType<Required<CoreElementLifecycle>[T]> | typeof NOT_EXISTS {
+  const lifecycle = self[SuperLifecycleKey];
 
-  if (
-    !superLifecycle ||
-    !hasOwnProperty.call(superLifecycle, lifecycleKey) ||
-    !superLifecycle[lifecycleKey]
-  ) {
-    return callSuperLifecycle.NOT_EXISTS;
+  if (!lifecycle || !hasOwnProperty.call(lifecycle, lifecycleKey) || !lifecycle[lifecycleKey]) {
+    return fireCollectedLifecycle.NOT_EXISTS;
   }
 
-  return (superLifecycle[lifecycleKey] as AnyFunction).apply(self, args);
+  return (lifecycle[lifecycleKey] as AnyFunction).apply(self, args);
 }
 
-callSuperLifecycle.NOT_EXISTS = {} as symbol;
+fireCollectedLifecycle.NOT_EXISTS = {} as typeof NOT_EXISTS;
 
-callSuperLifecycle.returnValueIsExists = <T>(value: T | symbol): value is T =>
-  value !== callSuperLifecycle.NOT_EXISTS;
+fireCollectedLifecycle.isExists = <T>(value: T | typeof NOT_EXISTS): value is T =>
+  value !== fireCollectedLifecycle.NOT_EXISTS;
+
+export function getSuperLifecycle<T extends CoreElement>(self: T): Partial<CoreElementLifecycle> {
+  return (self as Partial<CoreInternalElement>)[SuperLifecycleKey] ?? {};
+}
