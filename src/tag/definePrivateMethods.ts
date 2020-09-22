@@ -1,4 +1,4 @@
-import { SetElementConnectedKey, StageKey } from '../shared/privatePropertiesKey';
+import { SetElementConnectedKey, StageKey } from '../shared/privatePropertyKeys';
 import { CoreElementStage, CoreInternalElement } from '../types';
 
 /**

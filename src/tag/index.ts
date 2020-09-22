@@ -3,7 +3,7 @@ import {
   MapAttrsToPropsKey,
   SetElementConnectedKey,
   StageKey,
-} from '../shared/privatePropertiesKey';
+} from '../shared/privatePropertyKeys';
 import {
   ClassType,
   CoreElement,
@@ -12,8 +12,10 @@ import {
   CoreElementStage,
   CoreInternalElement,
 } from '../types';
-import { defineLifecycle, fireCollectedLifecycle, getSuperLifecycle } from './defineLifecycle';
+import { defineLifecycles } from './defineLifecycles';
 import { definePrivateMethods } from './definePrivateMethods';
+import { fireCollectedLifecycle } from './fireCollectedLifecycle';
+import { getSuperCollectedLifecycles } from './getSuperCollectedLifecycles';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -99,7 +101,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       },
     };
 
-    defineLifecycle(WrappedClass.prototype, lifecycle);
+    defineLifecycles(WrappedClass.prototype, lifecycle);
 
     if (!hasOwnProperty.call(WrappedClass, 'observedAttributes')) {
       Object.defineProperty(WrappedClass, 'observedAttributes', {
@@ -128,4 +130,4 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
   };
 }
 
-tag.getSuperLifecycle = getSuperLifecycle;
+tag.getSuperLifecycles = getSuperCollectedLifecycles;

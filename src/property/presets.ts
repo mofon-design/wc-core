@@ -1,4 +1,4 @@
-import { StageKey } from '../shared/privatePropertiesKey';
+import { StageKey } from '../shared/privatePropertyKeys';
 import { CoreElement, CoreElementStage, CoreInternalElement } from '../types';
 
 export function attributeValueDefaultFormatter(value: unknown): string | null {

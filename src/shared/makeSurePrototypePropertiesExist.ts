@@ -1,5 +1,5 @@
 import { CoreElementStage, CoreInternalElement } from '../types';
-import { MapAttrsToPropsKey, StageKey } from './privatePropertiesKey';
+import { MapAttrsToPropsKey, StageKey } from './privatePropertyKeys';
 
 /**
  * Make sure that the necessary properties of the prototype already exist.

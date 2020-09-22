@@ -1,5 +1,5 @@
 import { makeSurePrototypePropertiesExist } from '../shared/makeSurePrototypePropertiesExist';
-import { MapAttrsToPropsKey } from '../shared/privatePropertiesKey';
+import { MapAttrsToPropsKey } from '../shared/privatePropertyKeys';
 import { CoreElement, CoreInternalElement } from '../types';
 
 /**
@@ -11,7 +11,7 @@ import { CoreElement, CoreInternalElement } from '../types';
  *
  * @returns Normalized attribute name.
  */
-export function createAttrPropMap(
+export function createAttributePropertyMap(
   UnsafePrototype: CoreElement,
   propertyKey: keyof any,
   customAttribute: keyof any = propertyKey,

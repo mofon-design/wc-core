@@ -1,4 +1,4 @@
-import { PropertiesKey } from '../shared/privatePropertiesKey';
+import { PropertiesKey } from '../shared/privatePropertyKeys';
 import { CoreElement, CoreInternalElement } from '../types';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;

@@ -1,4 +1,4 @@
-import { StageKey } from '../shared/privatePropertiesKey';
+import { StageKey } from '../shared/privatePropertyKeys';
 import {
   CoreElement,
   CoreElementStage,
@@ -7,7 +7,7 @@ import {
   PropertyDecoratorOptions,
 } from '../types';
 import { getPropertyValue, setPropertyValue } from './accessPropertyValue';
-import { createAttrPropMap } from './createAttrPropMap';
+import { createAttributePropertyMap } from './createAttributePropertyMap';
 import { attributeValueDefaultFormatter } from './presets';
 
 export function getPropertyDecoratorCreator(customAttribute?: string) {
@@ -19,7 +19,7 @@ export function getPropertyDecoratorCreator(customAttribute?: string) {
     const { enumerable = true, watcher } = options;
 
     return function propertyDecorator(Prototype, propertyKey) {
-      const attributeName = createAttrPropMap(Prototype, propertyKey, customAttribute);
+      const attributeName = createAttributePropertyMap(Prototype, propertyKey, customAttribute);
 
       Object.defineProperty(Prototype, propertyKey, {
         enumerable,

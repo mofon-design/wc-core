@@ -1,11 +1,5 @@
-import { SuperLifecycleKey } from '../shared/privatePropertiesKey';
-import {
-  AnyFunction,
-  ArgsType,
-  CoreElement,
-  CoreElementLifecycle,
-  CoreInternalElement,
-} from '../types';
+import { SuperLifecycleKey } from '../shared/privatePropertyKeys';
+import { AnyFunction, CoreElementLifecycle, CoreInternalElement } from '../types';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -29,7 +23,7 @@ function isKeyof<T>(object: T, key: keyof any): key is keyof T {
  * tag('my-element')(MyElement);
  * ```
  */
-export function defineLifecycle(
+export function defineLifecycles(
   Prototype: Partial<CoreInternalElement>,
   incomingLifecycles: Required<CoreElementLifecycle>,
 ) {
@@ -111,29 +105,4 @@ export function defineLifecycle(
       },
     });
   }
-}
-
-declare const NOT_EXISTS: unique symbol;
-
-export function fireCollectedLifecycle<T extends keyof CoreElementLifecycle>(
-  self: CoreInternalElement,
-  lifecycleKey: T,
-  args: ArgsType<Required<CoreElementLifecycle>[T]>,
-): ReturnType<Required<CoreElementLifecycle>[T]> | typeof NOT_EXISTS {
-  const lifecycle = self[SuperLifecycleKey];
-
-  if (!lifecycle || !hasOwnProperty.call(lifecycle, lifecycleKey) || !lifecycle[lifecycleKey]) {
-    return fireCollectedLifecycle.NOT_EXISTS;
-  }
-
-  return (lifecycle[lifecycleKey] as AnyFunction).apply(self, args);
-}
-
-fireCollectedLifecycle.NOT_EXISTS = {} as typeof NOT_EXISTS;
-
-fireCollectedLifecycle.isExists = <T>(value: T | typeof NOT_EXISTS): value is T =>
-  value !== fireCollectedLifecycle.NOT_EXISTS;
-
-export function getSuperLifecycle<T extends CoreElement>(self: T): Partial<CoreElementLifecycle> {
-  return (self as Partial<CoreInternalElement>)[SuperLifecycleKey] ?? {};
 }
