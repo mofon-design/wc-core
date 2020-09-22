@@ -2,7 +2,11 @@ import { CoreElement, property, tag } from '../../src';
 
 @tag('check-box')
 export class CheckBox extends HTMLElement implements CoreElement {
-  @property.boolean<CheckBox>({ watcher: CheckBox.prototype.onValueChange })
+  @property.boolean<CheckBox>({
+    watcher(oldValue, newValue) {
+      this.onValueChange(oldValue, newValue);
+    },
+  })
   checked: boolean | undefined;
 
   @(property('default-checked').boolean<CheckBox>({ enumerable: false }))
@@ -21,7 +25,6 @@ export class CheckBox extends HTMLElement implements CoreElement {
       this.checked = this.defaultChecked;
     }
 
-    this.div.style.background = this.checked ? 'grey' : '';
     this.div.addEventListener('click', () => {
       this.checked = !this.checked;
     });

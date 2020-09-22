@@ -10,7 +10,8 @@ export class ExtendedCheckBox extends CheckBox {
 
   initialize() {
     tag.getSuperLifecycles(this).initialize?.();
-    this.updateStyle();
+
+    console.log('this is child class.');
   }
 
   onValueChange(oldValue: boolean | undefined, newValue: boolean = false) {
