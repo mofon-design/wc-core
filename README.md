@@ -19,10 +19,10 @@ Or [visit preview site](https://wc-core.netlify.com/).
 ```ts
 import { CoreElement, property, tag } from '@mofon-design/wc-core';
 
-@tag('my-element')
+@tag('input-content')
 class InputContent extends HTMLElement implements CoreElement {
-  @(property('string').fallback('Attribute does not exists'))
-  value!: string;
+  @property.string<InputContent>({ watcher: InputContent.prototype.onValueChange })
+  value: string | undefined;
 
   button = document.createElement('button');
 
@@ -32,24 +32,116 @@ class InputContent extends HTMLElement implements CoreElement {
 
   constructor() {
     super();
-    this.paragraph.innerText = this.value;
+    this.paragraph.innerText = this.value || '';
     this.button.innerText = 'Remove Attribute';
-    this.input.addEventListener('input', () => (this.value = this.input.value));
-    this.button.addEventListener('click', () => (this.value = null!));
+    this.input.addEventListener('input', this.onInput);
+    this.button.addEventListener('click', this.onClickButton);
 
-    console.log('constructed, this.value =', this.value);
+    console.log(`constructed, \`this.value\` = \`${this.value}\``);
   }
 
   initialize() {
     this.appendChild(this.input);
     this.appendChild(this.button);
     this.appendChild(this.paragraph);
+
+    console.log(`initialized, \`this.value\` = \`${this.value}\``);
   }
 
-  propertyChangedCallback() {
-    this.paragraph.innerText = this.value;
+  onInput = () => {
+    this.value = this.input.value;
+  };
 
-    console.log('property changed, this.value =', this.value);
+  onClickButton = () => {
+    this.value = null!;
+  };
+
+  onValueChange(oldValue: string | undefined, newValue: string = '') {
+    this.paragraph.innerText = newValue;
+
+    console.log(`property \`value\` changed from \`${oldValue}\` to \`${newValue}\``);
+  }
+}
+```
+
+### Custom Attribute Name
+
+```ts
+import { CoreElement, property, tag } from '@mofon-design/wc-core';
+
+@tag('check-box')
+class CheckBox extends HTMLElement implements CoreElement {
+  @property.boolean<CheckBox>({
+    watcher(oldValue, newValue) {
+      this.onValueChange(oldValue, newValue);
+    },
+  })
+  checked: boolean | undefined;
+
+  @(property('default-checked').boolean<CheckBox>({ enumerable: false }))
+  defaultChecked: boolean | undefined;
+
+  div = document.createElement('div');
+
+  constructor() {
+    super();
+    this.div.style.cssText = 'width: 16px; height: 16px; border: 1px solid grey;';
+    console.log(`constructed, \`this.checked\` = \`${this.checked}\``);
+  }
+
+  initialize() {
+    if (!this.checked) {
+      this.checked = this.defaultChecked;
+    }
+
+    this.div.addEventListener('click', () => {
+      this.checked = !this.checked;
+    });
+
+    this.appendChild(this.div);
+
+    console.log(`initialized, \`this.checked\` = \`${this.checked}\``);
+  }
+
+  onValueChange(oldValue: boolean | undefined, newValue: boolean = false) {
+    this.div.style.background = newValue ? 'grey' : '';
+
+    console.log(`property \`checked\` changed from \`${oldValue}\` to \`${newValue}\``);
+  }
+}
+```
+
+### Extend Custom Element
+
+```ts
+@tag('extended-check-box')
+class ExtendedCheckBox extends CheckBox {
+  constructor() {
+    super();
+    this.div.style.border = '1px solid #d9d9d9';
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  initialize() {
+    tag.getSuperLifecycles(CheckBox).initialize?.();
+
+    console.log('this is child class.');
+  }
+
+  onValueChange(oldValue: boolean | undefined, newValue: boolean = false) {
+    this.updateStyle();
+
+    console.log(`property \`checked\` changed from \`${oldValue}\` to \`${newValue}\``);
+  }
+
+  updateStyle() {
+    if (this.checked) {
+      this.div.style.background = '#1890ff';
+      this.div.style.borderColor = '#1890ff';
+    } else {
+      this.div.style.background = '';
+      this.div.style.borderColor = '';
+    }
   }
 }
 ```
