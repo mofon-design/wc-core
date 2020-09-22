@@ -112,9 +112,9 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       Object.defineProperty(WrappedClass, 'observedAttributes', {
         configurable: true,
         enumerable: true,
-        get() {
-          // return Object.keys(this[MapAttrsToPropsKey]);
-          return Object.keys(WrappedClass.prototype[MapAttrsToPropsKey]);
+        get(): string[] {
+          // return Object.getOwnPropertyNames(this[MapAttrsToPropsKey]);
+          return Object.getOwnPropertyNames(WrappedClass.prototype[MapAttrsToPropsKey]);
         },
       });
     }

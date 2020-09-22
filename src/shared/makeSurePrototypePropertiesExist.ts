@@ -11,8 +11,17 @@ import { MapAttrsToPropsKey, StageKey } from './privatePropertyKeys';
  */
 export function makeSurePrototypePropertiesExist(Prototype: Partial<CoreInternalElement>): void {
   if (!Object.prototype.hasOwnProperty.call(Prototype, MapAttrsToPropsKey)) {
+    const mapAttrsToProps: CoreInternalElement['__mapAttrsToProps'] = {};
+
+    if (Prototype[MapAttrsToPropsKey]) {
+      Object.defineProperties(
+        mapAttrsToProps,
+        Object.getOwnPropertyDescriptors(Prototype[MapAttrsToPropsKey]),
+      );
+    }
+
     Object.defineProperty(Prototype, MapAttrsToPropsKey, {
-      value: { ...Prototype[MapAttrsToPropsKey] },
+      value: mapAttrsToProps,
       configurable: true,
       enumerable: false,
       writable: false,

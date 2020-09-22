@@ -27,7 +27,7 @@ export function defineLifecycles(
   Prototype: Partial<CoreInternalElement>,
   incomingLifecycles: Required<CoreElementLifecycle>,
 ) {
-  let collectedLifecycles: Partial<CoreElementLifecycle>;
+  let collectedLifecycles: CoreInternalElement['__lifecycles'];
   let lifecycleDescriptor: PropertyDescriptor | undefined;
 
   if (hasOwnProperty.call(Prototype, LifecyclesKey)) {
@@ -93,8 +93,17 @@ export function defineLifecycles(
        */
       set(this: CoreInternalElement, value: AnyFunction) {
         if (!hasOwnProperty.call(this, LifecyclesKey)) {
+          const lifecycles: CoreInternalElement['__lifecycles'] = {};
+
+          if (this[LifecyclesKey]) {
+            Object.defineProperties(
+              lifecycles,
+              Object.getOwnPropertyDescriptors(this[LifecyclesKey]),
+            );
+          }
+
           Object.defineProperty(this, LifecyclesKey, {
-            value: { ...this[LifecyclesKey] },
+            value: lifecycles,
             configurable: true,
             enumerable: false,
             writable: false,
