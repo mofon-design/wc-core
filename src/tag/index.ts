@@ -15,7 +15,7 @@ import {
 import { defineLifecycles } from './defineLifecycles';
 import { definePrivateMethods } from './definePrivateMethods';
 import { fireCollectedLifecycle } from './fireCollectedLifecycle';
-import { getSuperCollectedLifecycles } from './getSuperCollectedLifecycles';
+import { getParentClassLifecycles } from './getParentClassLifecycles';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -130,4 +130,4 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
   };
 }
 
-tag.getSuperLifecycles = getSuperCollectedLifecycles;
+tag.getSuperLifecycles = getParentClassLifecycles;

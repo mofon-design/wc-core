@@ -83,11 +83,6 @@ export interface CoreElementConstructor<T extends string = string>
 export interface CoreInternalElement extends CoreElement {
   /**
    * @protected
-   * Try to get the un-decorated lifecycles from `__lifecycles` property in parent class.
-   */
-  __getSuperLifecycles(): Partial<CoreElementLifecycle>;
-  /**
-   * @protected
    * The lifecycles have been tamper-proofed, and `__lifecycles` is used to store
    * the original lifecycles of the wrapped class.
    */

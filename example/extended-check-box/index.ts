@@ -8,8 +8,9 @@ export class ExtendedCheckBox extends CheckBox {
     this.div.style.border = '1px solid #d9d9d9';
   }
 
+  // eslint-disable-next-line class-methods-use-this
   initialize() {
-    tag.getSuperLifecycles(this).initialize?.();
+    tag.getSuperLifecycles(CheckBox).initialize?.();
 
     console.log('this is child class.');
   }

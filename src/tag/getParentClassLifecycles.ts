@@ -1,6 +1,5 @@
-/* eslint-disable max-classes-per-file */
-import { GetSuperLifecyclesKey } from '../shared/privatePropertyKeys';
-import { CoreElement, CoreElementLifecycle, CoreInternalElement } from '../types';
+import { LifecyclesKey } from '../shared/privatePropertyKeys';
+import { ClassType, CoreElement, CoreElementLifecycle, CoreInternalElement } from '../types';
 
 /**
  * Get un-decorated lifecycles of parent class.
@@ -14,8 +13,17 @@ import { CoreElement, CoreElementLifecycle, CoreInternalElement } from '../types
  * the processing logic of the `@tag()` decorator more than once,
  * thus causing some unexpected errors.
  */
-export function getSuperCollectedLifecycles<T extends CoreElement>(
-  self: T,
+export function getParentClassLifecycles<T extends ClassType<CoreElement>>(
+  ParentClass: T,
 ): Partial<CoreElementLifecycle> {
-  return (self as Partial<CoreInternalElement>)[GetSuperLifecyclesKey]?.call(self) ?? {};
+  const prototype: Partial<CoreInternalElement> = ParentClass.prototype;
+
+  if (
+    !Object.prototype.hasOwnProperty.call(prototype, LifecyclesKey) ||
+    !prototype[LifecyclesKey]
+  ) {
+    return {};
+  }
+
+  return prototype[LifecyclesKey]!;
 }
