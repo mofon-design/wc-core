@@ -37,6 +37,11 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
 
     definePrivateMethods(WrappedClass.prototype);
 
+    /**
+     * The purpose of defining some empty lifecycles is to transfer the current lifecycles
+     * into `__lifecycles` so that child classes can use `tag.getSuperLifecycles`
+     * to get the lifecycles of current class.
+     */
     const lifecycle: ThisType<CoreInternalElement> & Required<CoreElementLifecycle> = {
       adoptedCallback(): void {
         fireCollectedLifecycle(this, 'adoptedCallback', []);
