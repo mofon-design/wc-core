@@ -1,6 +1,6 @@
 {
   "name": "@mofon-design/wc-core",
-  "version": "0.6.0-beta.0",
+  "version": "0.6.0",
   "description": "Web components core of Mofon Design",
   "license": "MIT",
   "main": "lib/index.js",
@@ -51,12 +51,9 @@
     "typescript": "^4.0.0",
     "yorkie": "^2.0.0"
   },
-  "sideEffects": [
-    "*.css",
-    "*.less"
-  ],
+  "sideEffects": false,
   "lint-staged": {
-    "*.{less,md,json}": [
+    "*.{md,json}": [
       "prettier --write"
     ],
     "*.js?(x)": [
