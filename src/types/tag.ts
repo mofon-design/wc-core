@@ -132,5 +132,5 @@ export const enum CoreElementStage {
    * preventing the property setter from firing `setAttribute()` or `removeAttribute()`
    * which causes loop calls.
    */
-  SYNC_ATTRIBUTE = 1 << 2,
+  SYNC_ATTRIBUTE_TO_PROPERTY = 1 << 2,
 }

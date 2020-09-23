@@ -66,9 +66,9 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
            * ```
            */
 
-          this[StageKey] |= CoreElementStage.SYNC_ATTRIBUTE;
+          this[StageKey] |= CoreElementStage.SYNC_ATTRIBUTE_TO_PROPERTY;
           (this as any)[WrappedClass.prototype[MapAttrsToPropsKey][name]] = newValue;
-          this[StageKey] &= ~CoreElementStage.SYNC_ATTRIBUTE;
+          this[StageKey] &= ~CoreElementStage.SYNC_ATTRIBUTE_TO_PROPERTY;
         }
 
         fireCollectedLifecycle(this, 'attributeChangedCallback', [name, oldValue, newValue]);
