@@ -2,7 +2,7 @@ import { LifecyclesKey } from '../shared/privatePropertyKeys';
 import { ClassType, CoreElement, CoreElementLifecycle, CoreInternalElement } from '../types';
 
 /**
- * Get un-decorated lifecycles of parent class.
+ * Copy un-decorated lifecycles of class.
  *
  * @description
  * When a custom element is created and inherited from another custom element
@@ -13,17 +13,18 @@ import { ClassType, CoreElement, CoreElementLifecycle, CoreInternalElement } fro
  * the processing logic of the `@tag()` decorator more than once,
  * thus causing some unexpected errors.
  */
-export function getParentClassLifecycles<T extends ClassType<CoreElement>>(
-  ParentClass: T,
+export function getUndecoratedLifecycles<T extends ClassType<CoreElement>>(
+  Target: T,
 ): Partial<CoreElementLifecycle> {
-  const prototype: Partial<CoreInternalElement> = ParentClass.prototype;
+  const prototype: Partial<CoreInternalElement> = Target.prototype;
+  const undecoratedLifecycles: Partial<CoreElementLifecycle> = {};
 
-  if (
-    !Object.prototype.hasOwnProperty.call(prototype, LifecyclesKey) ||
-    !prototype[LifecyclesKey]
-  ) {
-    return {};
+  if (Object.prototype.hasOwnProperty.call(prototype, LifecyclesKey) && prototype[LifecyclesKey]) {
+    Object.defineProperties(
+      undecoratedLifecycles,
+      Object.getOwnPropertyDescriptors(prototype[LifecyclesKey]),
+    );
   }
 
-  return prototype[LifecyclesKey]!;
+  return undecoratedLifecycles;
 }

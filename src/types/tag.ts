@@ -84,7 +84,7 @@ export interface CoreInternalElement extends CoreElement {
   /**
    * @protected
    * The lifecycles have been tamper-proofed, and `__lifecycles` is used to store
-   * the original lifecycles of the wrapped class.
+   * the undecorated lifecycles of the wrapped class.
    */
   __lifecycles: Partial<CoreElementLifecycle>;
   /**

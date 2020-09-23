@@ -27,21 +27,9 @@ export function defineLifecycles(
   Prototype: Partial<CoreInternalElement>,
   incomingLifecycles: Required<CoreElementLifecycle>,
 ) {
-  let collectedLifecycles: CoreInternalElement['__lifecycles'];
   let lifecycleDescriptor: PropertyDescriptor | undefined;
 
-  if (hasOwnProperty.call(Prototype, LifecyclesKey)) {
-    collectedLifecycles = Prototype[LifecyclesKey]!;
-  } else {
-    collectedLifecycles = {};
-
-    Object.defineProperty(Prototype, LifecyclesKey, {
-      value: collectedLifecycles,
-      configurable: true,
-      enumerable: false,
-      writable: false,
-    });
-  }
+  const undecoratedLifecycles = makeSureUndecoratedLifecyclesStoreExists(Prototype);
 
   for (const lifecycleKey in incomingLifecycles) {
     if (!isKeyof(incomingLifecycles, lifecycleKey)) {
@@ -58,8 +46,8 @@ export function defineLifecycles(
      */
     lifecycleDescriptor = Object.getOwnPropertyDescriptor(Prototype, lifecycleKey);
     if (lifecycleDescriptor) {
-      // * ASSERT `lifecycleDescriptor.configurable !== false`;
-      Object.defineProperty(collectedLifecycles, lifecycleKey, lifecycleDescriptor);
+      // * ASSERT `!lifecycleDescriptor.get && !lifecycleDescriptor.set`;
+      Object.defineProperty(undecoratedLifecycles, lifecycleKey, lifecycleDescriptor);
     }
 
     Object.defineProperty(Prototype, lifecycleKey, {
@@ -92,26 +80,46 @@ export function defineLifecycles(
        * }
        */
       set(this: CoreInternalElement, value: AnyFunction) {
-        if (!hasOwnProperty.call(this, LifecyclesKey)) {
-          const lifecycles: CoreInternalElement['__lifecycles'] = {};
+        const lifecycles = makeSureUndecoratedLifecyclesStoreExists(this);
 
-          if (this[LifecyclesKey]) {
-            Object.defineProperties(
-              lifecycles,
-              Object.getOwnPropertyDescriptors(this[LifecyclesKey]),
-            );
-          }
-
-          Object.defineProperty(this, LifecyclesKey, {
-            value: lifecycles,
-            configurable: true,
-            enumerable: false,
-            writable: false,
-          });
-        }
-
-        this[LifecyclesKey][lifecycleKey] = value;
+        Object.defineProperty(lifecycles, lifecycleKey, {
+          configurable: true,
+          enumerable: true,
+          value,
+          writable: false,
+        });
       },
     });
   }
+}
+
+function makeSureUndecoratedLifecyclesStoreExists(
+  instanceOrPrototype: Partial<CoreInternalElement>,
+): CoreElementLifecycle {
+  let undecoratedLifecycles: CoreElementLifecycle;
+
+  if (
+    hasOwnProperty.call(instanceOrPrototype, LifecyclesKey) &&
+    instanceOrPrototype[LifecyclesKey]
+  ) {
+    undecoratedLifecycles = instanceOrPrototype[LifecyclesKey]!;
+  } else {
+    undecoratedLifecycles = {};
+
+    if (instanceOrPrototype[LifecyclesKey]) {
+      Object.defineProperties(
+        undecoratedLifecycles,
+        Object.getOwnPropertyDescriptors(instanceOrPrototype[LifecyclesKey]),
+      );
+    }
+
+    Object.defineProperty(instanceOrPrototype, LifecyclesKey, {
+      value: undecoratedLifecycles,
+      configurable: true,
+      enumerable: false,
+      writable: false,
+    });
+  }
+
+  return undecoratedLifecycles;
 }
