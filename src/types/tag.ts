@@ -105,14 +105,6 @@ export interface CoreInternalElement extends CoreElement {
   __properties: Record<keyof any, unknown>;
   /**
    * @protected
-   * Determine whether the element has been connected to the document according to
-   * `Node.isConnected`, and update the current stage.
-   *
-   * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/isConnected
-   */
-  __setElementConnected(): void;
-  /**
-   * @protected
    * Indicate the state of the current element.
    */
   __stage: CoreElementStage;
@@ -132,17 +124,13 @@ export const enum CoreElementStage {
    */
   INITIALIZED = 1 << 0,
   /**
-   * Indicate whether the element is connected (directly or indirectly) to the context object.
-   */
-  CONNECTED = 1 << 1,
-  /**
    * Reserved value.
    */
-  UPDATING = 1 << 2,
+  UPDATING = 1 << 1,
   /**
    * Indicate that the HTML attribute value is being synchronized to the element property,
    * preventing the property setter from firing `setAttribute()` or `removeAttribute()`
    * which causes loop calls.
    */
-  SYNC_ATTRIBUTE = 1 << 3,
+  SYNC_ATTRIBUTE = 1 << 2,
 }

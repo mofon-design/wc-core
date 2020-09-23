@@ -1,9 +1,5 @@
 import { makeSurePrototypePropertiesExist } from '../shared/makeSurePrototypePropertiesExist';
-import {
-  MapAttrsToPropsKey,
-  SetElementConnectedKey,
-  StageKey,
-} from '../shared/privatePropertyKeys';
+import { MapAttrsToPropsKey, StageKey } from '../shared/privatePropertyKeys';
 import {
   ClassType,
   CoreElement,
@@ -13,7 +9,6 @@ import {
   CoreInternalElement,
 } from '../types';
 import { defineLifecycles } from './defineLifecycles';
-import { definePrivateMethods } from './definePrivateMethods';
 import { fireCollectedLifecycle } from './fireCollectedLifecycle';
 import { getParentClassLifecycles } from './getParentClassLifecycles';
 
@@ -34,8 +29,6 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
     const WrappedClass = (ClassObject as ClassType<CoreElement>) as ClassType<CoreInternalElement>;
 
     makeSurePrototypePropertiesExist(WrappedClass.prototype);
-
-    definePrivateMethods(WrappedClass.prototype);
 
     /**
      * The purpose of defining some empty lifecycles is to transfer the current lifecycles
@@ -82,8 +75,6 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       },
 
       connectedCallback(): void {
-        this[SetElementConnectedKey]();
-
         if (!(this[StageKey] & CoreElementStage.INITIALIZED)) {
           this[StageKey] |= CoreElementStage.INITIALIZED;
           this.initialize?.call(this);
@@ -93,7 +84,6 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       },
 
       disconnectedCallback(): void {
-        this[SetElementConnectedKey]();
         fireCollectedLifecycle(this, 'disconnectedCallback', []);
       },
 

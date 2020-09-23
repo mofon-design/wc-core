@@ -6,6 +6,4 @@ export const MapAttrsToPropsKey = `__mapAttrsToProps$${randomKey}` as '__mapAttr
 
 export const PropertiesKey = `__properties$${randomKey}` as '__properties';
 
-export const SetElementConnectedKey = `__setElementConnected$${randomKey}` as '__setElementConnected';
-
 export const StageKey = `__stage$${randomKey}` as '__stage';
