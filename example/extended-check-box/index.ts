@@ -27,7 +27,7 @@ export class ExtendedCheckBox extends CheckBox {
       this.div.style.borderColor = '#1890ff';
     } else {
       this.div.style.background = '';
-      this.div.style.borderColor = '';
+      this.div.style.borderColor = '#d9d9d9';
     }
   }
 }
