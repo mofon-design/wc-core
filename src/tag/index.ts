@@ -1,9 +1,5 @@
 import { makeSurePrototypePropertiesExist } from '../shared/makeSurePrototypePropertiesExist';
-import {
-  MapAttrsToPropsKey,
-  SetElementConnectedKey,
-  StageKey,
-} from '../shared/privatePropertyKeys';
+import { MapAttrsToPropsKey, StageKey } from '../shared/privatePropertyKeys';
 import {
   ClassType,
   CoreElement,
@@ -13,9 +9,8 @@ import {
   CoreInternalElement,
 } from '../types';
 import { defineLifecycles } from './defineLifecycles';
-import { definePrivateMethods } from './definePrivateMethods';
-import { fireCollectedLifecycle } from './fireCollectedLifecycle';
-import { getParentClassLifecycles } from './getParentClassLifecycles';
+import { fireUndecoratedLifecycle } from './fireUndecoratedLifecycle';
+import { getUndecoratedLifecycles } from './getUndecoratedLifecycles';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -35,16 +30,14 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
 
     makeSurePrototypePropertiesExist(WrappedClass.prototype);
 
-    definePrivateMethods(WrappedClass.prototype);
-
     /**
      * The purpose of defining some empty lifecycles is to transfer the current lifecycles
-     * into `__lifecycles` so that child classes can use `tag.getSuperLifecycles`
+     * into `__lifecycles` so that child classes can use `tag.getUndecoratedLifecycles`
      * to get the lifecycles of current class.
      */
     const lifecycle: ThisType<CoreInternalElement> & Required<CoreElementLifecycle> = {
       adoptedCallback(): void {
-        fireCollectedLifecycle(this, 'adoptedCallback', []);
+        fireUndecoratedLifecycle(this, 'adoptedCallback', []);
       },
 
       attributeChangedCallback(
@@ -73,36 +66,33 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
            * ```
            */
 
-          this[StageKey] |= CoreElementStage.SYNC_ATTRIBUTE;
+          this[StageKey] |= CoreElementStage.SYNC_ATTRIBUTE_TO_PROPERTY;
           (this as any)[WrappedClass.prototype[MapAttrsToPropsKey][name]] = newValue;
-          this[StageKey] &= ~CoreElementStage.SYNC_ATTRIBUTE;
+          this[StageKey] &= ~CoreElementStage.SYNC_ATTRIBUTE_TO_PROPERTY;
         }
 
-        fireCollectedLifecycle(this, 'attributeChangedCallback', [name, oldValue, newValue]);
+        fireUndecoratedLifecycle(this, 'attributeChangedCallback', [name, oldValue, newValue]);
       },
 
       connectedCallback(): void {
-        this[SetElementConnectedKey]();
-
         if (!(this[StageKey] & CoreElementStage.INITIALIZED)) {
           this[StageKey] |= CoreElementStage.INITIALIZED;
           this.initialize?.call(this);
         }
 
-        fireCollectedLifecycle(this, 'connectedCallback', []);
+        fireUndecoratedLifecycle(this, 'connectedCallback', []);
       },
 
       disconnectedCallback(): void {
-        this[SetElementConnectedKey]();
-        fireCollectedLifecycle(this, 'disconnectedCallback', []);
+        fireUndecoratedLifecycle(this, 'disconnectedCallback', []);
       },
 
       initialize(): void {
-        fireCollectedLifecycle(this, 'initialize', []);
+        fireUndecoratedLifecycle(this, 'initialize', []);
       },
 
       propertyChangedCallback(property, oldValue, newValue): void {
-        fireCollectedLifecycle(this, 'propertyChangedCallback', [property, oldValue, newValue]);
+        fireUndecoratedLifecycle(this, 'propertyChangedCallback', [property, oldValue, newValue]);
       },
     };
 
@@ -135,4 +125,4 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
   };
 }
 
-tag.getParentClassLifecycles = getParentClassLifecycles;
+tag.getUndecoratedLifecycles = getUndecoratedLifecycles;

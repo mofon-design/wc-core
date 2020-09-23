@@ -40,7 +40,7 @@ export function booleanPropertyValueDefaultFormatter<T extends CoreElement>(
 
   if (value === '') {
     const stage = this[StageKey];
-    if (stage !== undefined && stage & CoreElementStage.SYNC_ATTRIBUTE) {
+    if (stage !== undefined && stage & CoreElementStage.SYNC_ATTRIBUTE_TO_PROPERTY) {
       return true;
     }
   }

@@ -4,9 +4,9 @@ import { AnyFunction, ArgsType, CoreElementLifecycle, CoreInternalElement } from
 declare const NOT_EXISTS: unique symbol;
 
 /**
- * Fire the original lifecycle that has not been wrapped by the decorator.
+ * Fire the undecorated lifecycle that has not been wrapped by the decorator.
  */
-export function fireCollectedLifecycle<T extends keyof CoreElementLifecycle>(
+export function fireUndecoratedLifecycle<T extends keyof CoreElementLifecycle>(
   self: CoreInternalElement,
   lifecycleKey: T,
   args: ArgsType<Required<CoreElementLifecycle>[T]>,
@@ -18,13 +18,13 @@ export function fireCollectedLifecycle<T extends keyof CoreElementLifecycle>(
     !Object.prototype.hasOwnProperty.call(lifecycle, lifecycleKey) ||
     !lifecycle[lifecycleKey]
   ) {
-    return fireCollectedLifecycle.NOT_EXISTS;
+    return fireUndecoratedLifecycle.NOT_EXISTS;
   }
 
   return (lifecycle[lifecycleKey] as AnyFunction).apply(self, args);
 }
 
-fireCollectedLifecycle.NOT_EXISTS = {} as typeof NOT_EXISTS;
+fireUndecoratedLifecycle.NOT_EXISTS = {} as typeof NOT_EXISTS;
 
-fireCollectedLifecycle.isExists = <T>(value: T | typeof NOT_EXISTS): value is T =>
-  value !== fireCollectedLifecycle.NOT_EXISTS;
+fireUndecoratedLifecycle.isExists = <T>(value: T | typeof NOT_EXISTS): value is T =>
+  value !== fireUndecoratedLifecycle.NOT_EXISTS;

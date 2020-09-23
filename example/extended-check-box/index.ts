@@ -10,7 +10,7 @@ export class ExtendedCheckBox extends CheckBox {
 
   // eslint-disable-next-line class-methods-use-this
   initialize() {
-    tag.getParentClassLifecycles(CheckBox).initialize?.call(this);
+    tag.getUndecoratedLifecycles(CheckBox).initialize?.call(this);
 
     console.log('this is child class.');
   }
@@ -27,7 +27,7 @@ export class ExtendedCheckBox extends CheckBox {
       this.div.style.borderColor = '#1890ff';
     } else {
       this.div.style.background = '';
-      this.div.style.borderColor = '';
+      this.div.style.borderColor = '#d9d9d9';
     }
   }
 }

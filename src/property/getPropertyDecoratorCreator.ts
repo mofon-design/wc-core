@@ -45,7 +45,7 @@ export function getPropertyDecoratorCreator(customAttribute?: string) {
            */
 
           if (
-            !(this[StageKey] & CoreElementStage.SYNC_ATTRIBUTE) &&
+            !(this[StageKey] & CoreElementStage.SYNC_ATTRIBUTE_TO_PROPERTY) &&
             this[StageKey] & CoreElementStage.INITIALIZED
           ) {
             const attributeValue = toAttributeValue.call(this, newValue);
