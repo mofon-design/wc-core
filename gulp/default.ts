@@ -35,6 +35,7 @@ gulp.task('gulp-typescript', () => {
 
 gulp.task('gulp-babel-es', () => {
   const babelPresetEnvOptions: BabelPresetEnvOptions = {
+    loose: true,
     modules: false,
     targets: {
       browsers: ['> 1%', 'last 2 versions', 'not ie <= 8'],
@@ -52,8 +53,8 @@ gulp.task('gulp-babel-es', () => {
 
 gulp.task('gulp-babel-lib', () => {
   const babelPresetEnvOptions: BabelPresetEnvOptions = {
-    modules: 'commonjs',
     loose: true,
+    modules: 'commonjs',
     targets: {
       browsers: ['> 1%', 'last 2 versions', 'not ie <= 10'],
     },
