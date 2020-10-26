@@ -22,9 +22,7 @@
     "pre-commit": "lint-staged",
     "commit-msg": "ts-node scripts/verifyCommit.ts"
   },
-  "dependencies": {
-    "@babel/runtime": "^7.11.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.11.4",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
