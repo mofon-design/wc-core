@@ -1,6 +1,12 @@
 import { CoreElement, PropertyDecoratorOptions } from '../types';
 import { getPropertyDecoratorCreator } from './getPropertyDecoratorCreator';
-import * as presets from './presets';
+import {
+  attributeValueDefaultFormatter,
+  booleanAttributeValueDefaultFormatter,
+  booleanPropertyValueDefaultFormatter,
+  numberPropertyValueDefaultFormatter,
+  stringPropertyValueDefaultFormatter,
+} from './presets';
 
 function property(customAttribute?: string) {
   const propertyDecoratorCreator = getPropertyDecoratorCreator(customAttribute);
@@ -19,8 +25,8 @@ function property(customAttribute?: string) {
       options?: PropertyDecoratorOptions<T, boolean | undefined>,
     ) {
       return propertyDecoratorCreator<T, boolean | undefined>(
-        presets.booleanPropertyValueDefaultFormatter,
-        presets.booleanAttributeValueDefaultFormatter,
+        booleanPropertyValueDefaultFormatter,
+        booleanAttributeValueDefaultFormatter,
         options,
       );
     },
@@ -35,8 +41,8 @@ function property(customAttribute?: string) {
       options?: PropertyDecoratorOptions<T, number | undefined>,
     ) {
       return propertyDecoratorCreator<T, number | undefined>(
-        presets.numberPropertyValueDefaultFormatter,
-        presets.attributeValueDefaultFormatter,
+        numberPropertyValueDefaultFormatter,
+        attributeValueDefaultFormatter,
         options,
       );
     },
@@ -53,8 +59,8 @@ function property(customAttribute?: string) {
       options?: PropertyDecoratorOptions<T, string | undefined>,
     ) {
       return propertyDecoratorCreator<T, string | undefined>(
-        presets.stringPropertyValueDefaultFormatter,
-        presets.attributeValueDefaultFormatter,
+        stringPropertyValueDefaultFormatter,
+        attributeValueDefaultFormatter,
         options,
       );
     },

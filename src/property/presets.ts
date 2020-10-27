@@ -75,9 +75,11 @@ export function numberPropertyValueDefaultFormatter<T extends CoreElement>(
     return oldValue;
   }
 
-  const numberifiedValue = Number(value);
+  const numberifiedValue = typeof value === 'number' ? value : +String(value);
 
-  return Number.isNaN(numberifiedValue) ? oldValue : numberifiedValue;
+  // return Number.isNaN(numberifiedValue) ? oldValue : numberifiedValue;
+  // eslint-disable-next-line no-self-compare
+  return numberifiedValue === numberifiedValue ? numberifiedValue : oldValue;
 }
 
 /**
