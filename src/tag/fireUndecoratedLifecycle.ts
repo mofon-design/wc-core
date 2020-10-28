@@ -13,11 +13,7 @@ export function fireUndecoratedLifecycle<T extends keyof CoreElementLifecycle>(
 ): ReturnType<Required<CoreElementLifecycle>[T]> | typeof NOT_EXISTS {
   const lifecycle = self[LifecyclesKey];
 
-  if (
-    !lifecycle ||
-    !Object.prototype.hasOwnProperty.call(lifecycle, lifecycleKey) ||
-    !lifecycle[lifecycleKey]
-  ) {
+  if (!lifecycle || !lifecycle[lifecycleKey]) {
     return fireUndecoratedLifecycle.NOT_EXISTS;
   }
 

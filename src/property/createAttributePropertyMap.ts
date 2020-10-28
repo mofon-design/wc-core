@@ -25,14 +25,8 @@ export function createAttributePropertyMap(
     typeof customAttribute === 'string' ? customAttribute : String(customAttribute);
 
   /** map HTML attribute name to class property key */
-  // * ASSERT `!Object.prototype.hasOwnProperty.call(Prototype[MapAttrsToPropsKey], attributeName)`
-  // eslint-disable-next-line no-param-reassign
-  Object.defineProperty(Prototype[MapAttrsToPropsKey], attributeName, {
-    configurable: true,
-    enumerable: true,
-    value: propertyKey,
-    writable: false,
-  });
+  // * ASSERT `!(attributeName in Prototype[MapAttrsToPropsKey])`
+  Prototype[MapAttrsToPropsKey][attributeName] = propertyKey;
 
   return attributeName;
 }

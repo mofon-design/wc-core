@@ -47,7 +47,7 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
       ): void {
         // if (oldValue === newValue) return;
 
-        if (hasOwnProperty.call(WrappedClass.prototype[MapAttrsToPropsKey], name)) {
+        if (name in WrappedClass.prototype[MapAttrsToPropsKey]) {
           /**
            * Prevent the property setter from loop calls.
            *

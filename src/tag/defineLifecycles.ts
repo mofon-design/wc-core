@@ -105,7 +105,7 @@ function makeSureUndecoratedLifecyclesStoreExists(
   ) {
     undecoratedLifecycles = instanceOrPrototype[LifecyclesKey]!;
   } else {
-    undecoratedLifecycles = {};
+    undecoratedLifecycles = Object.create(null);
 
     if (instanceOrPrototype[LifecyclesKey]) {
       assignOwnProperties(undecoratedLifecycles, instanceOrPrototype[LifecyclesKey]);

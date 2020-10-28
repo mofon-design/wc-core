@@ -15,7 +15,7 @@ export function getPropertyValue<T extends CoreElement, U extends keyof any>(
   if (hasOwnProperty.call(self, PropertiesKey)) {
     properties = self[PropertiesKey]!;
   } else {
-    properties = {};
+    properties = Object.create(null);
 
     Object.defineProperty(self, PropertiesKey, {
       configurable: true,
@@ -25,9 +25,7 @@ export function getPropertyValue<T extends CoreElement, U extends keyof any>(
     });
   }
 
-  if (hasOwnProperty.call(properties, key)) {
-    return properties[key];
-  }
+  return properties[key];
 }
 
 /**
@@ -43,7 +41,7 @@ export function setPropertyValue<T extends CoreElement, U extends keyof any>(
   if (hasOwnProperty.call(self, PropertiesKey)) {
     properties = self[PropertiesKey]!;
   } else {
-    properties = {};
+    properties = Object.create(null);
 
     Object.defineProperty(self, PropertiesKey, {
       configurable: true,
