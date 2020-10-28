@@ -1,13 +1,6 @@
-import { assignOwnProperties } from '../helpers/Object.assignOwnProperties';
 import { CoreElement, PropertyDecoratorOptions } from '../types';
 import { getPropertyDecoratorCreator } from './getPropertyDecoratorCreator';
-import {
-  attributeValueDefaultFormatter,
-  booleanAttributeValueDefaultFormatter,
-  booleanPropertyValueDefaultFormatter,
-  numberPropertyValueDefaultFormatter,
-  stringPropertyValueDefaultFormatter,
-} from './presets';
+import * as presets from './presets';
 
 function property(customAttribute?: string) {
   const propertyDecoratorCreator = getPropertyDecoratorCreator(customAttribute);
@@ -26,8 +19,8 @@ function property(customAttribute?: string) {
       options?: PropertyDecoratorOptions<T, boolean | undefined>,
     ) {
       return propertyDecoratorCreator<T, boolean | undefined>(
-        booleanPropertyValueDefaultFormatter,
-        booleanAttributeValueDefaultFormatter,
+        presets.booleanPropertyValueDefaultFormatter,
+        presets.booleanAttributeValueDefaultFormatter,
         options,
       );
     },
@@ -42,8 +35,8 @@ function property(customAttribute?: string) {
       options?: PropertyDecoratorOptions<T, number | undefined>,
     ) {
       return propertyDecoratorCreator<T, number | undefined>(
-        numberPropertyValueDefaultFormatter,
-        attributeValueDefaultFormatter,
+        presets.numberPropertyValueDefaultFormatter,
+        presets.attributeValueDefaultFormatter,
         options,
       );
     },
@@ -60,14 +53,17 @@ function property(customAttribute?: string) {
       options?: PropertyDecoratorOptions<T, string | undefined>,
     ) {
       return propertyDecoratorCreator<T, string | undefined>(
-        stringPropertyValueDefaultFormatter,
-        attributeValueDefaultFormatter,
+        presets.stringPropertyValueDefaultFormatter,
+        presets.attributeValueDefaultFormatter,
         options,
       );
     },
   };
 }
 
-const propertyWithPresets = assignOwnProperties(property, property());
+const propertyWithPresets: typeof property & ReturnType<typeof property> = Object.defineProperties(
+  property,
+  Object.getOwnPropertyDescriptors(property()),
+);
 
 export { propertyWithPresets as property };

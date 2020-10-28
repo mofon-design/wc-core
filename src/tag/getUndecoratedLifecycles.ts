@@ -1,4 +1,3 @@
-import { assignOwnProperties } from '../helpers/Object.assignOwnProperties';
 import { LifecyclesKey } from '../shared/privatePropertyKeys';
 import { ClassType, CoreElement, CoreElementLifecycle, CoreInternalElement } from '../types';
 
@@ -21,7 +20,10 @@ export function getUndecoratedLifecycles<T extends ClassType<CoreElement>>(
   const undecoratedLifecycles: Partial<CoreElementLifecycle> = {};
 
   if (Object.prototype.hasOwnProperty.call(prototype, LifecyclesKey) && prototype[LifecyclesKey]) {
-    assignOwnProperties(undecoratedLifecycles, prototype[LifecyclesKey]!);
+    Object.defineProperties(
+      undecoratedLifecycles,
+      Object.getOwnPropertyDescriptors(prototype[LifecyclesKey]),
+    );
   }
 
   return undecoratedLifecycles;
