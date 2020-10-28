@@ -1,11 +1,11 @@
 {
   "name": "@mofon-design/wc-core",
-  "version": "0.7.0-beta.0",
+  "version": "0.7.0-beta.1",
   "description": "Web components core of Mofon Design",
   "license": "MIT",
   "main": "index.umd.js",
   "module": "es/index.js",
-  "types": "src/index.d.ts",
+  "types": "src/index.ts",
   "scripts": {
     "build": "gulp",
     "build:example": "gulp example",
