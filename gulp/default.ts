@@ -1,15 +1,14 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { Options as BabelPresetEnvOptions } from '@babel/preset-env';
+import rollupBabel from '@rollup/plugin-babel';
+import rollupNodeResolve from '@rollup/plugin-node-resolve';
 import * as del from 'del';
 import * as gulp from 'gulp';
-import * as babel from 'gulp-babel';
+import * as prettier from 'gulp-prettier';
 import * as ts from 'gulp-typescript';
 import * as uglify from 'gulp-uglify';
-import * as merge from 'merge2';
 import * as path from 'path';
 import * as rollup from 'rollup';
-import * as rollupBabel from 'rollup-plugin-babel';
-import * as rollupNodeResolve from 'rollup-plugin-node-resolve';
 import * as tsConfig from '../tsconfig.json';
 
 function getAbsolutePath(p: string) {
@@ -20,59 +19,34 @@ gulp.task('gulp-typescript', () => {
   const compileTask = ts({
     ...tsConfig.compilerOptions,
     module: 'ESNext',
-    target: 'ES2018',
+    target: 'ESNext',
+    declaration: false,
+    removeComments: true,
     rootDir: getAbsolutePath('.'),
-    outDir: getAbsolutePath('dist/ts'),
-    declarationDir: getAbsolutePath('dist/ts'),
+    outDir: getAbsolutePath('es'),
   });
 
-  const streams = gulp.src('src/**/*.ts').pipe(compileTask);
-  const jsDestStream = streams.js.pipe(gulp.dest('dist/ts'));
-  const dtsDestStream = streams.dts.pipe(gulp.dest('lib')).pipe(gulp.dest('es'));
-
-  return merge([jsDestStream, dtsDestStream]);
-});
-
-gulp.task('gulp-babel-es', () => {
-  const babelPresetEnvOptions: BabelPresetEnvOptions = {
-    loose: true,
-    modules: false,
-    targets: {
-      browsers: ['> 1%', 'last 2 versions', 'not ie <= 8'],
-    },
-  };
-
-  const compileTask = babel({
-    comments: false,
-    presets: [['@babel/preset-env', babelPresetEnvOptions]],
-    plugins: [['@babel/plugin-proposal-class-properties', { loose: false }]],
-  });
-
-  return gulp.src('dist/ts/**', { base: 'dist/ts' }).pipe(compileTask).pipe(gulp.dest('es'));
-});
-
-gulp.task('gulp-babel-lib', () => {
-  const babelPresetEnvOptions: BabelPresetEnvOptions = {
-    loose: true,
-    modules: 'commonjs',
-    targets: {
-      browsers: ['> 1%', 'last 2 versions', 'not ie <= 10'],
-    },
-  };
-
-  const compileTask = babel({
-    comments: false,
-    presets: [['@babel/preset-env', babelPresetEnvOptions]],
-    plugins: [['@babel/plugin-proposal-class-properties', { loose: false }]],
-  });
-
-  return gulp.src('dist/ts/**', { base: 'dist/ts' }).pipe(compileTask).pipe(gulp.dest('lib'));
+  return gulp.src('src/**/*.ts').pipe(compileTask).pipe(prettier()).pipe(gulp.dest('es'));
 });
 
 gulp.task('rollup-umd', async () => {
+  const babelPresetEnvOptions: BabelPresetEnvOptions = {
+    loose: false,
+    modules: false,
+    targets: {
+      browsers: ['last 2 versions', 'not ie <= 10'],
+    },
+  };
+
+  const rollupBabelPlugin = rollupBabel({
+    babelHelpers: 'bundled',
+    presets: [['@babel/preset-env', babelPresetEnvOptions]],
+    plugins: [['@babel/plugin-proposal-class-properties', { loose: false }]],
+  });
+
   const bundle = await rollup.rollup({
     input: getAbsolutePath('es/export.js'),
-    plugins: [rollupBabel(), rollupNodeResolve()],
+    plugins: [rollupBabelPlugin, rollupNodeResolve()],
   });
 
   await bundle.write({
@@ -85,18 +59,6 @@ gulp.task('rollup-umd', async () => {
   return gulp.src('index.umd.js').pipe(uglify()).pipe(gulp.dest('.'));
 });
 
-gulp.task('clean-dist', () => del(['dist']));
+gulp.task('clean', () => del(['es', 'index.umd.js']));
 
-gulp.task('clean', () => del(['lib', 'es', 'dist', 'index.umd.js']));
-
-gulp.task(
-  'default',
-  gulp.series(
-    'clean',
-    'gulp-typescript',
-    'gulp-babel-es',
-    'gulp-babel-lib',
-    'rollup-umd',
-    'clean-dist',
-  ),
-);
+gulp.task('default', gulp.series('clean', 'gulp-typescript', 'rollup-umd'));
