@@ -1,3 +1,4 @@
+import { assignOwnProperties } from '../helpers/Object.assignOwnProperties';
 import { CoreElementStage, CoreInternalElement } from '../types';
 import { MapAttrsToPropsKey, StageKey } from './privatePropertyKeys';
 
@@ -14,10 +15,7 @@ export function makeSurePrototypePropertiesExist(Prototype: Partial<CoreInternal
     const mapAttrsToProps: CoreInternalElement['__mapAttrsToProps'] = {};
 
     if (Prototype[MapAttrsToPropsKey]) {
-      Object.defineProperties(
-        mapAttrsToProps,
-        Object.getOwnPropertyDescriptors(Prototype[MapAttrsToPropsKey]),
-      );
+      assignOwnProperties(mapAttrsToProps, Prototype[MapAttrsToPropsKey]);
     }
 
     Object.defineProperty(Prototype, MapAttrsToPropsKey, {

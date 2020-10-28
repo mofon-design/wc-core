@@ -1,3 +1,4 @@
+import { assignOwnProperties } from '../helpers/Object.assignOwnProperties';
 import { LifecyclesKey } from '../shared/privatePropertyKeys';
 import { AnyFunction, CoreElementLifecycle, CoreInternalElement } from '../types';
 
@@ -107,10 +108,7 @@ function makeSureUndecoratedLifecyclesStoreExists(
     undecoratedLifecycles = {};
 
     if (instanceOrPrototype[LifecyclesKey]) {
-      Object.defineProperties(
-        undecoratedLifecycles,
-        Object.getOwnPropertyDescriptors(instanceOrPrototype[LifecyclesKey]),
-      );
+      assignOwnProperties(undecoratedLifecycles, instanceOrPrototype[LifecyclesKey]);
     }
 
     Object.defineProperty(instanceOrPrototype, LifecyclesKey, {

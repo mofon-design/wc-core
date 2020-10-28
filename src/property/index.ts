@@ -1,3 +1,4 @@
+import { assignOwnProperties } from '../helpers/Object.assignOwnProperties';
 import { CoreElement, PropertyDecoratorOptions } from '../types';
 import { getPropertyDecoratorCreator } from './getPropertyDecoratorCreator';
 import {
@@ -67,6 +68,6 @@ function property(customAttribute?: string) {
   };
 }
 
-const propertyWithPresets = Object.assign(property, property());
+const propertyWithPresets = assignOwnProperties(property, property());
 
 export { propertyWithPresets as property };
