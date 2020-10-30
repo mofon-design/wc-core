@@ -34,7 +34,7 @@
     "@types/gulp": "^4.0.6",
     "@types/gulp-typescript": "^2.13.0",
     "@types/gulp-uglify": "^3.0.6",
-    "@umijs/fabric": "^2.0.3",
+    "@umijs/fabric": "^2.3.0",
     "chalk": "^3.0.0",
     "del": "^5.1.0",
     "gulp": "^4.0.2",
