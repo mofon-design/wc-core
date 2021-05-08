@@ -9,7 +9,7 @@ declare const NOT_EXISTS: unique symbol;
 export function fireUndecoratedLifecycle<T extends keyof CoreElementLifecycle>(
   self: CoreInternalElement,
   lifecycleKey: T,
-  args: ArgsType<Required<CoreElementLifecycle>[T]>,
+  args: ArgsType<Required<CoreElementLifecycle>[T]> | IArguments,
 ): ReturnType<Required<CoreElementLifecycle>[T]> | typeof NOT_EXISTS {
   const lifecycle = self[LifecyclesKey];
 
@@ -17,7 +17,7 @@ export function fireUndecoratedLifecycle<T extends keyof CoreElementLifecycle>(
     return fireUndecoratedLifecycle.NOT_EXISTS;
   }
 
-  return (lifecycle[lifecycleKey] as AnyFunction).apply(self, args);
+  return (lifecycle[lifecycleKey] as AnyFunction).apply(self, args as any[]);
 }
 
 fireUndecoratedLifecycle.NOT_EXISTS = {} as typeof NOT_EXISTS;

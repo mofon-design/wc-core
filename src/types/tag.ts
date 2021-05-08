@@ -7,13 +7,13 @@ export interface CustomElementLifecycle {
   /**
    * Invoked each time the custom element is moved to a new document.
    */
-  adoptedCallback?(): void;
+  adoptedCallback?(oldDocument: Document | null, newDocument: Document): void;
   /**
    * Invoked each time one of the custom element's attributes is added, removed,
    * or changed. Which attributes to notice change for is specified in a static
    * get `observedAttributes` method.
    */
-  attributeChangedCallback?(name: string, oldValue: string | null, newValue: string | null): void;
+  attributeChangedCallback?(name: string, oldValue: string | null, newValue: string | null, namespace: string | null): void;
   /**
    * Invoked each time the custom element is appended into a document-connected element.
    * This will happen each time the node is moved, and may happen before the element's

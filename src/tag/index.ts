@@ -36,15 +36,18 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
      * to get the lifecycles of current class.
      */
     const lifecycle: ThisType<CoreInternalElement> & Required<CoreElementLifecycle> = {
-      adoptedCallback(): void {
-        fireUndecoratedLifecycle(this, 'adoptedCallback', []);
+      adoptedCallback(_oldDocument, newDocument) {
+        if (this.ownerDocument !== newDocument) return;
+
+        // eslint-disable-next-line prefer-rest-params
+        fireUndecoratedLifecycle(this, 'adoptedCallback', arguments);
       },
 
       attributeChangedCallback(
-        name: string,
-        oldValue: string | null,
-        newValue: string | null,
-      ): void {
+        name,
+        _oldValue,
+        newValue,
+      ) {
         // if (oldValue === newValue) return;
 
         if (name in WrappedClass.prototype[MapAttrsToPropsKey]) {
@@ -71,28 +74,37 @@ export function tag<U extends string>(tagName: U, options?: ElementDefinitionOpt
           this[StageKey] &= ~CoreElementStage.SYNC_ATTRIBUTE_TO_PROPERTY;
         }
 
-        fireUndecoratedLifecycle(this, 'attributeChangedCallback', [name, oldValue, newValue]);
+        // eslint-disable-next-line prefer-rest-params
+        fireUndecoratedLifecycle(this, 'attributeChangedCallback', arguments);
       },
 
-      connectedCallback(): void {
+      connectedCallback() {
+        if (!this.isConnected) return;
+
         if (!(this[StageKey] & CoreElementStage.INITIALIZED)) {
           this[StageKey] |= CoreElementStage.INITIALIZED;
           this.initialize?.call(this);
         }
 
-        fireUndecoratedLifecycle(this, 'connectedCallback', []);
+        // eslint-disable-next-line prefer-rest-params
+        fireUndecoratedLifecycle(this, 'connectedCallback', arguments);
       },
 
-      disconnectedCallback(): void {
-        fireUndecoratedLifecycle(this, 'disconnectedCallback', []);
+      disconnectedCallback() {
+        if (this.isConnected) return;
+
+        // eslint-disable-next-line prefer-rest-params
+        fireUndecoratedLifecycle(this, 'disconnectedCallback', arguments);
       },
 
-      initialize(): void {
-        fireUndecoratedLifecycle(this, 'initialize', []);
+      initialize() {
+        // eslint-disable-next-line prefer-rest-params
+        fireUndecoratedLifecycle(this, 'initialize', arguments);
       },
 
-      propertyChangedCallback(property, oldValue, newValue): void {
-        fireUndecoratedLifecycle(this, 'propertyChangedCallback', [property, oldValue, newValue]);
+      propertyChangedCallback() {
+        // eslint-disable-next-line prefer-rest-params
+        fireUndecoratedLifecycle(this, 'propertyChangedCallback', arguments);
       },
     };
 
