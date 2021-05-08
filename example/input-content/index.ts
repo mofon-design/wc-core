@@ -2,7 +2,7 @@ import { CoreElement, property, tag } from '../../src';
 
 @tag('input-content')
 export class InputContent extends HTMLElement implements CoreElement {
-  @property.string<InputContent>({ watcher: InputContent.prototype.onValueChange })
+  @property.string({ watcher: InputContent.prototype.onValueChange })
   value: string | undefined;
 
   button = document.createElement('button');

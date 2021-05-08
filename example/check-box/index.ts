@@ -9,7 +9,7 @@ export class CheckBox extends HTMLElement implements CoreElement {
   })
   checked: boolean | undefined;
 
-  @(property('default-checked').boolean<CheckBox>({ enumerable: false }))
+  @(property('default-checked').boolean({ enumerable: false }))
   defaultChecked: boolean | undefined;
 
   div = document.createElement('div');
